@@ -1,0 +1,11 @@
+node_modules
+.vitepress/dist
+.vitepress/cache
+.DS_Store
+*.log
+
+# IDE / 编辑器
+.idea/
+
+# Claude Code 本地设置（机器私有）
+.claude/settings.local.json
