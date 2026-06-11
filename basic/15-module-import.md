@@ -148,3 +148,85 @@ import datetime # 日期时间
 import json     # JSON 处理
 import re       # 正则表达式
 ```
+
+## 使用场景
+
+### 场景 1：代码组织
+大型项目模块化管理。
+
+### 场景 2：代码复用
+共享常用功能函数。
+
+### 场景 3：命名空间隔离
+避免命名冲突。
+
+### 场景 4：第三方库使用
+pandas、requests 等库的导入。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：创建模块 `calculator.py`，包含加减乘除函数，并在另一个文件中导入使用。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+# calculator.py
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+# main.py
+from calculator import add, subtract
+print(add(3, 5))       # 8
+print(subtract(10, 3)) # 7
+```
+</details>
+
+### 进阶练习
+
+**题目 2**：创建包结构 `mypackage/math/operations.py`，实现并导入。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```
+mypackage/
+├── __init__.py
+└── math/
+    ├── __init__.py
+    └── operations.py
+```
+
+```python
+# mypackage/math/operations.py
+def multiply(a, b):
+    return a * b
+
+# main.py
+from mypackage.math.operations import multiply
+print(multiply(3, 4))  # 12
+```
+</details>
+
+### 挑战练习
+
+**题目 3**：解释 `if __name__ == "__main__":` 的作用，并举例说明使用场景。
+
+## 费曼学习法检验
+
+1. **这是什么**：模块和包有什么区别？`__init__.py` 的作用是什么？
+
+2. **为什么需要**：为什么不推荐 `from module import *`？
+
+3. **怎么用**：向新手解释相对导入和绝对导入的区别？
+
+4. **注意事项**：循环导入是什么？如何避免？
+
+::: tip 学习建议
+模块化是大型项目的基础！理解导入机制和包结构很重要。
+:::

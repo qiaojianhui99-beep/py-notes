@@ -176,6 +176,97 @@ with open("config.toml", "rb") as f:
     config = tomli.load(f)
 ```
 
+## 使用场景
+
+### 场景 1：日期时间处理
+定时任务、日志记录。
+
+### 场景 2：文件系统操作
+批量处理文件、目录管理。
+
+### 场景 3：数据序列化
+API 接口、配置文件。
+
+### 场景 4：随机数生成
+测试数据、游戏开发。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：计算从今天到你的生日还有多少天。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+from datetime import datetime, date
+
+today = date.today()
+birthday = date(today.year, 12, 25)  # 假设生日是 12 月 25 日
+if birthday < today:
+    birthday = date(today.year + 1, 12, 25)
+days = (birthday - today).days
+print(f"还有 {days} 天")
+```
+</details>
+
+**题目 2**：生成 10 个 1-100 之间的随机整数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+import random
+
+numbers = [random.randint(1, 100) for _ in range(10)]
+print(numbers)
+```
+</details>
+
+### 进阶练习
+
+**题目 3**：递归遍历目录，找出所有 `.py` 文件并统计总行数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+import os
+
+def count_lines(directory):
+    total = 0
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.py'):
+                path = os.path.join(root, file)
+                with open(path, 'r', encoding='utf-8') as f:
+                    total += len(f.readlines())
+    return total
+
+print(count_lines('.'))
+```
+</details>
+
+### 挑战练习
+
+**题目 4**：实现一个 JSON 配置文件管理器，支持读取、修改、保存。
+
+## 费曼学习法检验
+
+1. **这是什么**：标准库和第三方库有什么区别？如何选择？
+
+2. **为什么需要**：为什么推荐用 `pathlib` 而不是 `os.path`？
+
+3. **怎么用**：向新手解释时区的概念，以及如何处理时区问题？
+
+4. **注意事项**：`random` 模块生成的随机数是真随机吗？适合加密吗？
+
+::: tip 学习建议
+标准库是 Python 的宝藏！"batteries included" 理念让很多功能开箱即用。
+:::
+
+
 ## re 模块
 
 正则表达式（基础）。

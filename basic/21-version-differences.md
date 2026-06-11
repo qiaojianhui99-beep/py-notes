@@ -143,3 +143,95 @@ else:
     def func(x: Union[int, str]):
         pass
 ```
+
+## 使用场景
+
+### 场景 1：新项目开发
+使用最新语法特性提高效率。
+
+### 场景 2：老项目维护
+理解旧版本代码，逐步迁移。
+
+### 场景 3：团队协作
+统一版本，避免兼容性问题。
+
+### 场景 4：库开发
+考虑向后兼容性。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：将以下代码改写为 Python 3.10+ 语法：
+```python
+from typing import Union
+def process(x: Union[int, str]) -> Union[int, None]:
+    pass
+```
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+def process(x: int | str) -> int | None:
+    pass
+```
+</details>
+
+### 进阶练习
+
+**题目 2**：用 match-case 重写多个 if-elif 判断 HTTP 状态码的代码。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+# Python 3.10+
+def handle_status(code):
+    match code:
+        case 200:
+            return "OK"
+        case 404:
+            return "Not Found"
+        case 500:
+            return "Server Error"
+        case _:
+            return "Unknown"
+
+# Python 3.9-
+def handle_status_old(code):
+    if code == 200:
+        return "OK"
+    elif code == 404:
+        return "Not Found"
+    elif code == 500:
+        return "Server Error"
+    else:
+        return "Unknown"
+```
+</details>
+
+### 挑战练习
+
+**题目 3**：编写兼容 Python 3.9+ 和 3.10+ 的代码，使用条件判断选择不同语法。
+
+<details>
+<summary>💡 查看提示</summary>
+
+使用 `sys.version_info` 判断版本。
+</details>
+
+## 费曼学习法检验
+
+1. **这是什么**：Python 为什么要不断更新语法？旧代码会失效吗？
+
+2. **为什么需要**：match-case 比 if-elif 好在哪里？什么场景下更适合？
+
+3. **怎么用**：向新手解释如何查看当前 Python 版本并选择合适的语法？
+
+4. **注意事项**：如何在项目中平衡使用新特性和保持兼容性？
+
+::: tip 学习建议
+了解版本差异避免踩坑！新特性让代码更简洁，但要考虑团队环境。
+:::
+

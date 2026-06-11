@@ -103,7 +103,7 @@ data_old: Dict[str, int] = {"age": 25}
 ## 使用场景
 
 ### 场景 1：用户输入处理
-Web 表单、命令行工具接收用户输入时需要类型转换。
+Web 表单、命令行工具接收用户输入时，需要类型转换和验证。
 
 ```python
 age = int(input("请输入年龄: "))
@@ -112,27 +112,30 @@ if age >= 18:
 ```
 
 ### 场景 2：配置文件读取
-读取配置时确保数据类型正确。
+读取 JSON、YAML 配置文件时，需要确保数据类型正确。
 
 ```python
-config = {"timeout": "30"}
+config = {"timeout": "30", "retry": "3"}
 timeout: int = int(config["timeout"])
+retry: int = int(config["retry"])
 ```
 
 ### 场景 3：数据分析
-处理 CSV、数据库数据时的类型转换。
+处理 CSV、数据库数据时，需要类型转换。
 
 ```python
-price = float("99.99")
+# CSV 读取的都是字符串
+price_str = "99.99"
+price = float(price_str)
 total = price * 2
 ```
 
 ### 场景 4：API 接口开发
-类型注解提高代码可读性。
+使用类型注解提高代码可读性和 IDE 提示。
 
 ```python
-def create_user(name: str, age: int) -> dict[str, str | int]:
-    return {"name": name, "age": age}
+def create_user(name: str, age: int, email: str) -> dict[str, str | int]:
+    return {"name": name, "age": age, "email": email}
 ```
 
 ## 练习题
@@ -151,9 +154,11 @@ radius = float(input("请输入半径: "))
 area = math.pi * radius ** 2
 print(f"圆的面积是: {area:.2f}")
 ```
+
+**解析**：使用 `float()` 转换输入，`math.pi` 获取 π 值，f-string 的 `:.2f` 格式化保留 2 位小数。
 </details>
 
-**题目 2**：判断 `x = "123"` 是否可转换为整数，如果可以则输出 `int(x) + 10`。
+**题目 2**：判断变量 `x = "123"` 是否可以转换为整数，如果可以则输出转换后的值加 10。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -161,13 +166,16 @@ print(f"圆的面积是: {area:.2f}")
 ```python
 x = "123"
 if x.isdigit():
-    print(int(x) + 10)  # 133
+    result = int(x) + 10
+    print(result)  # 133
 ```
+
+**解析**：使用 `isdigit()` 方法检查字符串是否全为数字，然后再转换。
 </details>
 
 ### 进阶练习
 
-**题目 3**：编写 `safe_divide(a: str, b: str) -> float | None`，转换失败或除数为 0 返回 None。
+**题目 3**：编写函数 `safe_divide(a: str, b: str) -> float | None`，接收两个字符串，转换为数字后相除。如果转换失败或除数为 0，返回 `None`。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -175,29 +183,48 @@ if x.isdigit():
 ```python
 def safe_divide(a: str, b: str) -> float | None:
     try:
-        num_a, num_b = float(a), float(b)
-        return num_a / num_b if num_b != 0 else None
+        num_a = float(a)
+        num_b = float(b)
+        if num_b == 0:
+            return None
+        return num_a / num_b
     except ValueError:
         return None
+
+# 测试
+print(safe_divide("10", "2"))    # 5.0
+print(safe_divide("10", "0"))    # None
+print(safe_divide("abc", "2"))   # None
 ```
+
+**解析**：使用 `try-except` 捕获转换异常，检查除数是否为 0。
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现 `detect_type(value: str)`，自动检测字符串应转换为什么类型（int/float/bool/str）并返回转换后的值。
+**题目 4**：实现一个类型检测工具函数 `detect_type(value: str)`，自动检测字符串应该转换为什么类型（int、float、bool 或保持 str），并返回转换后的值。
+
+<details>
+<summary>💡 查看提示</summary>
+
+- 纯数字 → int
+- 小数 → float  
+- "true"/"false" → bool
+- 其他 → str
+</details>
 
 ## 费曼学习法检验
 
-用自己的话回答以下问题：
+用自己的话回答以下问题（不要看上面的内容）：
 
 1. **这是什么**：变量和数据类型是什么？为什么需要不同的数据类型？
 
-2. **为什么需要**：如果所有数据都用字符串存储会有什么问题？
+2. **为什么需要**：如果所有数据都用字符串存储会有什么问题？类型转换解决了什么问题？
 
-3. **怎么用**：向编程新手解释，如何把输入的 "18" 变成数字 18 并判断是否成年？
+3. **怎么用**：向一个从未编程的人解释，如何把用户输入的"18"变成数字 18 并判断是否成年？
 
-4. **注意事项**：`int("3.14")` 会发生什么？如何避免程序崩溃？
+4. **注意事项**：`int("3.14")` 会发生什么？`float("abc")` 呢？如何避免程序崩溃？
 
 ::: tip 学习建议
-类型转换是 Python 编程的基础！尝试向朋友讲解一遍，是检验理解最好的方法。
+如果上面 4 个问题你都能流畅回答，说明你已经真正掌握了本章内容！尝试向朋友讲解一遍，是检验理解最好的方法。
 :::

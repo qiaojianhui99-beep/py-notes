@@ -189,3 +189,86 @@ try:
 except* ValueError as eg:
     print(f"发现 {len(eg.exceptions)} 个 ValueError")
 ```
+
+## 使用场景
+
+### 场景 1：输入验证
+处理用户输入错误、数据格式异常。
+
+### 场景 2：文件操作
+处理文件不存在、权限错误。
+
+### 场景 3：网络请求
+处理超时、连接失败。
+
+### 场景 4：数据库操作
+处理连接失败、查询错误。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：编写程序，输入两个数字相除，处理除零异常和输入错误。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+try:
+    a = float(input("第一个数: "))
+    b = float(input("第二个数: "))
+    result = a / b
+    print(f"结果: {result}")
+except ValueError:
+    print("输入无效，请输入数字")
+except ZeroDivisionError:
+    print("除数不能为零")
+```
+</details>
+
+### 进阶练习
+
+**题目 2**：编写 `safe_read_file(filename)` 函数，处理文件不存在、编码错误等异常。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+def safe_read_file(filename):
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return f"文件 {filename} 不存在"
+    except UnicodeDecodeError:
+        return "文件编码错误"
+    except Exception as e:
+        return f"未知错误: {e}"
+```
+</details>
+
+### 挑战练习
+
+**题目 3**：实现重试装饰器，函数失败后自动重试 3 次。
+
+<details>
+<summary>💡 查看提示</summary>
+
+使用装饰器 + 循环 + try-except 组合。
+</details>
+
+## 费曼学习法检验
+
+1. **这是什么**：为什么需要异常处理？不处理会怎样？
+
+2. **为什么需要**：`finally` 块什么时候执行？即使有 return 也会执行吗？
+
+3. **怎么用**：向新手解释什么时候应该捕获异常，什么时候让它抛出？
+
+4. **注意事项**：为什么不推荐使用空的 `except:` 捕获所有异常？
+
+::: tip 学习建议
+异常处理让程序更健壮！但不要过度使用，合理的异常处理是艺术。
+:::
+
+
