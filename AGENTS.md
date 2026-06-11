@@ -16,6 +16,24 @@
 
 **改动后用 `pnpm docs:build` 验证**:VitePress 的死链检查会让构建失败(exit code 1),这是发现断链的主要手段。
 
+## Git 分支管理
+
+每次新建临时分支完成工作后，按以下流程操作：
+
+1. 确保所有更改已提交
+2. 切换到 main 分支：`git checkout main`
+3. 合并临时分支：`git merge <临时分支名>`
+4. 删除临时分支：`git branch -d <临时分支名>`
+5. 推送到远程：`git push origin main`
+
+**示例**：
+```bash
+git checkout main
+git merge claude/feature-branch
+git branch -d claude/feature-branch
+git push origin main
+```
+
 ## 目录结构
 
 ```
