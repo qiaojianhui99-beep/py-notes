@@ -218,3 +218,89 @@ isinstance(dog, Animal)  # True
 # 检查子类关系
 issubclass(Dog, Animal)  # True
 ```
+
+## 使用场景
+
+### 场景 1：数据验证
+使用属性装饰器验证输入。
+
+### 场景 2：运算符重载
+实现自定义类的比较、运算。
+
+### 场景 3：上下文管理
+数据库连接、文件处理。
+
+### 场景 4：元编程
+ORM 框架、API 客户端。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：为 `Person` 类添加 `@property` 装饰器，年龄只读。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self._name = name
+        self._age = age
+    
+    @property
+    def age(self):
+        return self._age
+
+person = Person("Alice", 25)
+print(person.age)  # 25
+# person.age = 30  # AttributeError
+```
+</details>
+
+### 进阶练习
+
+**题目 2**：实现 `Vector` 类，支持加法和点积运算。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
+    
+    def dot(self, other):
+        return self.x * other.x + self.y * other.y
+    
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
+
+v1 = Vector(1, 2)
+v2 = Vector(3, 4)
+print(v1 + v2)      # Vector(4, 6)
+print(v1.dot(v2))   # 11
+```
+</details>
+
+### 挑战练习
+
+**题目 3**：实现自定义上下文管理器 `Timer`，自动计时代码块执行时间。
+
+## 费曼学习法检验
+
+1. **这是什么**：`@property` 和普通方法有什么区别？为什么要用它？
+
+2. **为什么需要**：抽象基类有什么用？为什么不直接用普通类？
+
+3. **怎么用**：向新手解释魔术方法的命名规则和常用场景？
+
+4. **注意事项**：什么时候需要自定义 `__str__` 和 `__repr__`？
+
+::: tip 学习建议
+OOP 进阶特性让代码更 Pythonic！掌握装饰器、魔术方法是关键。
+:::

@@ -92,3 +92,86 @@ for i in range(1, 10):
         print(f"{j}x{i}={i*j}", end=" ")
     print()
 ```
+
+## 使用场景
+
+### 场景 1：批量数据处理
+遍历文件列表、数据库记录。
+
+### 场景 2：重复操作
+自动化任务、定时任务。
+
+### 场景 3：数据生成
+生成测试数据、序列号。
+
+### 场景 4：交互式程序
+游戏主循环、CLI 工具。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：打印 1-100 的所有偶数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+for i in range(2, 101, 2):
+    print(i, end=" ")
+```
+</details>
+
+**题目 2**：求 1-100 的和。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+total = sum(range(1, 101))
+print(total)  # 5050
+
+# 或使用循环
+total = 0
+for i in range(1, 101):
+    total += i
+print(total)
+```
+</details>
+
+### 进阶练习
+
+**题目 3**：找出 1-100 中所有的质数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+for num in range(2, 101):
+    is_prime = True
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            is_prime = False
+            break
+    if is_prime:
+        print(num, end=" ")
+```
+</details>
+
+### 挑战练习
+
+**题目 4**：实现一个猜数字游戏，随机生成 1-100 的数字，用户猜测，提示大了/小了，直到猜对。
+
+## 费曼学习法检验
+
+1. **这是什么**：for 和 while 有什么区别？各适合什么场景？
+
+2. **为什么需要**：break 和 continue 的区别是什么？else 子句什么时候执行？
+
+3. **怎么用**：向新手解释 `range(1, 10, 2)` 的三个参数含义？
+
+4. **注意事项**：死循环是什么？如何避免 while 循环变成死循环？
+
+::: tip 学习建议
+循环是编程的核心！掌握 for 和 while 的使用场景，理解 break/continue 的区别。
+:::

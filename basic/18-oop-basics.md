@@ -168,3 +168,85 @@ p2 = Point(3, 4)
 print(p1)       # Point(1, 2)
 p3 = p1 + p2    # Point(4, 6)
 ```
+
+## 使用场景
+
+### 场景 1：数据建模
+用户、订单、商品等业务对象。
+
+### 场景 2：代码复用
+通过继承共享代码逻辑。
+
+### 场景 3：框架开发
+Django Model、Flask View。
+
+### 场景 4：游戏开发
+角色、道具、场景对象。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：创建 `Rectangle` 类，包含长宽属性和计算面积的方法。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):
+        return self.width * self.height
+
+rect = Rectangle(5, 3)
+print(rect.area())  # 15
+```
+</details>
+
+### 进阶练习
+
+**题目 2**：创建 `BankAccount` 类，包含存款、取款、查询余额功能。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+class BankAccount:
+    def __init__(self, balance=0):
+        self.balance = balance
+    
+    def deposit(self, amount):
+        self.balance += amount
+        return self.balance
+    
+    def withdraw(self, amount):
+        if amount <= self.balance:
+            self.balance -= amount
+            return self.balance
+        return "余额不足"
+    
+    def get_balance(self):
+        return self.balance
+```
+</details>
+
+### 挑战练习
+
+**题目 3**：实现 `Student` 继承 `Person`，添加成绩管理功能。
+
+## 费曼学习法检验
+
+1. **这是什么**：类和对象有什么区别？实例属性和类属性的区别？
+
+2. **为什么需要**：为什么需要面向对象？函数式编程不够用吗？
+
+3. **怎么用**：向新手解释 `self` 是什么？为什么方法的第一个参数是 `self`？
+
+4. **注意事项**：什么时候用继承，什么时候用组合？
+
+::: tip 学习建议
+面向对象是编程思维的升级！理解封装、继承、多态三大特性。
+:::

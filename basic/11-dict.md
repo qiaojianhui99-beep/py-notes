@@ -127,3 +127,83 @@ students = {
 
 students["Alice"]["age"]  # 20
 ```
+
+## 使用场景
+
+### 场景 1：配置管理
+应用配置、用户设置。
+
+### 场景 2：数据映射
+ID 到对象、缓存数据。
+
+### 场景 3：计数统计
+词频统计、分组聚合。
+
+### 场景 4：JSON 数据处理
+API 响应、配置文件。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：创建字典存储三个学生的姓名和分数，输出分数最高的学生。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+students = {"Alice": 90, "Bob": 85, "Charlie": 95}
+top_student = max(students, key=students.get)
+print(f"{top_student}: {students[top_student]}")
+```
+</details>
+
+**题目 2**：统计字符串 "hello world" 中每个字符出现的次数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+s = "hello world"
+count = {}
+for char in s:
+    if char != " ":
+        count[char] = count.get(char, 0) + 1
+print(count)
+```
+</details>
+
+### 进阶练习
+
+**题目 3**：合并两个字典，相同键的值相加。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+d1 = {"a": 1, "b": 2}
+d2 = {"b": 3, "c": 4}
+result = d1.copy()
+for k, v in d2.items():
+    result[k] = result.get(k, 0) + v
+print(result)  # {'a': 1, 'b': 5, 'c': 4}
+```
+</details>
+
+### 挑战练习
+
+**题目 4**：实现 LRU 缓存（最近最少使用），使用字典存储，限制容量。
+
+## 费曼学习法检验
+
+1. **这是什么**：字典的键为什么必须是不可变对象？
+
+2. **为什么需要**：字典查找为什么比列表快？时间复杂度是多少？
+
+3. **怎么用**：向新手解释 `dict.get(key, default)` 比 `dict[key]` 好在哪？
+
+4. **注意事项**：遍历字典时能修改字典吗？会发生什么？
+
+::: tip 学习建议
+字典是 Python 最强大的数据结构！掌握增删改查和推导式，理解哈希原理。
+:::

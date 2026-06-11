@@ -38,7 +38,7 @@ jobs:
       # 文档：https://github.com/pnpm/action-setup
       - uses: pnpm/action-setup@v3
         with:
-          version: 8       # pnpm 版本，需与本地开发环境一致
+          version: 10      # pnpm 版本，需与本地开发环境一致
 
       # 步骤 3：安装 Node.js
       # 文档：https://github.com/actions/setup-node

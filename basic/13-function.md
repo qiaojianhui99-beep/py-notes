@@ -110,3 +110,80 @@ def add(a, b):
 
 print(add.__doc__)  # 查看文档
 ```
+
+## 使用场景
+
+### 场景 1：代码复用
+避免重复代码，提高维护性。
+
+### 场景 2：模块化开发
+将复杂问题分解为小函数。
+
+### 场景 3：库和框架开发
+提供 API 接口。
+
+### 场景 4：回调和事件处理
+事件驱动编程。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：编写函数 `is_even(n)` 判断数字是否为偶数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+def is_even(n):
+    return n % 2 == 0
+
+print(is_even(4))  # True
+```
+</details>
+
+**题目 2**：编写函数 `max_of_three(a, b, c)` 返回三个数中的最大值。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+def max_of_three(a, b, c):
+    return max(a, b, c)
+```
+</details>
+
+### 进阶练习
+
+**题目 3**：编写函数 `fibonacci(n)` 返回斐波那契数列的第 n 项。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+print(fibonacci(6))  # 8
+```
+</details>
+
+### 挑战练习
+
+**题目 4**：实现一个函数装饰器，计算函数执行时间。
+
+## 费曼学习法检验
+
+1. **这是什么**：函数的参数传递是传值还是传引用？
+
+2. **为什么需要**：为什么需要 return？不用 return 会怎样？
+
+3. **怎么用**：向新手解释全局变量和局部变量的区别？
+
+4. **注意事项**：什么时候需要用 global 关键字？滥用会有什么问题？
+
+::: tip 学习建议
+函数是程序的基本单元！写好函数是写好程序的第一步。
+:::

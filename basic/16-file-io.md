@@ -137,6 +137,86 @@ os.path.join("dir", "file.txt")
 os.path.getsize("file.txt")
 ```
 
+## 使用场景
+
+### 场景 1：数据持久化
+保存配置、日志、用户数据。
+
+### 场景 2：数据处理
+CSV、JSON、TXT 文件处理。
+
+### 场景 3：系统管理
+批量文件操作、备份脚本。
+
+### 场景 4：爬虫数据存储
+保存网页、图片、数据。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：读取文件 `data.txt`，统计行数和字符数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+with open("data.txt", "r") as f:
+    content = f.read()
+    lines = content.count('\n') + 1
+    chars = len(content)
+    print(f"行数: {lines}, 字符数: {chars}")
+```
+</details>
+
+**题目 2**：将列表 `["apple", "banana", "orange"]` 写入文件，每行一个。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+fruits = ["apple", "banana", "orange"]
+with open("fruits.txt", "w") as f:
+    for fruit in fruits:
+        f.write(fruit + "\n")
+```
+</details>
+
+### 进阶练习
+
+**题目 3**：复制文件内容到新文件（支持二进制文件）。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+def copy_file(src, dst):
+    with open(src, "rb") as f1:
+        with open(dst, "wb") as f2:
+            f2.write(f1.read())
+
+copy_file("source.txt", "dest.txt")
+```
+</details>
+
+### 挑战练习
+
+**题目 4**：实现日志追加功能，每次记录时间戳和内容。
+
+## 费曼学习法检验
+
+1. **这是什么**：为什么推荐用 `with` 语句而不是手动 `close()`？
+
+2. **为什么需要**：文本模式和二进制模式有什么区别？
+
+3. **怎么用**：向新手解释 `r`、`w`、`a` 三种模式的区别？
+
+4. **注意事项**：处理大文件时应该用什么方法读取？为什么？
+
+::: tip 学习建议
+文件操作是实用技能！掌握读写、路径操作和异常处理。
+:::
+
 ## 文件和目录操作
 
 ```python
