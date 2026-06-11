@@ -19,6 +19,7 @@ export default defineConfig({
       { text: '进阶', link: '/advanced/', activeMatch: '/advanced/' },
       { text: '数据库', link: '/database/', activeMatch: '/database/' },
       { text: 'Web 框架', link: '/web/', activeMatch: '/web/' },
+      { text: '部署', link: '/deployment/', activeMatch: '/deployment/' },
     ],
 
     // 每个 tab 对应一套侧边栏。后续加文章时，在对应分区的 items 里加一行即可。
@@ -54,6 +55,15 @@ export default defineConfig({
           text: 'Web 框架',
           items: [
             { text: '简介', link: '/web/' },
+          ],
+        },
+      ],
+      '/deployment/': [
+        {
+          text: '部署',
+          items: [
+            { text: '简介', link: '/deployment/' },
+            { text: 'GitHub 项目部署', link: '/deployment/github-pages' },
           ],
         },
       ],
