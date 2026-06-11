@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // VitePress 配置文档：https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: '/py-notes/',
   lang: 'zh-CN',
   title: 'Python 笔记',
   description: 'Python 学习笔记：基础、进阶、数据库、Web 框架',
