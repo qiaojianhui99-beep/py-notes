@@ -74,6 +74,8 @@ export default defineConfig({
             { text: 'MongoDB 文档数据库', link: '/database/06-mongodb' },
             { text: 'PostgreSQL', link: '/database/07-postgresql' },
             { text: '最佳实践', link: '/database/08-best-practices' },
+            { text: '实战项目', link: '/database/09-project' },
+            { text: '常见问题', link: '/database/10-faq' },
           ],
         },
       ],
