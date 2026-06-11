@@ -1,6 +1,6 @@
 # Python 笔记
 
-基于 [VitePress](https://vitepress.dev/) 搭建的 Python 学习笔记站点,内容分为**基础、进阶、数据库、Web 框架**四个分区,顶部导航栏一键切换。
+基于 [VitePress](https://vitepress.dev/) 搭建的 Python 学习笔记站点，内容分为**基础、进阶、数据库、Web 框架、部署**五个分区，顶部导航栏一键切换。
 
 ## 技术栈
 
@@ -22,11 +22,14 @@ py-notes/
 │   └── index.md
 ├── database/               # 数据库
 │   └── index.md
-└── web/                    # Web 框架
-    └── index.md
+├── web/                    # Web 框架
+│   └── index.md
+└── deployment/             # 部署
+    ├── index.md
+    └── github-pages.md
 ```
 
-顶部四个 tab(**基础 / 进阶 / 数据库 / Web 框架**)对应 `.vitepress/config.mts` 里的 `nav`;每个分区有独立的侧边栏 `sidebar`,用于组织该分区下的文章目录。
+顶部五个 tab（**基础 / 进阶 / 数据库 / Web 框架 / 部署**）对应 `.vitepress/config.mts` 里的 `nav`；每个分区有独立的侧边栏 `sidebar`，用于组织该分区下的文章目录。
 
 ## 快速开始
 
@@ -36,7 +39,7 @@ py-notes/
 pnpm install
 ```
 
-启动本地开发服务器(默认 http://localhost:5173,支持热更新):
+启动本地开发服务器（默认 `http://localhost:5173`，支持热更新）：
 
 ```bash
 pnpm docs:dev
@@ -70,7 +73,7 @@ pnpm docs:dev
 
 3. 保存后开发服务器会自动刷新,侧边栏即出现该条目。
 
-其余三个分区(进阶 / 数据库 / Web 框架)添加方式相同,只需替换对应的目录和 `sidebar` 键即可。
+其余分区（进阶 / 数据库 / Web 框架 / 部署）添加方式相同，只需替换对应的目录和 `sidebar` 键即可。
 
 ## 约定
 

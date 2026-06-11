@@ -4,17 +4,17 @@
 
 ## 环境与命令
 
-- 包管理器:**pnpm**(不要用 npm / yarn)。
-- Node.js 18+(推荐 20+)。
+- 包管理器：**pnpm**（不要用 npm / yarn）。
+- Node.js 18+（推荐 20+）。
 
 | 命令 | 作用 |
 |------|------|
 | `pnpm install` | 安装依赖 |
-| `pnpm docs:dev` | 启动开发服务器(http://localhost:5173,热更新) |
+| `pnpm docs:dev` | 启动开发服务器（`http://localhost:5173`，热更新） |
 | `pnpm docs:build` | 生产构建到 `.vitepress/dist` |
 | `pnpm docs:preview` | 预览构建产物 |
 
-**改动后用 `pnpm docs:build` 验证**:VitePress 的死链检查会让构建失败(exit code 1),这是发现断链的主要手段。
+**改动后用 `pnpm docs:build` 验证**：VitePress 的死链检查会让构建失败（exit code 1），这是发现断链的主要手段。
 
 ## Git 分支管理
 
@@ -38,15 +38,16 @@ git push origin main
 
 ```
 py-notes/
-├── .vitepress/config.mts   # 站点配置:nav(顶部 tab)、sidebar、搜索、中文化
-├── index.md                # 首页(layout: home)
+├── .vitepress/config.mts   # 站点配置：nav（顶部 tab）、sidebar、搜索、中文化
+├── index.md                # 首页（layout: home）
 ├── basic/                  # 基础
 ├── advanced/               # 进阶
 ├── database/               # 数据库
-└── web/                    # Web 框架
+├── web/                    # Web 框架
+└── deployment/             # 部署
 ```
 
-四个分区与顶部导航 tab 一一对应:`/basic/`、`/advanced/`、`/database/`、`/web/`。
+五个分区与顶部导航 tab 一一对应：`/basic/`、`/advanced/`、`/database/`、`/web/`、`/deployment/`。
 
 ## 关键约定(务必遵守)
 

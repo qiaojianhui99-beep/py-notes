@@ -51,6 +51,9 @@ Python 基础教程，从零开始学习 Python 编程，涵盖语法、数据�
 
 - **[常用标准库](20-stdlib.md)** - os、sys、datetime、json、re
 - **[版本差异对照](21-version-differences.md)** - Python 3.9-3.14 新特性对比
+- **[包管理与虚拟环境](22-pip-virtualenv.md)** - pip、venv、requirements.txt
+- **[调试技巧](23-debugging.md)** - print、pdb、breakpoint、IDE 调试
+- **[路径操作（pathlib）](24-pathlib.md)** - 面向对象的路径与文件操作
 
 ## 学习建议
 
