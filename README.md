@@ -74,5 +74,6 @@ pnpm docs:dev
 
 ## 约定
 
-- Python 示例代码以 **Python 3.9** 为目标,避免使用 3.10+ 的语法(如 `match` 语句、`X | Y` 类型标注等)。
-- 文章使用 Markdown 编写,支持 VitePress 的[扩展语法](https://vitepress.dev/guide/markdown)(代码高亮、提示容器、表格等)。
+- Python 示例代码以 **Python 3.14** 为目标，充分利用现代 Python 语法。
+- 在语法变化处会标注旧版本（3.9-）和新版本（3.10+）的写法对比。
+- 文章使用 Markdown 编写，支持 VitePress 的[扩展语法](https://vitepress.dev/guide/markdown)(代码高亮、提示容器、表格等)。
