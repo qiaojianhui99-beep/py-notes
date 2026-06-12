@@ -230,6 +230,35 @@ print(multiply(3, 4))  # 12
 
 **题目 3**：解释 `if __name__ == "__main__":` 的作用，并举例说明使用场景。
 
+<details>
+<summary>💡 查看参考答案</summary>
+
+`__name__` 是 Python 自动提供的变量。
+
+- 文件被直接运行时，`__name__` 的值是 `"__main__"`。
+- 文件被其他模块导入时，`__name__` 的值是模块名。
+
+所以 `if __name__ == "__main__":` 常用来放“只有直接运行这个文件时才执行”的测试代码或入口代码，避免模块被导入时自动执行。
+
+```python
+# calculator.py
+def add(a, b):
+    return a + b
+
+if __name__ == "__main__":
+    print(add(3, 5))  # 只有直接运行 calculator.py 时才执行
+```
+
+```python
+# main.py
+from calculator import add
+
+print(add(10, 20))
+```
+
+运行 `python calculator.py` 时会输出测试结果；运行 `python main.py` 时只会使用 `add()`，不会自动执行 `calculator.py` 里的测试代码。
+</details>
+
 ## 费曼学习法检验
 
 1. **这是什么**：模块和包有什么区别？`__init__.py` 的作用是什么？

@@ -18,7 +18,7 @@ Python 基础教程，从零开始学习 Python 编程，涵盖语法、数据�
 ### 数据类型
 
 - **[变量与数据类型](03-variables-types.md)** - int、float、str、bool、None
-- **[运算符](04-operators.md)** - 算术、比较、逻辑、位运算
+- **[运算符](04-operators.md)** - 算术、比较、逻辑、赋值与成员判断
 - **[字符串操作](08-string.md)** - 格式化、切片、常用方法
 - **[列表](09-list.md)** - 创建、索引、切片、方法
 - **[元组](10-tuple.md)** - 不可变序列、应用场景
@@ -34,13 +34,13 @@ Python 基础教程，从零开始学习 Python 编程，涵盖语法、数据�
 ### 函数与模块
 
 - **[函数定义与调用](13-function.md)** - def、参数、返回值
-- **[函数进阶](14-function-advanced.md)** - 默认参数、可变参数、lambda、闭包
+- **[函数进阶](14-function-advanced.md)** - 默认参数、可变参数、lambda、递归
 - **[模块与包](15-module-import.md)** - import、from...import、包结构
 
 ### 文件与异常
 
 - **[文件操作](16-file-io.md)** - 读写文件、with 语句
-- **[异常处理](17-exception.md)** - try/except、raise、自定义异常
+- **[异常处理](17-exception.md)** - try/except、else/finally、raise、常见异常
 
 ### 面向对象
 
@@ -49,11 +49,12 @@ Python 基础教程，从零开始学习 Python 编程，涵盖语法、数据�
 
 ### 标准库与工具
 
-- **[常用标准库](20-stdlib.md)** - os、sys、datetime、json、re
+- **[常用标准库](20-stdlib.md)** - os、sys、datetime、math、random、json
 - **[版本差异对照](21-version-differences.md)** - Python 3.9-3.14 新特性对比
 - **[包管理与虚拟环境](22-pip-virtualenv.md)** - pip、venv、requirements.txt
 - **[调试技巧](23-debugging.md)** - print、pdb、breakpoint、IDE 调试
 - **[路径操作（pathlib）](24-pathlib.md)** - 面向对象的路径与文件操作
+- **[常用内置函数与遍历技巧](25-builtins-iteration.md)** - len、sum、sorted、enumerate、zip、any、all
 
 ## 学习建议
 

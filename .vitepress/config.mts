@@ -59,6 +59,7 @@ export default defineConfig({
             { text: '包管理与虚拟环境', link: '/basic/22-pip-virtualenv' },
             { text: '调试技巧', link: '/basic/23-debugging' },
             { text: '路径操作（pathlib）', link: '/basic/24-pathlib' },
+            { text: '常用内置函数与遍历技巧', link: '/basic/25-builtins-iteration' },
           ],
         },
       ],

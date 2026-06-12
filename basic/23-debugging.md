@@ -189,6 +189,42 @@ print(find_max([1, -5, 3, -2]))  # 3
 
 **题目 2**：使用 pdb 调试递归函数，查看调用栈。
 
+<details>
+<summary>💡 查看答案</summary>
+
+先创建一个文件 `factorial_debug.py`：
+
+```python
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n - 1)
+
+print(factorial(4))
+```
+
+用 pdb 启动：
+
+```bash
+python -m pdb factorial_debug.py
+```
+
+常用操作：
+
+```text
+n      # 执行下一行，不进入函数内部
+s      # 进入当前函数调用
+w      # 查看调用栈，也可以写 where
+r      # 执行到当前函数返回
+c      # 继续运行
+q      # 退出调试
+```
+
+调试递归时，可以多次输入 `s` 进入 `factorial()` 的下一层调用，再输入 `w` 查看当前调用栈。你会看到 `factorial(4)` 调用 `factorial(3)`，再调用 `factorial(2)`，直到终止条件返回。
+
+**解析**：递归调试的重点不是一次看完结果，而是观察“函数如何一层层调用，又如何一层层返回”。
+</details>
+
 ### 挑战练习
 
 **题目 3**：给 `divide(a, b)` 添加断言，确保除数不是 0，并观察断言失败时的报错。
