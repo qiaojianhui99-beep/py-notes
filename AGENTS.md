@@ -16,6 +16,27 @@
 
 **改动后用 `pnpm docs:build` 验证**：VitePress 的死链检查会让构建失败（exit code 1），这是发现断链的主要手段。
 
+## 推送代码前的检查流程
+
+**务必遵守**：推送到远程 main 分支前，先在本地构建验证，避免线上构建失败。
+
+### 标准流程
+
+```bash
+# 1. 本地构建检查
+pnpm docs:build
+
+# 2. 构建成功后再提交推送
+git add .
+git commit -m "your message"
+git push origin main
+```
+
+这样可以：
+- 提前发现死链、语法错误等构建问题
+- 保持 main 分支稳定，避免 GitHub Actions 失败
+- 节省调试时间
+
 ## Git 分支管理
 
 每次新建临时分支完成工作后，按以下流程操作：
