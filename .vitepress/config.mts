@@ -13,8 +13,11 @@ export default defineConfig({
   srcExclude: ['**/README.md', '**/AGENTS.md'],
 
   themeConfig: {
+    logo: '/python.svg',
+
     // 顶部导航栏 —— 这就是四个 tab，点击切换分区
     nav: [
+      { text: '首页', link: '/' },
       { text: '基础', link: '/basic/', activeMatch: '/basic/' },
       { text: '进阶', link: '/advanced/', activeMatch: '/advanced/' },
       { text: '数据库', link: '/database/', activeMatch: '/database/' },
@@ -26,7 +29,8 @@ export default defineConfig({
     sidebar: {
       '/basic/': [
         {
-          text: '基础',
+          text: '基础语法',
+          collapsed: false,
           items: [
             { text: '简介', link: '/basic/' },
             { text: 'Python 简介与环境搭建', link: '/basic/01-intro' },
@@ -58,7 +62,8 @@ export default defineConfig({
       ],
       '/advanced/': [
         {
-          text: '进阶',
+          text: '进阶主题',
+          collapsed: false,
           items: [
             { text: '简介', link: '/advanced/' },
             { text: '垃圾回收机制', link: '/advanced/01-garbage-collection' },
@@ -84,7 +89,8 @@ export default defineConfig({
       ],
       '/database/': [
         {
-          text: '数据库',
+          text: '数据库操作',
+          collapsed: false,
           items: [
             { text: '简介', link: '/database/' },
             { text: 'SQLite 基础', link: '/database/01-sqlite' },
@@ -110,7 +116,8 @@ export default defineConfig({
       ],
       '/deployment/': [
         {
-          text: '部署',
+          text: '项目部署',
+          collapsed: false,
           items: [
             { text: '简介', link: '/deployment/' },
             { text: 'GitHub 项目部署', link: '/deployment/github-pages' },
