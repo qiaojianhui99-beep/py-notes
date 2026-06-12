@@ -84,4 +84,4 @@ pnpm docs:build
 
 ## 许可
 
-贡献的内容将采用 [MIT License](LICENSE) 授权。
+贡献的内容将采用 [MIT License](https://github.com/qiaojianhui99-beep/py-notes/blob/main/LICENSE) 授权。
