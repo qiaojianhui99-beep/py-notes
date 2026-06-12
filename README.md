@@ -1,6 +1,13 @@
 # Python 笔记
 
-基于 [VitePress](https://vitepress.dev/) 搭建的 Python 学习笔记站点，内容分为**基础、进阶、数据库、Web 框架、部署**五个分区，顶部导航栏一键切换。
+[![GitHub Pages](https://img.shields.io/badge/docs-online-blue.svg)](https://qiaojianhui99-beep.github.io/py-notes/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![VitePress](https://img.shields.io/badge/VitePress-1.x-646CFF.svg)](https://vitepress.dev/)
+[![Python](https://img.shields.io/badge/Python-3.14-3776AB.svg?logo=python)](https://www.python.org/)
+
+📚 完整的 Python 学习笔记，基于 [VitePress](https://vitepress.dev/) 搭建的现代化文档站点，内容分为**基础、进阶、数据库、Web 框架、部署**五个分区，顶部导航栏一键切换。
+
+🌐 **在线阅读**: [https://qiaojianhui99-beep.github.io/py-notes/](https://qiaojianhui99-beep.github.io/py-notes/)
 
 ## 技术栈
 
