@@ -1,5 +1,19 @@
 # 输入输出
 
+## 核心概念
+
+程序需要和用户交流。输出是程序把结果显示出来，输入是用户把数据交给程序。
+
+- `print()`：把内容输出到屏幕。
+- `input()`：从键盘读取用户输入。
+
+```python
+name = input("请输入姓名: ")
+print("你好，", name)
+```
+
+注意：`input()` 读到的内容永远是字符串。
+
 ## print() 函数
 
 ### 基本用法
@@ -10,102 +24,172 @@ print(123)
 print(3.14)
 ```
 
-### 多个参数
+### 输出多个值
 
 ```python
-print("Name:", "Alice", "Age:", 25)
-# 输出: Name: Alice Age: 25
+name = "Alice"
+age = 18
+
+print("姓名:", name, "年龄:", age)
 ```
 
-### sep 参数（分隔符）
+输出结果：
+
+```text
+姓名: Alice 年龄: 18
+```
+
+### sep 参数
+
+`sep` 用来设置多个值之间的分隔符。
 
 ```python
-print("A", "B", "C", sep="-")
-# 输出: A-B-C
+print("2026", "06", "12", sep="-")
 ```
 
-### end 参数（结尾符）
+输出：
+
+```text
+2026-06-12
+```
+
+### end 参数
+
+`end` 用来设置输出结束后追加什么内容。默认是换行。
 
 ```python
 print("Hello", end=" ")
 print("World")
-# 输出: Hello World
+```
+
+输出：
+
+```text
+Hello World
 ```
 
 ## input() 函数
 
+`input()` 会暂停程序，等待用户输入。
+
 ```python
 name = input("请输入姓名: ")
-print("你好,", name)
-
-# 输入数字需要类型转换
-age = int(input("请输入年龄: "))
+print("你好，" + name)
 ```
+
+如果要输入数字，需要手动转换类型：
+
+```python
+age_text = input("请输入年龄: ")
+age = int(age_text)
+print(age)
+```
+
+也可以写成一行：
+
+```python
+age = int(input("请输入年龄: "))
+print(age)
+```
+
+如果用户输入的不是合法数字，转换会报错。异常处理后面会学习。
 
 ## 格式化输出
 
-### 1. f-string（推荐，Python 3.6+）
+格式化输出可以把变量自然地放进文本中。
+
+### f-string
+
+推荐使用 f-string：
 
 ```python
 name = "Alice"
-age = 25
-print(f"我叫{name}, 今年{age}岁")
-print(f"明年{age + 1}岁")
+age = 18
 
-# Python 3.12+ 支持更复杂的表达式
-items = [1, 2, 3]
-print(f"项目: {items = }")  # 项目: items = [1, 2, 3]
-print(f"{sum(items) = }")   # sum(items) = 6
+print(f"我叫{name}，今年{age}岁")
 ```
 
-### 2. format() 方法
+f-string 中可以写简单表达式：
 
 ```python
-print("我叫{}, 今年{}岁".format("Alice", 25))
-print("我叫{name}, 今年{age}岁".format(name="Alice", age=25))
+age = 18
+print(f"明年 {age + 1} 岁")
 ```
 
-### 3. % 格式化（旧式）
+### format() 方法
 
 ```python
-print("我叫%s, 今年%d岁" % ("Alice", 25))
+print("我叫{}，今年{}岁".format("Alice", 18))
 ```
 
-## 格式化选项
+### 旧式 `%` 格式化
 
 ```python
-# 保留小数位
-pi = 3.1415926
-print(f"{pi:.2f}")  # 3.14
+print("我叫%s，今年%d岁" % ("Alice", 18))
+```
 
-# 对齐
-print(f"{'左对齐':<10}|")
-print(f"{'右对齐':>10}|")
-print(f"{'居中':^10}|")
+新代码优先使用 f-string，旧代码中可能会见到 `format()` 和 `%`。
 
-# 填充
-print(f"{42:05}")  # 00042
+## 常用格式控制
+
+### 保留小数
+
+```python
+price = 19.987
+print(f"{price:.2f}")  # 19.99
+```
+
+### 对齐宽度
+
+```python
+print(f"{'Python':<10}|")  # 左对齐
+print(f"{'Python':>10}|")  # 右对齐
+print(f"{'Python':^10}|")  # 居中
+```
+
+### 填充字符
+
+```python
+print(f"{42:0>5}")  # 00042
+print(f"{42:*>5}")  # ***42
 ```
 
 ## 使用场景
 
-### 场景 1：日志记录
-格式化输出运行时信息、错误日志。
+### 场景 1：命令行交互
 
-### 场景 2：用户交互
-命令行工具获取用户输入并反馈。
+```python
+name = input("请输入姓名: ")
+print(f"欢迎你，{name}")
+```
 
-### 场景 3：数据展示
-表格对齐、报表生成。
+### 场景 2：显示计算结果
 
-### 场景 4：调试输出
-快速查看变量值和程序状态。
+```python
+price = 19.9
+count = 3
+print(f"总价: {price * count:.2f}")
+```
+
+### 场景 3：输出对齐内容
+
+```python
+print(f"{'商品':<10}{'价格':>8}")
+print(f"{'键盘':<10}{199:>8}")
+```
+
+### 场景 4：临时查看变量
+
+```python
+score = 95
+print(f"当前分数: {score}")
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：输入姓名和年龄，输出格式："我叫XXX，今年XX岁"。
+**题目 1**：输入姓名和年龄，输出 `我叫XXX，今年XX岁`。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -113,57 +197,63 @@ print(f"{42:05}")  # 00042
 ```python
 name = input("请输入姓名: ")
 age = input("请输入年龄: ")
+
 print(f"我叫{name}，今年{age}岁")
 ```
 </details>
 
-**题目 2**：输出一个右对齐宽度为 10 的数字 42，填充字符为 `*`。
+**题目 2**：输入两个数字，输出它们的和。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-print(f"{42:*>10}")  # ********42
+a = float(input("请输入第一个数字: "))
+b = float(input("请输入第二个数字: "))
+
+print(f"两数之和是: {a + b}")
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：制作一个简单计算器，输入两个数字和运算符，输出结果。
+**题目 3**：输出数字 `42`，要求宽度为 8，右对齐，左侧用 `0` 填充。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-a = float(input("第一个数: "))
-op = input("运算符 (+,-,*,/): ")
-b = float(input("第二个数: "))
-
-if op == "+":
-    print(f"{a} + {b} = {a + b}")
-elif op == "-":
-    print(f"{a} - {b} = {a - b}")
-elif op == "*":
-    print(f"{a} * {b} = {a * b}")
-elif op == "/":
-    print(f"{a} / {b} = {a / b if b != 0 else '错误'}")
+print(f"{42:0>8}")  # 00000042
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：编写程序生成格式化的表格，输出商品清单（名称、单价、数量、总价）。
+**题目 4**：已知商品名、单价和数量，输出一张简单小票，金额保留 2 位小数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+name = "键盘"
+price = 199.0
+count = 2
+total = price * count
+
+print(f"{'商品':<8}{'单价':>8}{'数量':>6}{'总价':>10}")
+print(f"{name:<8}{price:>8.2f}{count:>6}{total:>10.2f}")
+```
+</details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：f-string、format() 和 % 格式化有什么区别？为什么推荐 f-string？
+用自己的话回答以下问题：
 
-2. **为什么需要**：为什么 input() 返回的总是字符串？这带来什么问题？
-
-3. **怎么用**：向新手解释如何控制浮点数显示的小数位数？
-
-4. **注意事项**：`{var = }` 调试语法（Python 3.12+）有什么用？
+1. **这是什么**：`print()` 和 `input()` 分别做什么？
+2. **为什么需要**：为什么 `input()` 得到的数字要先转换类型？
+3. **怎么用**：如何用 f-string 把变量放进一句话里？
+4. **注意事项**：格式化输出中 `.2f` 表示什么？
 
 ::: tip 学习建议
-掌握格式化输出能让程序输出更专业！多练习 f-string 的各种格式选项。
+输入输出是让程序“能被人使用”的第一步。先练熟 f-string，它会贯穿后面的所有章节。
 :::

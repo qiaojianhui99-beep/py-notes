@@ -1,144 +1,232 @@
 # 集合（set）
 
-## 集合创建
+## 核心概念
+
+集合用于保存一组不重复的数据。它最擅长两件事：
+
+- 去重。
+- 做交集、并集、差集等集合运算。
 
 ```python
-# 空集合（不能用 {}）
-empty = set()
-
-# 包含元素
-numbers = {1, 2, 3, 4, 5}
-mixed = {1, "hello", 3.14}
-
-# 从列表创建（自动去重）
-lst = [1, 2, 2, 3, 3, 3]
-s = set(lst)  # {1, 2, 3}
+numbers = {1, 2, 3, 3}
+print(numbers)  # {1, 2, 3}
 ```
 
-## 特性
+集合是无序的，不能依赖元素显示顺序。
 
-- **无序**：元素没有固定顺序
-- **不重复**：自动去除重复元素
-- **可变**：可以添加/删除元素
+## 集合创建
+
+创建非空集合：
+
+```python
+numbers = {1, 2, 3}
+names = {"Alice", "Bob", "Alice"}
+
+print(names)  # {'Alice', 'Bob'}
+```
+
+创建空集合必须使用 `set()`：
+
+```python
+empty = set()
+```
+
+不能用 `{}` 创建空集合，因为 `{}` 表示空字典。
+
+从列表创建集合可以自动去重：
+
+```python
+numbers = [1, 2, 2, 3, 3, 3]
+unique_numbers = set(numbers)
+
+print(unique_numbers)
+```
+
+## 集合特性
+
+集合有三个重要特点：
+
+- **不重复**：重复元素会被自动合并。
+- **无序**：不能通过索引访问元素。
+- **可变**：可以添加和删除元素。
+
+```python
+numbers = {1, 2, 3}
+
+# print(numbers[0])  # TypeError
+```
 
 ## 添加元素
 
 ```python
-s = {1, 2, 3}
+numbers = {1, 2, 3}
 
-# add: 添加单个元素
-s.add(4)  # {1, 2, 3, 4}
+numbers.add(4)
+print(numbers)
 
-# update: 添加多个元素
-s.update([5, 6])  # {1, 2, 3, 4, 5, 6}
+numbers.update([5, 6, 7])
+print(numbers)
 ```
+
+区别：
+
+- `add()`：添加一个元素。
+- `update()`：添加多个元素。
 
 ## 删除元素
 
 ```python
-s = {1, 2, 3, 4, 5}
+numbers = {1, 2, 3, 4}
 
-# remove: 删除指定元素（不存在会报错）
-s.remove(3)
+numbers.remove(3)
+print(numbers)
 
-# discard: 删除指定元素（不存在不报错）
-s.discard(10)
-
-# pop: 随机删除一个元素
-s.pop()
-
-# clear: 清空集合
-s.clear()
+numbers.discard(10)
+print(numbers)
 ```
+
+区别：
+
+- `remove()`：元素不存在会报错。
+- `discard()`：元素不存在也不会报错。
+
+清空集合：
+
+```python
+numbers.clear()
+print(numbers)  # set()
+```
+
+## 成员检查
+
+集合的成员检查非常常用。
+
+```python
+allowed_users = {"Alice", "Bob", "Charlie"}
+
+print("Alice" in allowed_users)  # True
+print("David" in allowed_users)  # False
+```
+
+如果只关心“是否存在”，集合通常比列表更合适。
 
 ## 集合运算
 
 ```python
 a = {1, 2, 3, 4}
 b = {3, 4, 5, 6}
+```
 
-# 并集
-a | b           # {1, 2, 3, 4, 5, 6}
-a.union(b)
+### 并集
 
-# 交集
-a & b           # {3, 4}
-a.intersection(b)
+两个集合的所有元素：
 
-# 差集
-a - b           # {1, 2}
-a.difference(b)
+```python
+print(a | b)        # {1, 2, 3, 4, 5, 6}
+print(a.union(b))
+```
 
-# 对称差集（不在交集中的元素）
-a ^ b           # {1, 2, 5, 6}
-a.symmetric_difference(b)
+### 交集
+
+两个集合共同拥有的元素：
+
+```python
+print(a & b)             # {3, 4}
+print(a.intersection(b))
+```
+
+### 差集
+
+在 `a` 中但不在 `b` 中的元素：
+
+```python
+print(a - b)          # {1, 2}
+print(a.difference(b))
+```
+
+### 对称差集
+
+只出现在其中一个集合里的元素：
+
+```python
+print(a ^ b)  # {1, 2, 5, 6}
 ```
 
 ## 集合关系
 
 ```python
-a = {1, 2, 3}
-b = {1, 2, 3, 4, 5}
+small = {1, 2}
+big = {1, 2, 3, 4}
 
-# 子集
-a.issubset(b)     # True
-a <= b            # True
-
-# 超集
-b.issuperset(a)   # True
-b >= a            # True
-
-# 无交集
-a.isdisjoint({4, 5})  # True
+print(small <= big)            # True，small 是 big 的子集
+print(big >= small)            # True，big 是 small 的超集
+print(small.isdisjoint({5, 6})) # True，没有共同元素
 ```
 
-## 成员检查
+## frozenset
+
+`frozenset` 是不可变集合。创建后不能添加或删除元素。
 
 ```python
-s = {1, 2, 3}
-
-1 in s      # True
-4 in s      # False
-4 not in s  # True
+values = frozenset([1, 2, 3])
+print(values)
 ```
 
-## frozenset（不可变集合）
-
-```python
-# 创建后不能修改
-fs = frozenset([1, 2, 3])
-
-# 可以作为字典的键
-d = {fs: "value"}
-
-# 支持集合运算
-fs2 = frozenset([3, 4, 5])
-fs | fs2  # frozenset({1, 2, 3, 4, 5})
-```
+初学阶段只需要知道它存在。普通去重和集合运算主要使用 `set`。
 
 ## 集合推导式
 
-```python
-# 基本形式
-squares = {x**2 for x in range(5)}  # {0, 1, 4, 9, 16}
+集合推导式可以生成新集合。
 
-# 带条件
-evens = {x for x in range(10) if x % 2 == 0}  # {0, 2, 4, 6, 8}
+```python
+squares = {number ** 2 for number in range(1, 6)}
+print(squares)
+```
+
+也可以加条件：
+
+```python
+evens = {number for number in range(1, 11) if number % 2 == 0}
+print(evens)
 ```
 
 ## 使用场景
 
 ### 场景 1：去重
-列表去重、数据清洗。
 
-### 场景 2：集合运算
-共同好友、权限交集。
+```python
+names = ["Alice", "Bob", "Alice"]
+unique_names = set(names)
+```
 
-### 场景 3：成员检查
-快速判断元素是否存在。
+### 场景 2：找共同元素
 
-### 场景 4：数据分析
-唯一值统计、差异分析。
+```python
+python_users = {"Alice", "Bob"}
+java_users = {"Bob", "Charlie"}
+
+both = python_users & java_users
+```
+
+### 场景 3：找差异
+
+```python
+yesterday = {"Alice", "Bob", "Charlie"}
+today = {"Alice", "David"}
+
+left_users = yesterday - today
+new_users = today - yesterday
+```
+
+### 场景 4：权限检查
+
+```python
+admin_users = {"Alice", "Bob"}
+current_user = "Alice"
+
+if current_user in admin_users:
+    print("允许访问")
+```
 
 ## 练习题
 
@@ -150,9 +238,10 @@ evens = {x for x in range(10) if x % 2 == 0}  # {0, 2, 4, 6, 8}
 <summary>💡 查看答案</summary>
 
 ```python
-lst = [1, 2, 2, 3, 3, 3]
-unique = list(set(lst))
-print(unique)  # [1, 2, 3]
+numbers = [1, 2, 2, 3, 3, 3]
+unique_numbers = set(numbers)
+
+print(unique_numbers)
 ```
 </details>
 
@@ -164,14 +253,15 @@ print(unique)  # [1, 2, 3]
 ```python
 list1 = [1, 2, 3, 4]
 list2 = [3, 4, 5, 6]
-common = list(set(list1) & set(list2))
-print(common)  # [3, 4]
+
+common = set(list1) & set(list2)
+print(common)
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：找出只在第一个列表出现但不在第二个列表的元素。
+**题目 3**：找出只在第一个列表中出现、但不在第二个列表中出现的元素。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -179,31 +269,43 @@ print(common)  # [3, 4]
 ```python
 list1 = [1, 2, 3, 4]
 list2 = [3, 4, 5, 6]
-diff = list(set(list1) - set(list2))
-print(diff)  # [1, 2]
+
+only_in_first = set(list1) - set(list2)
+print(only_in_first)
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现一个函数，判断两个字符串是否是字母异位词（包含相同字母但顺序不同）。
+**题目 4**：有三组用户，分别表示昨天访问、今天访问、付费用户。找出今天新增访问用户、连续两天都访问的用户、今天访问且已经付费的用户。
 
 <details>
-<summary>💡 查看提示</summary>
+<summary>💡 查看答案</summary>
 
-使用集合比较字母种类，字典统计字母数量。
+```python
+yesterday = {"Alice", "Bob", "Charlie"}
+today = {"Alice", "David", "Eva"}
+paid = {"Alice", "Eva", "Frank"}
+
+new_today = today - yesterday
+active_both_days = today & yesterday
+paid_today = today & paid
+
+print("今天新增:", new_today)
+print("连续访问:", active_both_days)
+print("今日付费访问:", paid_today)
+```
 </details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：集合为什么是无序的？这对使用有什么影响？
+用自己的话回答以下问题：
 
-2. **为什么需要**：集合的成员检查为什么比列表快？
-
-3. **怎么用**：向新手解释交集、并集、差集的实际应用场景？
-
-4. **注意事项**：为什么集合不能包含列表？如何存储可变对象的集合？
+1. **这是什么**：集合是什么？它和列表有什么不同？
+2. **为什么需要**：为什么去重时常用集合？
+3. **怎么用**：交集、并集、差集分别怎么写？
+4. **注意事项**：为什么不能依赖集合的显示顺序？
 
 ::: tip 学习建议
-集合的数学运算非常强大！适合处理唯一性和关系运算问题。
+集合适合处理“唯一性”和“关系”。如果问题里出现共同、不同、去重、是否存在，就可以考虑集合。
 :::

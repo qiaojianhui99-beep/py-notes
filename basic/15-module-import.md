@@ -1,5 +1,17 @@
 # 模块与包
 
+## 核心概念
+
+模块就是一个 `.py` 文件，包就是包含多个模块的文件夹。使用模块和包，可以把代码拆分到不同文件中，避免所有代码都堆在一个文件里。
+
+当你写：
+
+```python
+import math
+```
+
+意思是把 Python 已经提供的 `math` 模块导入当前文件，然后使用它里面的功能。
+
 ## import 语句
 
 ### 导入整个模块
@@ -32,10 +44,11 @@ print(sqrt(16))
 ### 使用别名
 
 ```python
-import numpy as np
+import math as m
 from math import sqrt as square_root
 
-square_root(16)  # 4.0
+print(m.pi)
+print(square_root(16))  # 4.0
 ```
 
 ## 模块搜索路径

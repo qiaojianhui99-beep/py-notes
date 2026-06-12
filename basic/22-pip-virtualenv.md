@@ -1,6 +1,12 @@
 # 包管理与虚拟环境
 
+## 核心概念
+
 pip 和虚拟环境是 Python 开发的基础工具。
+
+- **pip**：安装、卸载、升级第三方包。
+- **虚拟环境**：为每个项目创建独立的 Python 依赖环境。
+- **requirements.txt**：记录项目依赖，方便别人恢复环境。
 
 ## pip 包管理器
 
@@ -157,11 +163,35 @@ cat requirements.txt
 
 ### 进阶练习
 
-**题目 2**：编写脚本，自动创建虚拟环境并安装依赖。
+**题目 2**：写出在一台新电脑上恢复项目环境的命令顺序。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```bash
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+# Linux/Mac
+source .venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+如果项目没有 `requirements.txt`，需要先确认依赖来源，不能盲目安装。
+</details>
 
 ### 挑战练习
 
-**题目 3**：研究 poetry 或 pipenv 等现代包管理工具。
+**题目 3**：比较 `pip freeze > requirements.txt` 和手写 `requirements.txt` 的区别。
+
+<details>
+<summary>💡 查看参考答案</summary>
+
+`pip freeze` 会导出当前环境中的所有包，适合记录完整环境，但可能包含项目并不直接依赖的包。手写 `requirements.txt` 更简洁，通常只写项目直接依赖，但需要开发者自己维护版本范围。
+</details>
 
 ## 费曼学习法检验
 

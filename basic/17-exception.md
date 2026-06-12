@@ -1,214 +1,219 @@
 # 异常处理
 
+## 核心概念
+
+异常是程序运行过程中出现的问题。比如除数为 0、文件不存在、输入内容不能转成数字，都会导致异常。
+
+如果不处理异常，程序会停止运行：
+
+```python
+number = int("abc")  # ValueError
+```
+
+异常处理的目标不是隐藏错误，而是在可预期的问题出现时，给出更友好的处理方式。
+
 ## try-except 结构
+
+把可能出错的代码放进 `try`，把处理方式写进 `except`。
+
+```python
+try:
+    number = int("abc")
+except ValueError:
+    print("转换失败，请提供数字字符串")
+```
+
+执行流程：
+
+1. 先执行 `try` 中的代码。
+2. 如果没有异常，跳过 `except`。
+3. 如果出现匹配的异常，执行对应的 `except`。
+
+## 捕获不同异常
+
+不同错误对应不同异常类型。
+
+```python
+try:
+    a = float(input("第一个数: "))
+    b = float(input("第二个数: "))
+    print(a / b)
+except ValueError:
+    print("请输入合法数字")
+except ZeroDivisionError:
+    print("除数不能为 0")
+```
+
+也可以把多个异常放在一个元组里统一处理：
+
+```python
+try:
+    number = int(input("请输入数字: "))
+    print(10 / number)
+except (ValueError, ZeroDivisionError):
+    print("输入无效或除数为 0")
+```
+
+## 获取异常信息
+
+使用 `as` 可以拿到异常对象。
+
+```python
+try:
+    number = int("abc")
+except ValueError as error:
+    print(f"错误信息: {error}")
+```
+
+调试时可以输出异常信息；面向普通用户时，通常输出更容易理解的提示。
+
+## 捕获所有常规异常
+
+`Exception` 可以捕获大多数常规异常。
 
 ```python
 try:
     result = 10 / 0
-except ZeroDivisionError:
-    print("不能除以零")
+except Exception as error:
+    print(f"发生错误: {error}")
 ```
 
-## 捕获多个异常
-
-```python
-# Python 3.11+ 可以用 | 合并异常类型
-try:
-    num = int(input("输入数字: "))
-    result = 10 / num
-except ValueError | ZeroDivisionError as e:
-    print(f"错误: {e}")
-
-# 也可以分别处理
-try:
-    num = int(input("输入数字: "))
-    result = 10 / num
-except ValueError:
-    print("输入无效")
-except ZeroDivisionError:
-    print("不能除以零")
-
-# 旧版本写法（Python 3.10-）
-try:
-    num = int(input("输入数字: "))
-    result = 10 / num
-except (ValueError, ZeroDivisionError) as e:
-    print(f"错误: {e}")
-```
-
-## 捕获所有异常
-
-```python
-try:
-    # 代码
-    pass
-except Exception as e:
-    print(f"发生错误: {e}")
-```
+不建议随意捕获所有异常后什么都不做。这样会把真正的问题藏起来。
 
 ## else 子句
 
-没有异常时执行。
+`else` 在没有异常时执行。
 
 ```python
 try:
-    result = 10 / 2
-except ZeroDivisionError:
-    print("除以零")
+    number = int("123")
+except ValueError:
+    print("转换失败")
 else:
-    print(f"结果是 {result}")
+    print(f"转换成功: {number}")
 ```
+
+`else` 适合放“只有成功后才执行”的代码。
 
 ## finally 子句
 
-无论是否异常都执行（常用于清理资源）。
+`finally` 无论是否出现异常都会执行。
 
 ```python
 try:
-    f = open("file.txt", "r")
-    content = f.read()
-except FileNotFoundError:
-    print("文件不存在")
+    print("开始执行")
+    result = 10 / 2
+except ZeroDivisionError:
+    print("除数不能为 0")
 finally:
-    f.close()  # 确保文件关闭
+    print("执行结束")
 ```
+
+`finally` 常用于清理资源。文件操作中更推荐使用 `with`，它会自动关闭文件。
 
 ## 完整结构
 
 ```python
 try:
-    # 可能出错的代码
-    pass
+    number = int(input("请输入数字: "))
 except ValueError:
-    # 处理 ValueError
-    pass
-except Exception as e:
-    # 处理其他异常
-    pass
+    print("输入无效")
 else:
-    # 没有异常时执行
-    pass
+    print(f"你输入的是 {number}")
 finally:
-    # 无论如何都执行
-    pass
+    print("程序结束")
 ```
+
+实际代码中不一定四个部分都要写。最常见的是 `try-except`。
 
 ## raise 抛出异常
 
-```python
-def check_age(age):
-    if age < 0:
-        raise ValueError("年龄不能为负数")
-    return age
-
-try:
-    check_age(-5)
-except ValueError as e:
-    print(e)
-```
-
-## 自定义异常
+`raise` 用于主动抛出异常。
 
 ```python
-class MyError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
+age = -1
 
-def func():
-    raise MyError("自定义错误")
-
-try:
-    func()
-except MyError as e:
-    print(e)
+if age < 0:
+    raise ValueError("年龄不能为负数")
 ```
+
+在函数中也很常见：
+
+```python
+def check_score(score):
+    if score < 0 or score > 100:
+        raise ValueError("分数必须在 0 到 100 之间")
+    return score
+```
+
+当函数收到不合理的数据时，主动抛出异常比返回一个含糊的结果更清楚。
 
 ## 常见异常类型
 
 ```python
-# ValueError：值错误
-int("abc")
-
-# TypeError：类型错误
-"hello" + 123
-
-# KeyError：键不存在
-d = {"a": 1}
-d["b"]
-
-# IndexError：索引超出范围
-lst = [1, 2, 3]
-lst[10]
-
-# FileNotFoundError：文件不存在
-open("nonexistent.txt")
-
-# ZeroDivisionError：除以零
-10 / 0
-
-# AttributeError：属性不存在
-"hello".non_existent_method()
-
-# ImportError：导入错误
-import non_existent_module
+int("abc")        # ValueError：值不合适
+"hello" + 123     # TypeError：类型不匹配
+10 / 0            # ZeroDivisionError：除数为 0
 ```
 
-## 异常链
-
 ```python
-try:
-    # 代码
-    pass
-except ValueError as e:
-    raise RuntimeError("处理失败") from e
+data = {"name": "Alice"}
+# data["age"]     # KeyError：字典键不存在
 ```
 
-## ExceptionGroup（Python 3.11+）
-
-处理多个异常。
+```python
+items = [1, 2, 3]
+# items[10]       # IndexError：列表索引超出范围
+```
 
 ```python
-# Python 3.11+ 新特性
-def process_items(items):
-    errors = []
-    for item in items:
-        try:
-            # 处理逻辑
-            if item < 0:
-                raise ValueError(f"负数: {item}")
-        except ValueError as e:
-            errors.append(e)
-    
-    if errors:
-        raise ExceptionGroup("多个错误", errors)
-
-# 捕获 ExceptionGroup
-try:
-    process_items([1, -2, 3, -4])
-except* ValueError as eg:
-    print(f"发现 {len(eg.exceptions)} 个 ValueError")
+# open("missing.txt")  # FileNotFoundError：文件不存在
 ```
 
 ## 使用场景
 
-### 场景 1：输入验证
-处理用户输入错误、数据格式异常。
+### 场景 1：处理用户输入
 
-### 场景 2：文件操作
-处理文件不存在、权限错误。
+```python
+try:
+    age = int(input("请输入年龄: "))
+except ValueError:
+    print("年龄必须是数字")
+```
 
-### 场景 3：网络请求
-处理超时、连接失败。
+### 场景 2：处理文件读取
 
-### 场景 4：数据库操作
-处理连接失败、查询错误。
+```python
+try:
+    with open("data.txt", "r", encoding="utf-8") as f:
+        print(f.read())
+except FileNotFoundError:
+    print("文件不存在")
+```
+
+### 场景 3：检查函数参数
+
+```python
+def divide(a, b):
+    if b == 0:
+        raise ValueError("除数不能为 0")
+    return a / b
+```
+
+### 场景 4：让程序继续运行
+
+```python
+try:
+    number = int("abc")
+except ValueError:
+    number = 0
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：编写程序，输入两个数字相除，处理除零异常和输入错误。
+**题目 1**：输入两个数字相除，处理输入错误和除数为 0 的情况。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -218,17 +223,18 @@ try:
     a = float(input("第一个数: "))
     b = float(input("第二个数: "))
     result = a / b
-    print(f"结果: {result}")
 except ValueError:
-    print("输入无效，请输入数字")
+    print("请输入合法数字")
 except ZeroDivisionError:
-    print("除数不能为零")
+    print("除数不能为 0")
+else:
+    print(f"结果: {result}")
 ```
 </details>
 
 ### 进阶练习
 
-**题目 2**：编写 `safe_read_file(filename)` 函数，处理文件不存在、编码错误等异常。
+**题目 2**：编写函数 `safe_read_file(filename)`，文件不存在时返回提示文本。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -239,36 +245,43 @@ def safe_read_file(filename):
         with open(filename, "r", encoding="utf-8") as f:
             return f.read()
     except FileNotFoundError:
-        return f"文件 {filename} 不存在"
-    except UnicodeDecodeError:
-        return "文件编码错误"
-    except Exception as e:
-        return f"未知错误: {e}"
+        return "文件不存在"
+
+content = safe_read_file("data.txt")
+print(content)
 ```
 </details>
 
 ### 挑战练习
 
-**题目 3**：实现重试装饰器，函数失败后自动重试 3 次。
+**题目 3**：反复要求用户输入数字，直到输入合法数字为止。
 
 <details>
-<summary>💡 查看提示</summary>
+<summary>💡 查看答案</summary>
 
-使用装饰器 + 循环 + try-except 组合。
+```python
+while True:
+    text = input("请输入数字: ")
+
+    try:
+        number = float(text)
+        break
+    except ValueError:
+        print("输入无效，请重新输入")
+
+print(f"你输入的是: {number}")
+```
 </details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：为什么需要异常处理？不处理会怎样？
+用自己的话回答以下问题：
 
-2. **为什么需要**：`finally` 块什么时候执行？即使有 return 也会执行吗？
-
-3. **怎么用**：向新手解释什么时候应该捕获异常，什么时候让它抛出？
-
-4. **注意事项**：为什么不推荐使用空的 `except:` 捕获所有异常？
+1. **这是什么**：异常是什么？`try-except` 做了什么？
+2. **为什么需要**：为什么不能简单地让程序报错退出？
+3. **怎么用**：如何处理用户输入不是数字的情况？
+4. **注意事项**：为什么不应该随便捕获所有异常后忽略？
 
 ::: tip 学习建议
-异常处理让程序更健壮！但不要过度使用，合理的异常处理是艺术。
+异常处理要针对“可以预料的问题”。如果你不知道怎么处理某个异常，就不要把它藏起来。
 :::
-
-

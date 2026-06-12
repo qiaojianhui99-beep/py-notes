@@ -1,177 +1,250 @@
 # 循环
 
+## 核心概念
+
+循环用于重复执行一段代码。遇到“做很多次”“逐个处理”“直到满足条件为止”这类需求，通常就需要循环。
+
+Python 常用两种循环：
+
+- `for`：适合次数明确，或逐个处理一组内容。
+- `while`：适合次数不确定，但知道继续条件。
+
 ## for 循环
 
-### 遍历列表
+`for` 可以配合 `range()` 重复执行固定次数。
 
 ```python
-fruits = ["apple", "banana", "orange"]
-for fruit in fruits:
-    print(fruit)
+for i in range(5):
+    print(i)
 ```
 
-### 遍历字符串
+输出：
 
-```python
-for char in "Python":
-    print(char)
+```text
+0
+1
+2
+3
+4
 ```
 
-### range() 函数
+注意：`range(5)` 从 `0` 开始，到 `5` 之前停止。
+
+## range() 函数
+
+### range(stop)
 
 ```python
-# range(stop)
 for i in range(5):
     print(i)  # 0, 1, 2, 3, 4
+```
 
-# range(start, stop)
+### range(start, stop)
+
+```python
 for i in range(2, 6):
     print(i)  # 2, 3, 4, 5
+```
 
-# range(start, stop, step)
+### range(start, stop, step)
+
+```python
 for i in range(0, 10, 2):
     print(i)  # 0, 2, 4, 6, 8
 ```
 
-## while 循环
+第三个参数是步长，表示每次增加多少。
+
+## 遍历字符串
+
+字符串可以逐个字符处理：
 
 ```python
-count = 0
-while count < 5:
+word = "Python"
+
+for char in word:
+    print(char)
+```
+
+这会依次输出 `P`、`y`、`t`、`h`、`o`、`n`。
+
+## while 循环
+
+`while` 会在条件为真时一直执行。
+
+```python
+count = 1
+
+while count <= 5:
     print(count)
     count += 1
 ```
 
+写 `while` 时，一定要让循环条件有机会变成 `False`，否则会出现死循环。
+
 ## break 语句
 
-跳出整个循环。
+`break` 用来提前结束整个循环。
 
 ```python
-for i in range(10):
+for i in range(1, 10):
     if i == 5:
         break
-    print(i)  # 0, 1, 2, 3, 4
+    print(i)
 ```
+
+输出 `1` 到 `4`，遇到 `5` 时循环结束。
 
 ## continue 语句
 
-跳过当前迭代，继续下一次。
+`continue` 用来跳过本次循环，直接进入下一次。
 
 ```python
-for i in range(5):
-    if i == 2:
+for i in range(1, 6):
+    if i == 3:
         continue
-    print(i)  # 0, 1, 3, 4
+    print(i)
 ```
+
+输出 `1`、`2`、`4`、`5`。
 
 ## else 子句
 
-循环正常结束时执行（未被 break 打断）。
+循环也可以带 `else`。当循环没有被 `break` 打断时，`else` 会执行。
 
 ```python
-for i in range(5):
-    print(i)
-else:
-    print("循环结束")
+target = 3
 
-# 被 break 打断时不执行 else
-for i in range(5):
-    if i == 3:
+for i in range(1, 6):
+    if i == target:
+        print("找到了")
         break
-    print(i)
 else:
-    print("不会执行")
+    print("没找到")
 ```
+
+初学阶段不必强行使用循环 `else`，能读懂即可。
 
 ## 嵌套循环
 
+循环里面还可以写循环。
+
 ```python
-# 打印九九乘法表
-for i in range(1, 10):
-    for j in range(1, i + 1):
-        print(f"{j}x{i}={i*j}", end=" ")
+for row in range(1, 4):
+    for col in range(1, 4):
+        print(f"({row}, {col})", end=" ")
     print()
 ```
 
+嵌套循环常用于表格、坐标、乘法表等场景。
+
 ## 使用场景
 
-### 场景 1：批量数据处理
-遍历文件列表、数据库记录。
+### 场景 1：重复输出
 
-### 场景 2：重复操作
-自动化任务、定时任务。
+```python
+for i in range(3):
+    print("欢迎学习 Python")
+```
 
-### 场景 3：数据生成
-生成测试数据、序列号。
+### 场景 2：累计求和
 
-### 场景 4：交互式程序
-游戏主循环、CLI 工具。
+```python
+total = 0
+
+for i in range(1, 101):
+    total += i
+
+print(total)
+```
+
+### 场景 3：逐个检查字符
+
+```python
+word = "Python"
+
+for char in word:
+    print(char)
+```
+
+### 场景 4：等待用户输入正确内容
+
+```python
+password = ""
+
+while password != "123456":
+    password = input("请输入密码: ")
+
+print("登录成功")
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：打印 1-100 的所有偶数。
+**题目 1**：打印 1 到 10。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+for i in range(1, 11):
+    print(i)
+```
+</details>
+
+**题目 2**：打印 1 到 100 的所有偶数。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
 for i in range(2, 101, 2):
-    print(i, end=" ")
-```
-</details>
-
-**题目 2**：求 1-100 的和。
-
-<details>
-<summary>💡 查看答案</summary>
-
-```python
-total = sum(range(1, 101))
-print(total)  # 5050
-
-# 或使用循环
-total = 0
-for i in range(1, 101):
-    total += i
-print(total)
+    print(i)
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：找出 1-100 中所有的质数。
+**题目 3**：计算 1 到 100 的和。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-for num in range(2, 101):
-    is_prime = True
-    for i in range(2, int(num ** 0.5) + 1):
-        if num % i == 0:
-            is_prime = False
-            break
-    if is_prime:
-        print(num, end=" ")
+total = 0
+
+for i in range(1, 101):
+    total += i
+
+print(total)
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现一个猜数字游戏，随机生成 1-100 的数字，用户猜测，提示大了/小了，直到猜对。
+**题目 4**：输入一个正整数 `n`，打印 `n` 行星号，第 1 行 1 个，第 2 行 2 个，依次增加。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+n = int(input("请输入行数: "))
+
+for i in range(1, n + 1):
+    print("*" * i)
+```
+</details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：for 和 while 有什么区别？各适合什么场景？
+用自己的话回答以下问题：
 
-2. **为什么需要**：break 和 continue 的区别是什么？else 子句什么时候执行？
-
-3. **怎么用**：向新手解释 `range(1, 10, 2)` 的三个参数含义？
-
-4. **注意事项**：死循环是什么？如何避免 while 循环变成死循环？
+1. **这是什么**：`for` 和 `while` 有什么区别？
+2. **为什么需要**：为什么 `while` 循环容易写出死循环？
+3. **怎么用**：`range(1, 10, 2)` 的三个参数分别是什么意思？
+4. **注意事项**：`break` 和 `continue` 的区别是什么？
 
 ::: tip 学习建议
-循环是编程的核心！掌握 for 和 while 的使用场景，理解 break/continue 的区别。
+循环最容易通过动手掌握。先从打印数字、累计求和、星号图形这类小练习开始。
 :::

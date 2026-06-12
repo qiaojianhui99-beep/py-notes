@@ -1,203 +1,240 @@
 # 变量与数据类型
 
-## 变量赋值
+## 核心概念
 
-Python 是动态类型语言，无需声明类型。
+变量是给数据起的名字。程序运行时，可以通过变量名找到对应的数据。
 
 ```python
-x = 10
 name = "Alice"
-is_active = True
+age = 18
 ```
+
+可以把变量理解成标签：`name` 这个标签贴在 `"Alice"` 上，`age` 这个标签贴在 `18` 上。
+
+Python 是动态类型语言，创建变量时不需要提前声明类型。解释器会根据值自动判断类型。
+
+## 变量赋值
+
+使用 `=` 给变量赋值：
+
+```python
+score = 95
+message = "学习 Python"
+is_passed = True
+```
+
+`=` 不是数学里的“相等”，而是“把右边的值交给左边的名字”。
+
+变量可以重新赋值：
+
+```python
+age = 18
+age = 19
+```
+
+第二次赋值后，`age` 保存的是新值 `19`。
 
 ## 基本数据类型
 
-### 1. 整数（int）
+### 整数 int
+
+整数用于表示没有小数部分的数字。
 
 ```python
-num = 100
-negative = -50
+age = 18
+count = -3
 ```
 
-### 2. 浮点数（float）
+### 浮点数 float
+
+浮点数用于表示带小数部分的数字。
 
 ```python
-pi = 3.14
-scientific = 1.5e2  # 150.0
+price = 19.9
+temperature = -2.5
 ```
 
-### 3. 布尔值（bool）
+### 字符串 str
 
-```python
-is_valid = True
-is_empty = False
-```
-
-### 4. 字符串（str）
+字符串用于表示文本，可以使用单引号或双引号。
 
 ```python
 name = "Alice"
-message = '单引号也可以'
-multi_line = """多行
-字符串"""
+city = 'Beijing'
 ```
 
-### 5. 空值（None）
+多行文本可以使用三引号：
+
+```python
+message = """第一行
+第二行"""
+```
+
+### 布尔值 bool
+
+布尔值只有两个：`True` 和 `False`，常用于表示判断结果。
+
+```python
+is_active = True
+is_finished = False
+```
+
+注意首字母必须大写。
+
+### 空值 None
+
+`None` 表示“没有值”或“暂时没有结果”。
 
 ```python
 result = None
 ```
 
+## 查看类型
+
+使用 `type()` 可以查看一个值的类型：
+
+```python
+name = "Alice"
+age = 18
+
+print(type(name))  # <class 'str'>
+print(type(age))   # <class 'int'>
+```
+
+使用 `isinstance()` 可以判断某个值是不是指定类型：
+
+```python
+age = 18
+print(isinstance(age, int))  # True
+```
+
 ## 类型转换
 
-```python
-# 转整数
-int("123")      # 123
-int(3.14)       # 3
-
-# 转浮点数
-float("3.14")   # 3.14
-float(10)       # 10.0
-
-# 转字符串
-str(123)        # "123"
-str(3.14)       # "3.14"
-
-# 转布尔值
-bool(0)         # False
-bool(1)         # True
-bool("")        # False
-```
-
-## 类型检查
+有时数据看起来像数字，但实际是字符串，需要转换后才能当数字使用。
 
 ```python
-x = 10
-print(type(x))              # <class 'int'>
-print(isinstance(x, int))   # True
+number_text = "123"
+number = int(number_text)
+print(number)  # 123
 ```
 
-## 类型注解（Type Hints）
+常见转换：
 
 ```python
-# Python 3.14 推荐写法
-name: str = "Alice"
-age: int = 25
-scores: list[int] = [90, 85, 88]
-data: dict[str, int] = {"age": 25}
-
-# 联合类型（Python 3.10+）
-def process(value: int | str) -> None:
-    print(value)
-
-# 旧版本写法（Python 3.9-）
-from typing import Union, List, Dict
-
-def process_old(value: Union[int, str]) -> None:
-    print(value)
-
-scores_old: List[int] = [90, 85, 88]
-data_old: Dict[str, int] = {"age": 25}
+int("123")       # 123
+float("3.14")    # 3.14
+str(123)         # "123"
+bool(1)          # True
+bool(0)          # False
+bool("")         # False
 ```
+
+不是所有字符串都能转成数字：
+
+```python
+int("abc")  # 会报错
+```
+
+异常处理后面会专门学习。现在先记住：转换前要确认内容确实适合转换。
 
 ## 使用场景
 
-### 场景 1：用户输入处理
-Web 表单、命令行工具接收用户输入时需要类型转换。
+### 场景 1：保存用户信息
 
 ```python
-age = int(input("请输入年龄: "))
-if age >= 18:
-    print("成年人")
+user_name = "Alice"
+user_age = 18
+is_vip = False
 ```
 
-### 场景 2：配置文件读取
-读取配置时确保数据类型正确。
+### 场景 2：保存商品数据
 
 ```python
-config = {"timeout": "30"}
-timeout: int = int(config["timeout"])
+product_name = "键盘"
+price = 199.0
+stock = 30
 ```
 
-### 场景 3：数据分析
-处理 CSV、数据库数据时的类型转换。
+### 场景 3：保存程序状态
 
 ```python
-price = float("99.99")
-total = price * 2
-```
-
-### 场景 4：API 接口开发
-类型注解提高代码可读性。
-
-```python
-def create_user(name: str, age: int) -> dict[str, str | int]:
-    return {"name": name, "age": age}
+is_logged_in = True
+current_page = "home"
+error_message = None
 ```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：编写程序，输入圆的半径，输出圆的面积（保留 2 位小数）。
+**题目 1**：创建三个变量：姓名、年龄、是否正在学习 Python，并输出它们。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-import math
+name = "小明"
+age = 18
+is_learning_python = True
 
-radius = float(input("请输入半径: "))
-area = math.pi * radius ** 2
-print(f"圆的面积是: {area:.2f}")
+print(name)
+print(age)
+print(is_learning_python)
 ```
 </details>
 
-**题目 2**：判断 `x = "123"` 是否可转换为整数，如果可以则输出 `int(x) + 10`。
+**题目 2**：使用 `type()` 查看 `"100"`、`100`、`100.0` 的类型。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-x = "123"
-if x.isdigit():
-    print(int(x) + 10)  # 133
+print(type("100"))  # <class 'str'>
+print(type(100))    # <class 'int'>
+print(type(100.0))  # <class 'float'>
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：编写 `safe_divide(a: str, b: str) -> float | None`，转换失败或除数为 0 返回 None。
+**题目 3**：把字符串 `"18"` 转成整数，把整数 `18` 转成字符串，并分别输出类型。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-def safe_divide(a: str, b: str) -> float | None:
-    try:
-        num_a, num_b = float(a), float(b)
-        return num_a / num_b if num_b != 0 else None
-    except ValueError:
-        return None
+age_text = "18"
+age_number = int(age_text)
+
+number = 18
+number_text = str(number)
+
+print(age_number)
+print(type(age_number))
+print(number_text)
+print(type(number_text))
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现 `detect_type(value: str)`，自动检测字符串应转换为什么类型（int/float/bool/str）并返回转换后的值。
+**题目 4**：解释下面三个值有什么区别：`10`、`"10"`、`10.0`。
+
+<details>
+<summary>💡 查看参考答案</summary>
+
+`10` 是整数，类型是 `int`；`"10"` 是字符串，类型是 `str`，表示文本；`10.0` 是浮点数，类型是 `float`，表示带小数部分的数字。
+</details>
 
 ## 费曼学习法检验
 
 用自己的话回答以下问题：
 
-1. **这是什么**：变量和数据类型是什么？为什么需要不同的数据类型？
-
-2. **为什么需要**：如果所有数据都用字符串存储会有什么问题？
-
-3. **怎么用**：向编程新手解释，如何把输入的 "18" 变成数字 18 并判断是否成年？
-
-4. **注意事项**：`int("3.14")` 会发生什么？如何避免程序崩溃？
+1. **这是什么**：变量和数据类型分别是什么？
+2. **为什么需要**：为什么 `"18"` 和 `18` 不能完全当成同一种数据？
+3. **怎么用**：如何查看一个变量当前保存的数据类型？
+4. **注意事项**：什么时候需要做类型转换？转换失败会怎样？
 
 ::: tip 学习建议
-类型转换是 Python 编程的基础！尝试向朋友讲解一遍，是检验理解最好的方法。
+遇到不确定的数据，先用 `type()` 看类型。很多初学错误都来自把字符串和数字混在一起。
 :::

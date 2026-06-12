@@ -1,6 +1,15 @@
 # 路径操作（pathlib）
 
-pathlib 是 Python 3.4+ 引入的面向对象路径操作模块。
+## 核心概念
+
+`pathlib` 是 Python 提供的现代路径操作模块。它用 `Path` 对象表示路径，比手动拼接字符串更清楚，也更容易兼容 Windows、macOS 和 Linux。
+
+```python
+from pathlib import Path
+
+path = Path("data") / "users.txt"
+print(path)
+```
 
 ## Path 对象
 
@@ -184,7 +193,25 @@ print(f"总大小: {size / 1024 / 1024:.2f} MB")
 
 ### 挑战练习
 
-**题目 3**：实现文件整理工具，按扩展名分类文件到不同文件夹。
+**题目 3**：扫描当前目录下的文件，按扩展名统计数量，只输出统计结果，不移动文件。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+from pathlib import Path
+
+counter = {}
+
+for item in Path(".").iterdir():
+    if item.is_file():
+        suffix = item.suffix or "无扩展名"
+        counter[suffix] = counter.get(suffix, 0) + 1
+
+for suffix, count in counter.items():
+    print(f"{suffix}: {count}")
+```
+</details>
 
 ## 费曼学习法检验
 

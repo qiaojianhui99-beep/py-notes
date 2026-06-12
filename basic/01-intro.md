@@ -1,33 +1,48 @@
 # Python 简介与环境搭建
 
-## Python 简介
+## 核心概念
 
-Python 是一种解释型、面向对象、动态数据类型的高级程序设计语言。
+Python 是一种高级编程语言。它的语法接近日常英语，适合初学者入门，也能用于真实项目开发。
 
-### Python 特点
+学习 Python 前，先分清三个概念：
 
-- 简单易学
-- 开源免费
-- 跨平台
-- 丰富的库和框架
+- **Python 语言**：一套写代码的规则，比如 `print("Hello")` 表示输出文本。
+- **Python 解释器**：负责运行 Python 代码的程序。
+- **`.py` 文件**：保存 Python 代码的文本文件，例如 `hello.py`。
+
+当你运行一个 `.py` 文件时，Python 解释器会从上到下读取代码，并执行每一行。
 
 ## Python 版本
 
-- **Python 2.x**：已于 2020 年停止维护
-- **Python 3.x**：当前主流版本，本笔记基于 **Python 3.14**
+- **Python 2.x**：已经在 2020 年停止维护，不建议学习。
+- **Python 3.x**：当前主流版本，本笔记以 **Python 3.14** 为目标。
+
+如果刚开始学习，直接安装 Python 3 的最新稳定版本即可。
 
 ## 安装 Python
 
 ### Windows
 
-1. 访问 [python.org](https://www.python.org/downloads/)
-2. 下载 Python 3.14+ 安装包
-3. 安装时勾选"Add Python to PATH"
+1. 打开 [Python 下载页面](https://www.python.org/downloads/)。
+2. 下载 Python 3 安装包。
+3. 安装时勾选 `Add Python to PATH`。
+4. 安装完成后打开命令行，输入：
 
-### Mac
+```bash
+python --version
+```
+
+如果 Windows 上 `python` 命令不可用，可以尝试：
+
+```bash
+py --version
+```
+
+### macOS
 
 ```bash
 brew install python3
+python3 --version
 ```
 
 ### Linux
@@ -35,101 +50,141 @@ brew install python3
 ```bash
 sudo apt update
 sudo apt install python3
+python3 --version
 ```
 
 ## 开发环境
 
-### 1. IDLE（自带）
+初学阶段不需要复杂工具，能写代码、能运行代码即可。
 
-Python 安装后自带的简易 IDE。
+### IDLE
 
-### 2. VSCode
+Python 自带的简易开发环境，适合快速试一两行代码。
 
-推荐安装 Python 插件。
+### VSCode
 
-### 3. PyCharm
+轻量、常用，推荐安装 Python 插件。
 
-专业的 Python IDE。
+### PyCharm
+
+功能完整，适合后续做较大的 Python 项目。
 
 ## 第一个程序
+
+创建文件 `hello.py`，写入：
 
 ```python
 print("Hello, World!")
 ```
 
-运行方式：
+在命令行进入文件所在目录，运行：
+
 ```bash
 python hello.py
 ```
 
+如果看到 `Hello, World!`，说明 Python 已经可以正常运行。
+
 ## 使用场景
 
 ### 场景 1：学习编程
-Python 是最适合初学者的编程语言，语法简洁，上手快速。
 
-### 场景 2：数据分析和科学计算
-使用 pandas、numpy、matplotlib 进行数据处理和可视化。
+Python 语法简洁，适合用来理解变量、条件、循环、函数等编程基础。
 
-### 场景 3：Web 开发
-Django、Flask 等框架用于构建网站和 API 服务。
+### 场景 2：自动化办公
 
-### 场景 4：自动化脚本
-批量处理文件、自动化测试、系统管理任务。
+可以批量处理文件、整理表格、生成报告，减少重复操作。
 
-### 场景 5：人工智能和机器学习
-TensorFlow、PyTorch 等深度学习框架的首选语言。
+### 场景 3：数据分析
+
+Python 生态中有大量数据处理和可视化工具，适合分析表格、日志和业务数据。
+
+### 场景 4：Web 开发
+
+可以用 Flask、Django、FastAPI 等框架开发网站和接口服务。
+
+### 场景 5：人工智能
+
+很多机器学习和深度学习工具都优先支持 Python。
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：安装 Python 后，在命令行输入 `python --version` 查看版本号，并截图。
+**题目 1**：在命令行查看 Python 版本，确认当前安装的是 Python 3。
 
-**题目 2**：创建文件 `hello.py`，输出你的名字和年龄。
+<details>
+<summary>💡 查看答案</summary>
+
+Windows 常用命令：
+
+```bash
+python --version
+```
+
+如果不可用，尝试：
+
+```bash
+py --version
+```
+
+macOS/Linux 常用命令：
+
+```bash
+python3 --version
+```
+
+只要输出中包含 `Python 3.x.x`，就说明版本正确。
+</details>
+
+**题目 2**：创建文件 `hello.py`，输出你的名字。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-print("我叫张三")
-print("今年 25 岁")
+print("我叫小明")
 ```
 
-运行：`python hello.py`
+运行：
+
+```bash
+python hello.py
+```
 </details>
 
 ### 进阶练习
 
-**题目 3**：编写程序，输出当前 Python 的版本信息（提示：使用 `sys` 模块）。
+**题目 3**：修改 `hello.py`，让它分两行输出你的名字和一句学习目标。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-import sys
-print(f"Python 版本: {sys.version}")
-print(f"版本信息: {sys.version_info}")
+print("我叫小明")
+print("我要学会用 Python 写程序")
 ```
-
-**解析**：`sys.version` 返回版本字符串，`sys.version_info` 返回详细版本元组。
 </details>
 
 ### 挑战练习
 
-**题目 4**：研究你选择的开发环境（IDLE/VSCode/PyCharm），写出至少 3 个提高编码效率的快捷键或功能。
+**题目 4**：用自己的话解释：命令行里直接输入 `python` 和运行 `python hello.py` 有什么区别？
+
+<details>
+<summary>💡 查看参考答案</summary>
+
+直接输入 `python` 会进入交互式环境，适合临时试代码。运行 `python hello.py` 会执行文件中的代码，适合保存和反复运行一个完整程序。
+</details>
 
 ## 费曼学习法检验
 
 用自己的话回答以下问题：
 
-1. **这是什么**：Python 是什么？它和其他编程语言（如 Java、C++）有什么不同？
-
-2. **为什么需要**：为什么选择 Python 而不是其他语言？它最适合解决什么类型的问题？
-
-3. **怎么用**：向一个完全不懂编程的人解释，如何在电脑上运行第一个 Python 程序？
-
-4. **注意事项**：Python 2 和 Python 3 有什么区别？现在应该学哪个版本？
+1. **这是什么**：Python 语言、Python 解释器、`.py` 文件分别是什么？
+2. **为什么需要**：为什么学习前要先确认 Python 版本？
+3. **怎么用**：如何从创建文件到运行第一个 Python 程序？
+4. **注意事项**：如果命令行提示找不到 `python`，可以先检查什么？
 
 ::: tip 学习建议
-如果能用自己的话流畅回答上述问题，说明你已经理解了 Python 的基本概念。动手安装并运行第一个程序是最重要的第一步！
+第一章的重点不是记住很多概念，而是成功运行第一个 `.py` 文件。能运行，后面才有练习的基础。
 :::

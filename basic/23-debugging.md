@@ -1,6 +1,14 @@
 # 调试技巧
 
-掌握调试技巧能快速定位和解决问题。
+## 核心概念
+
+调试是定位和修复问题的过程。写程序时遇到错误很正常，关键是能判断：
+
+- 程序在哪里出错。
+- 变量当前是什么值。
+- 实际结果和预期结果哪里不同。
+
+调试不是随便试，而是有证据地缩小问题范围。
 
 ## print 调试
 
@@ -104,7 +112,7 @@ import sys
 
 try:
     result = 1 / 0
-except:
+except Exception:
     exc_type, exc_value, exc_tb = sys.exc_info()
     print(f"异常类型: {exc_type}")
     print(f"异常值: {exc_value}")
@@ -183,7 +191,22 @@ print(find_max([1, -5, 3, -2]))  # 3
 
 ### 挑战练习
 
-**题目 3**：实现自定义调试装饰器，打印函数参数和返回值。
+**题目 3**：给 `divide(a, b)` 添加断言，确保除数不是 0，并观察断言失败时的报错。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+def divide(a, b):
+    assert b != 0, "除数不能为 0"
+    return a / b
+
+print(divide(10, 2))
+print(divide(10, 0))
+```
+
+**解析**：第二次调用会触发 `AssertionError`，错误信息是 `除数不能为 0`。
+</details>
 
 ## 费曼学习法检验
 

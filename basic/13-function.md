@@ -1,189 +1,280 @@
 # 函数定义与调用
 
-## 定义函数
+## 核心概念
+
+函数是一段可以重复使用的代码。把一组操作放进函数里，需要时通过函数名调用。
 
 ```python
 def greet():
     print("Hello!")
 
-greet()  # 调用函数
+greet()
 ```
 
-## 参数和返回值
+函数可以让代码更清楚、更容易复用，也方便把复杂问题拆成小步骤。
+
+## 定义函数
+
+使用 `def` 定义函数：
+
+```python
+def say_hello():
+    print("你好")
+```
+
+函数体必须缩进。定义函数不会立刻执行函数体，只有调用函数时才会执行。
+
+```python
+say_hello()
+```
+
+## 参数
+
+参数是传给函数的数据。
+
+```python
+def greet(name):
+    print(f"你好，{name}")
+
+greet("Alice")
+greet("Bob")
+```
+
+多个参数用逗号分隔：
+
+```python
+def add(a, b):
+    print(a + b)
+
+add(3, 5)
+```
+
+## 返回值
+
+`return` 用来把结果交回给调用者。
 
 ```python
 def add(a, b):
     return a + b
 
-result = add(3, 5)  # 8
+result = add(3, 5)
+print(result)
+```
+
+如果函数没有写 `return`，默认返回 `None`。
+
+```python
+def show_message():
+    print("Hello")
+
+result = show_message()
+print(result)  # None
 ```
 
 ## 多个返回值
 
+Python 函数可以一次返回多个值，本质上返回的是元组。
+
 ```python
-def get_point():
+def get_position():
     return 10, 20
 
-x, y = get_point()
+x, y = get_position()
+
+print(x)
+print(y)
 ```
 
-## 无返回值
+## 函数调用顺序
+
+函数必须先定义，再调用。
 
 ```python
-def print_message():
-    print("Hello")
-    # 默认返回 None
+def double(number):
+    return number * 2
+
+print(double(5))
 ```
 
-## 函数作用域
+调用函数时，实参会按顺序传给形参：
+
+```python
+def introduce(name, age):
+    print(f"我叫{name}，今年{age}岁")
+
+introduce("Alice", 18)
+```
+
+## 作用域
+
+作用域决定变量能在哪里使用。
 
 ### 局部变量
 
-```python
-def func():
-    x = 10  # 局部变量
-    print(x)
+函数内部创建的变量，只能在函数内部使用。
 
-func()
-# print(x)  # 错误：x 不存在
+```python
+def show_age():
+    age = 18
+    print(age)
+
+show_age()
+# print(age)  # 函数外不能直接使用 age
 ```
 
 ### 全局变量
 
-```python
-x = 100  # 全局变量
-
-def func():
-    print(x)  # 可以访问全局变量
-
-func()  # 100
-```
-
-## global 关键字
-
-修改全局变量需要使用 `global`。
+函数外创建的变量，可以在函数内部读取。
 
 ```python
-count = 0
+name = "Alice"
 
-def increment():
-    global count
-    count += 1
+def greet():
+    print(f"你好，{name}")
 
-increment()
-print(count)  # 1
+greet()
 ```
 
-## nonlocal 关键字
+初学阶段建议：函数需要什么数据，就通过参数传进去；函数产生什么结果，就通过 `return` 返回。这样比直接修改全局变量更清楚。
 
-修改外层函数的局部变量。
+## 文档字符串
 
-```python
-def outer():
-    x = 10
-    
-    def inner():
-        nonlocal x
-        x += 1
-    
-    inner()
-    print(x)  # 11
-
-outer()
-```
-
-## 函数文档字符串
+文档字符串用于说明函数用途。
 
 ```python
 def add(a, b):
-    """
-    计算两个数的和
-    
-    参数:
-        a: 第一个数
-        b: 第二个数
-    
-    返回:
-        两数之和
-    """
+    """返回两个数的和。"""
     return a + b
-
-print(add.__doc__)  # 查看文档
 ```
+
+简单函数可以不写文档字符串；复杂函数建议写清楚参数、返回值和注意事项。
 
 ## 使用场景
 
-### 场景 1：代码复用
-避免重复代码，提高维护性。
+### 场景 1：复用重复代码
 
-### 场景 2：模块化开发
-将复杂问题分解为小函数。
+```python
+def print_line():
+    print("-" * 20)
 
-### 场景 3：库和框架开发
-提供 API 接口。
+print_line()
+print("用户信息")
+print_line()
+```
 
-### 场景 4：回调和事件处理
-事件驱动编程。
+### 场景 2：拆分计算步骤
+
+```python
+def get_total(price, count):
+    return price * count
+```
+
+### 场景 3：封装判断规则
+
+```python
+def is_even(number):
+    return number % 2 == 0
+```
+
+### 场景 4：让主流程更清楚
+
+```python
+def show_welcome():
+    print("欢迎使用程序")
+
+show_welcome()
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：编写函数 `is_even(n)` 判断数字是否为偶数。
+**题目 1**：编写函数 `is_even(number)`，判断一个数字是否为偶数。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-def is_even(n):
-    return n % 2 == 0
+def is_even(number):
+    return number % 2 == 0
 
-print(is_even(4))  # True
+print(is_even(4))
+print(is_even(5))
 ```
 </details>
 
-**题目 2**：编写函数 `max_of_three(a, b, c)` 返回三个数中的最大值。
+**题目 2**：编写函数 `get_area(width, height)`，返回矩形面积。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-def max_of_three(a, b, c):
-    return max(a, b, c)
+def get_area(width, height):
+    return width * height
+
+area = get_area(5, 3)
+print(area)
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：编写函数 `fibonacci(n)` 返回斐波那契数列的第 n 项。
+**题目 3**：编写函数 `get_max(a, b, c)`，返回三个数中的最大值。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
+def get_max(a, b, c):
+    max_value = a
 
-print(fibonacci(6))  # 8
+    if b > max_value:
+        max_value = b
+    if c > max_value:
+        max_value = c
+
+    return max_value
+
+print(get_max(3, 9, 5))
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现一个函数装饰器，计算函数执行时间。
+**题目 4**：编写函数 `show_menu()` 输出菜单，再根据用户输入输出对应操作。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+def show_menu():
+    print("1. 查看信息")
+    print("2. 修改信息")
+    print("3. 退出")
+
+show_menu()
+choice = input("请选择: ")
+
+if choice == "1":
+    print("查看信息")
+elif choice == "2":
+    print("修改信息")
+elif choice == "3":
+    print("退出")
+else:
+    print("未知选项")
+```
+</details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：函数的参数传递是传值还是传引用？
+用自己的话回答以下问题：
 
-2. **为什么需要**：为什么需要 return？不用 return 会怎样？
-
-3. **怎么用**：向新手解释全局变量和局部变量的区别？
-
-4. **注意事项**：什么时候需要用 global 关键字？滥用会有什么问题？
+1. **这是什么**：函数是什么？参数和返回值分别是什么？
+2. **为什么需要**：为什么重复代码适合放进函数？
+3. **怎么用**：如何定义并调用一个带参数的函数？
+4. **注意事项**：局部变量为什么不能在函数外直接使用？
 
 ::: tip 学习建议
-函数是程序的基本单元！写好函数是写好程序的第一步。
+写函数时先问自己：这个函数需要哪些输入？应该返回什么结果？函数名是否能说明它做什么？
 :::

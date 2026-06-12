@@ -1,193 +1,217 @@
 # 面向对象基础
 
+## 核心概念
+
+面向对象是一种组织代码的方式。它把数据和操作数据的函数放在一起，形成“对象”。
+
+先看一个简单例子：
+
+```python
+class Dog:
+    def bark(self):
+        print("汪汪")
+
+my_dog = Dog()
+my_dog.bark()
+```
+
+这里：
+
+- `Dog` 是类，像一张设计图。
+- `my_dog` 是对象，也叫实例。
+- `bark()` 是对象能执行的方法。
+
 ## 类与对象
 
+类用于描述一类事物，对象是根据类创建出来的具体事物。
+
 ```python
-# 定义类
-class Dog:
+class Student:
     pass
 
-# 创建对象
-my_dog = Dog()
+student1 = Student()
+student2 = Student()
 ```
 
-## `__init__` 构造方法
+`student1` 和 `student2` 都来自 `Student` 类，但它们是两个不同对象。
+
+## __init__ 构造方法
+
+`__init__` 会在创建对象时自动执行，常用于设置初始属性。
 
 ```python
-class Dog:
+class Student:
     def __init__(self, name, age):
-        self.name = name  # 实例属性
+        self.name = name
         self.age = age
-    
-    def bark(self):       # 实例方法
-        print(f"{self.name} 汪汪叫!")
 
-# 创建对象
-my_dog = Dog("旺财", 3)
-print(my_dog.name)  # 旺财
-my_dog.bark()       # 旺财 汪汪叫!
+student = Student("Alice", 18)
+
+print(student.name)
+print(student.age)
 ```
+
+`self.name = name` 的意思是：把传入的 `name` 保存到当前对象身上。
 
 ## self 关键字
 
-`self` 代表实例本身，必须是实例方法的第一个参数。
+`self` 代表当前对象本身。
 
 ```python
 class Person:
     def __init__(self, name):
         self.name = name
-    
+
     def greet(self):
-        print(f"你好, 我是 {self.name}")
+        print(f"你好，我是 {self.name}")
 
 person = Person("Alice")
-person.greet()  # 你好, 我是 Alice
+person.greet()
 ```
 
-## 实例属性 vs 类属性
+调用时写 `person.greet()`，定义方法时要写 `self`。这是 Python 的约定和语法要求。
+
+## 实例属性
+
+实例属性属于具体对象。不同对象可以有不同的属性值。
 
 ```python
 class Dog:
-    # 类属性（所有实例共享）
-    species = "犬科"
-    
     def __init__(self, name):
-        # 实例属性（每个实例独有）
         self.name = name
 
 dog1 = Dog("旺财")
 dog2 = Dog("小白")
 
-print(dog1.species)  # 犬科
-print(Dog.species)   # 犬科
-
-dog1.name  # 旺财
-dog2.name  # 小白
+print(dog1.name)
+print(dog2.name)
 ```
 
-## 实例方法、类方法、静态方法
+`dog1.name` 和 `dog2.name` 互不影响。
+
+## 实例方法
+
+实例方法是对象能执行的操作。
 
 ```python
-class MyClass:
-    count = 0
-    
-    def __init__(self):
-        MyClass.count += 1
-    
-    # 实例方法
-    def instance_method(self):
-        return f"实例方法, count={self.count}"
-    
-    # 类方法
-    @classmethod
-    def class_method(cls):
-        return f"类方法, count={cls.count}"
-    
-    # 静态方法
-    @staticmethod
-    def static_method():
-        return "静态方法"
+class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
 
-obj = MyClass()
-obj.instance_method()       # 实例调用
-MyClass.class_method()      # 类调用
-MyClass.static_method()     # 类调用
+    def area(self):
+        return self.width * self.height
+
+rect = Rectangle(5, 3)
+print(rect.area())
 ```
 
-## 私有属性和方法
+方法内部可以通过 `self` 使用对象自己的属性。
 
-使用双下划线 `__` 前缀。
+## 类属性
+
+类属性属于类本身，通常用于所有对象共享的值。
+
+```python
+class Dog:
+    species = "犬科"
+
+    def __init__(self, name):
+        self.name = name
+
+dog1 = Dog("旺财")
+dog2 = Dog("小白")
+
+print(dog1.species)
+print(dog2.species)
+print(Dog.species)
+```
+
+如果每个对象的值都不同，用实例属性；如果所有对象共享一个值，可以考虑类属性。
+
+## 简单封装
+
+封装是把数据和操作数据的方法放在一起，并通过方法控制如何修改数据。
 
 ```python
 class BankAccount:
     def __init__(self, balance):
-        self.__balance = balance  # 私有属性
-    
-    def __validate(self):         # 私有方法
-        return self.__balance >= 0
-    
-    def deposit(self, amount):
-        self.__balance += amount
-    
-    def get_balance(self):
-        return self.__balance
+        self.balance = balance
 
-account = BankAccount(1000)
-# print(account.__balance)  # 错误！
-print(account.get_balance())  # 1000
+    def deposit(self, amount):
+        if amount > 0:
+            self.balance += amount
+
+    def withdraw(self, amount):
+        if 0 < amount <= self.balance:
+            self.balance -= amount
+        else:
+            print("余额不足或金额无效")
+
+    def show_balance(self):
+        print(f"当前余额: {self.balance}")
 ```
 
-## 属性装饰器
+这样，账户余额的修改规则就集中在类的方法里，而不是散落在程序各处。
+
+## 命名约定
+
+Python 中单下划线开头的属性表示“内部使用，不建议外部直接访问”。
 
 ```python
-class Person:
+class User:
     def __init__(self, name):
         self._name = name
-    
-    @property
-    def name(self):
-        return self._name
-    
-    @name.setter
-    def name(self, value):
-        if not value:
-            raise ValueError("名字不能为空")
-        self._name = value
-
-person = Person("Alice")
-print(person.name)  # Alice (调用 getter)
-person.name = "Bob" # 调用 setter
 ```
 
-## 特殊方法（魔法方法）
-
-```python
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-    
-    def __str__(self):
-        # print() 时调用
-        return f"Point({self.x}, {self.y})"
-    
-    def __repr__(self):
-        # 交互式解释器显示
-        return f"Point({self.x}, {self.y})"
-    
-    def __add__(self, other):
-        # + 运算符
-        return Point(self.x + other.x, self.y + other.y)
-    
-    def __eq__(self, other):
-        # == 运算符
-        return self.x == other.x and self.y == other.y
-
-p1 = Point(1, 2)
-p2 = Point(3, 4)
-print(p1)       # Point(1, 2)
-p3 = p1 + p2    # Point(4, 6)
-```
+这是约定，不是强制限制。初学阶段先遵守这个阅读习惯即可。
 
 ## 使用场景
 
-### 场景 1：数据建模
-用户、订单、商品等业务对象。
+### 场景 1：描述现实中的对象
 
-### 场景 2：代码复用
-通过继承共享代码逻辑。
+```python
+class Student:
+    def __init__(self, name, score):
+        self.name = name
+        self.score = score
+```
 
-### 场景 3：框架开发
-Django Model、Flask View。
+### 场景 2：把数据和操作放在一起
 
-### 场景 4：游戏开发
-角色、道具、场景对象。
+```python
+class Counter:
+    def __init__(self):
+        self.count = 0
+
+    def add(self):
+        self.count += 1
+```
+
+### 场景 3：减少重复代码
+
+```python
+student1 = Student("Alice", 90)
+student2 = Student("Bob", 85)
+```
+
+### 场景 4：表达业务规则
+
+```python
+class Order:
+    def __init__(self, price, count):
+        self.price = price
+        self.count = count
+
+    def total(self):
+        return self.price * self.count
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：创建 `Rectangle` 类，包含长宽属性和计算面积的方法。
+**题目 1**：创建 `Rectangle` 类，包含宽、高属性和计算面积的方法。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -197,18 +221,40 @@ class Rectangle:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-    
+
     def area(self):
         return self.width * self.height
 
 rect = Rectangle(5, 3)
-print(rect.area())  # 15
+print(rect.area())
 ```
 </details>
 
 ### 进阶练习
 
-**题目 2**：创建 `BankAccount` 类，包含存款、取款、查询余额功能。
+**题目 2**：创建 `Student` 类，包含姓名、分数，并提供 `is_passed()` 方法判断是否及格。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+class Student:
+    def __init__(self, name, score):
+        self.name = name
+        self.score = score
+
+    def is_passed(self):
+        return self.score >= 60
+
+student = Student("Alice", 85)
+print(student.name)
+print(student.is_passed())
+```
+</details>
+
+### 挑战练习
+
+**题目 3**：创建 `BankAccount` 类，包含存款、取款、查询余额功能。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -217,36 +263,36 @@ print(rect.area())  # 15
 class BankAccount:
     def __init__(self, balance=0):
         self.balance = balance
-    
+
     def deposit(self, amount):
-        self.balance += amount
-        return self.balance
-    
+        if amount > 0:
+            self.balance += amount
+
     def withdraw(self, amount):
-        if amount <= self.balance:
+        if 0 < amount <= self.balance:
             self.balance -= amount
-            return self.balance
-        return "余额不足"
-    
+        else:
+            print("余额不足或金额无效")
+
     def get_balance(self):
         return self.balance
+
+account = BankAccount(100)
+account.deposit(50)
+account.withdraw(30)
+print(account.get_balance())
 ```
 </details>
 
-### 挑战练习
-
-**题目 3**：实现 `Student` 继承 `Person`，添加成绩管理功能。
-
 ## 费曼学习法检验
 
-1. **这是什么**：类和对象有什么区别？实例属性和类属性的区别？
+用自己的话回答以下问题：
 
-2. **为什么需要**：为什么需要面向对象？函数式编程不够用吗？
-
-3. **怎么用**：向新手解释 `self` 是什么？为什么方法的第一个参数是 `self`？
-
-4. **注意事项**：什么时候用继承，什么时候用组合？
+1. **这是什么**：类和对象分别是什么？
+2. **为什么需要**：为什么要把数据和方法放在同一个类里？
+3. **怎么用**：`__init__` 和 `self` 分别有什么作用？
+4. **注意事项**：实例属性和类属性有什么区别？
 
 ::: tip 学习建议
-面向对象是编程思维的升级！理解封装、继承、多态三大特性。
+面向对象入门时先抓住一句话：类是模板，对象是具体实例，方法是对象能做的事。
 :::

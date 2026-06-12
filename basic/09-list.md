@@ -1,142 +1,244 @@
 # 列表（list）
 
-## 列表创建
+## 核心概念
 
-```python
-# 空列表
-empty = []
-lst = list()
-
-# 包含元素的列表
-numbers = [1, 2, 3, 4, 5]
-mixed = [1, "hello", 3.14, True]
-nested = [[1, 2], [3, 4]]
-```
-
-## 访问元素
+列表用于保存一组有顺序的数据。一个列表可以保存多个值，并且可以修改、添加、删除。
 
 ```python
 fruits = ["apple", "banana", "orange"]
-fruits[0]   # 'apple'
-fruits[-1]  # 'orange'
+print(fruits)
+```
+
+列表适合表示“多个同类或相关的数据”，比如学生名单、商品列表、待办事项。
+
+## 列表创建
+
+```python
+empty = []
+numbers = [1, 2, 3, 4, 5]
+names = ["Alice", "Bob", "Charlie"]
+mixed = [1, "hello", 3.14, True]
+```
+
+列表中可以放不同类型的数据，但实际开发中，更推荐一个列表保存同一类数据。
+
+## 访问元素
+
+列表索引从 `0` 开始，和字符串一样。
+
+```python
+fruits = ["apple", "banana", "orange"]
+
+print(fruits[0])   # apple
+print(fruits[1])   # banana
+print(fruits[-1])  # orange
+```
+
+访问不存在的索引会报错：
+
+```python
+# print(fruits[10])  # IndexError
 ```
 
 ## 切片
 
+列表也支持切片。
+
 ```python
-nums = [0, 1, 2, 3, 4, 5]
-nums[1:4]   # [1, 2, 3]
-nums[:3]    # [0, 1, 2]
-nums[3:]    # [3, 4, 5]
-nums[::2]   # [0, 2, 4]
+numbers = [0, 1, 2, 3, 4, 5]
+
+print(numbers[1:4])  # [1, 2, 3]
+print(numbers[:3])   # [0, 1, 2]
+print(numbers[3:])   # [3, 4, 5]
+print(numbers[::2])  # [0, 2, 4]
 ```
+
+切片会生成一个新列表。
 
 ## 修改列表
 
+列表是可变的，可以直接修改元素。
+
 ```python
-lst = [1, 2, 3]
-lst[0] = 10  # [10, 2, 3]
+scores = [80, 90, 70]
+scores[0] = 85
+
+print(scores)  # [85, 90, 70]
 ```
 
-## 常用方法
-
-### 添加元素
+## 添加元素
 
 ```python
-lst = [1, 2, 3]
+tasks = ["写作业"]
 
-# append: 末尾添加
-lst.append(4)  # [1, 2, 3, 4]
+tasks.append("复习 Python")
+print(tasks)  # ['写作业', '复习 Python']
 
-# insert: 指定位置插入
-lst.insert(0, 0)  # [0, 1, 2, 3, 4]
+tasks.insert(0, "吃早餐")
+print(tasks)  # ['吃早餐', '写作业', '复习 Python']
 
-# extend: 扩展列表
-lst.extend([5, 6])  # [0, 1, 2, 3, 4, 5, 6]
+tasks.extend(["运动", "阅读"])
+print(tasks)
 ```
 
-### 删除元素
+区别：
+
+- `append()`：把一个元素加到末尾。
+- `insert()`：把一个元素插入指定位置。
+- `extend()`：把另一组元素追加进来。
+
+## 删除元素
 
 ```python
-lst = [1, 2, 3, 4, 5]
+numbers = [1, 2, 3, 4, 5]
 
-# remove: 删除指定值
-lst.remove(3)  # [1, 2, 4, 5]
+numbers.remove(3)
+print(numbers)  # [1, 2, 4, 5]
 
-# pop: 删除指定索引
-lst.pop()      # [1, 2, 4] (删除末尾)
-lst.pop(0)     # [2, 4] (删除索引 0)
+last = numbers.pop()
+print(last)     # 5
+print(numbers)  # [1, 2, 4]
 
-# clear: 清空列表
-lst.clear()    # []
+numbers.clear()
+print(numbers)  # []
 ```
 
-### 排序和反转
+区别：
+
+- `remove(value)`：按值删除。
+- `pop()`：删除并返回元素，默认删除最后一个。
+- `clear()`：清空列表。
+
+## 遍历列表
+
+列表经常配合循环使用。
 
 ```python
-nums = [3, 1, 4, 1, 5]
+fruits = ["apple", "banana", "orange"]
 
-# sort: 原地排序
-nums.sort()           # [1, 1, 3, 4, 5]
-nums.sort(reverse=True)  # [5, 4, 3, 1, 1]
-
-# reverse: 反转
-nums.reverse()  # [1, 1, 3, 4, 5]
-
-# sorted: 返回新列表
-sorted([3, 1, 2])  # [1, 2, 3]
+for fruit in fruits:
+    print(fruit)
 ```
 
-### 其他方法
+如果需要索引，可以使用 `range()`：
 
 ```python
-lst = [1, 2, 3, 2, 4]
+fruits = ["apple", "banana", "orange"]
 
-lst.count(2)   # 2 (计数)
-lst.index(3)   # 2 (查找索引)
-len(lst)       # 5 (长度)
+for i in range(len(fruits)):
+    print(i, fruits[i])
+```
+
+## 排序和反转
+
+```python
+numbers = [3, 1, 4, 1, 5]
+
+numbers.sort()
+print(numbers)  # [1, 1, 3, 4, 5]
+
+numbers.reverse()
+print(numbers)  # [5, 4, 3, 1, 1]
+```
+
+`sort()` 会修改原列表。如果想保留原列表，可以使用 `sorted()`：
+
+```python
+numbers = [3, 1, 2]
+new_numbers = sorted(numbers)
+
+print(numbers)      # [3, 1, 2]
+print(new_numbers)  # [1, 2, 3]
+```
+
+## 常用操作
+
+```python
+numbers = [1, 2, 3, 2, 4]
+
+print(len(numbers))       # 5
+print(numbers.count(2))   # 2
+print(numbers.index(3))   # 2
+print(2 in numbers)       # True
 ```
 
 ## 列表推导式
 
+列表推导式可以用更短的写法生成新列表。
+
+普通循环写法：
+
 ```python
-# 基本形式
-squares = [x**2 for x in range(5)]  # [0, 1, 4, 9, 16]
+squares = []
 
-# 带条件
-evens = [x for x in range(10) if x % 2 == 0]  # [0, 2, 4, 6, 8]
+for number in range(1, 6):
+    squares.append(number ** 2)
 
-# 嵌套
-matrix = [[i*j for j in range(3)] for i in range(3)]
+print(squares)
 ```
+
+列表推导式写法：
+
+```python
+squares = [number ** 2 for number in range(1, 6)]
+print(squares)
+```
+
+也可以加条件：
+
+```python
+evens = [number for number in range(1, 11) if number % 2 == 0]
+print(evens)
+```
+
+初学时，先写普通循环。熟练后再使用列表推导式。
 
 ## 使用场景
 
-### 场景 1：数据收集
-存储批量数据、用户列表。
+### 场景 1：保存待办事项
 
-### 场景 2：算法实现
-排序、搜索、栈、队列。
+```python
+tasks = ["写作业", "复习", "运动"]
+```
 
-### 场景 3：数据处理
-数据过滤、转换、聚合。
+### 场景 2：保存多个分数
 
-### 场景 4：配置管理
-菜单选项、权限列表。
+```python
+scores = [90, 85, 100]
+```
+
+### 场景 3：批量处理文本
+
+```python
+names = ["alice", "bob", "charlie"]
+
+for name in names:
+    print(name.title())
+```
+
+### 场景 4：生成一组数据
+
+```python
+numbers = []
+
+for i in range(1, 6):
+    numbers.append(i)
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：创建列表 `[1, 2, 3, 4, 5]`，删除所有偶数。
+**题目 1**：创建列表 `[1, 2, 3, 4, 5]`，把每个元素逐行输出。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-lst = [1, 2, 3, 4, 5]
-lst = [x for x in lst if x % 2 != 0]
-print(lst)  # [1, 3, 5]
+numbers = [1, 2, 3, 4, 5]
+
+for number in numbers:
+    print(number)
 ```
 </details>
 
@@ -148,43 +250,70 @@ print(lst)  # [1, 3, 5]
 ```python
 list1 = [1, 2, 3]
 list2 = [4, 5, 6]
-merged = list1 + list2  # [1, 2, 3, 4, 5, 6]
+
+merged = list1 + list2
+print(merged)
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：找出列表 `[3, 1, 4, 1, 5, 9, 2, 6]` 中的最大值和最小值。
+**题目 3**：删除列表 `[1, 2, 3, 4, 5]` 中的所有偶数，生成一个只包含奇数的新列表。
 
 <details>
 <summary>💡 查看答案</summary>
 
+普通循环写法：
+
 ```python
-lst = [3, 1, 4, 1, 5, 9, 2, 6]
-print(f"最大值: {max(lst)}, 最小值: {min(lst)}")
+numbers = [1, 2, 3, 4, 5]
+odds = []
+
+for number in numbers:
+    if number % 2 != 0:
+        odds.append(number)
+
+print(odds)
+```
+
+列表推导式写法：
+
+```python
+numbers = [1, 2, 3, 4, 5]
+odds = [number for number in numbers if number % 2 != 0]
+
+print(odds)
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现列表去重并保持原顺序（不能用 set）。
+**题目 4**：列表 `[3, 1, 3, 2, 1, 5]` 中有重复元素，请去重并保持原来的出现顺序。
 
 <details>
-<summary>💡 查看提示</summary>
+<summary>💡 查看答案</summary>
 
-使用字典或临时列表跟踪已出现的元素。
+```python
+numbers = [3, 1, 3, 2, 1, 5]
+result = []
+
+for number in numbers:
+    if number not in result:
+        result.append(number)
+
+print(result)  # [3, 1, 2, 5]
+```
 </details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：列表和元组有什么区别？为什么需要不可变的元组？
+用自己的话回答以下问题：
 
-2. **为什么需要**：为什么列表推导式比 for 循环更快？
-
-3. **怎么用**：向新手解释 `append()` 和 `extend()` 的区别？
-
-4. **注意事项**：`lst.sort()` 和 `sorted(lst)` 有什么区别？
+1. **这是什么**：列表是什么？它适合保存什么数据？
+2. **为什么需要**：为什么有了变量还需要列表？
+3. **怎么用**：如何添加、删除、遍历列表元素？
+4. **注意事项**：`append()` 和 `extend()` 有什么区别？
 
 ::: tip 学习建议
-列表是 Python 最常用的数据结构！掌握增删改查和推导式是关键。
+列表是最常用的数据结构之一。先把增删改查和循环遍历练熟，再追求更短的写法。
 :::

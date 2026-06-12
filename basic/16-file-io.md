@@ -1,5 +1,17 @@
 # 文件操作
 
+## 核心概念
+
+文件操作用于把数据保存到磁盘，或者从磁盘读取数据。程序运行时的数据会随着程序结束而消失，写入文件后，数据可以长期保存。
+
+常见文件操作包括：
+
+- 读取文件内容。
+- 写入新内容。
+- 追加内容。
+- 复制文件。
+- 检查文件路径。
+
 ## 打开文件
 
 ```python
@@ -137,6 +149,25 @@ os.path.join("dir", "file.txt")
 os.path.getsize("file.txt")
 ```
 
+## 文件和目录操作
+
+```python
+import os
+
+# 创建目录
+os.mkdir("new_folder")
+os.makedirs("path/to/folder")  # 递归创建
+
+# 删除文件
+os.remove("file.txt")
+
+# 删除空目录
+os.rmdir("folder")
+
+# 重命名
+os.rename("old.txt", "new.txt")
+```
+
 ## 使用场景
 
 ### 场景 1：数据持久化
@@ -201,7 +232,20 @@ copy_file("source.txt", "dest.txt")
 
 ### 挑战练习
 
-**题目 4**：实现日志追加功能，每次记录时间戳和内容。
+**题目 4**：实现简单日志追加功能，每次把用户输入的一行内容追加到 `log.txt`。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+message = input("请输入日志内容: ")
+
+with open("log.txt", "a", encoding="utf-8") as f:
+    f.write(message + "\n")
+
+print("已写入日志")
+```
+</details>
 
 ## 费曼学习法检验
 
@@ -216,22 +260,3 @@ copy_file("source.txt", "dest.txt")
 ::: tip 学习建议
 文件操作是实用技能！掌握读写、路径操作和异常处理。
 :::
-
-## 文件和目录操作
-
-```python
-import os
-
-# 创建目录
-os.mkdir("new_folder")
-os.makedirs("path/to/folder")  # 递归创建
-
-# 删除文件
-os.remove("file.txt")
-
-# 删除空目录
-os.rmdir("folder")
-
-# 重命名
-os.rename("old.txt", "new.txt")
-```

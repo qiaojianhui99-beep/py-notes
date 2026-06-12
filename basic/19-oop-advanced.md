@@ -1,115 +1,160 @@
 # 面向对象进阶
 
+## 核心概念
+
+面向对象进阶关注类之间的关系，以及如何让对象表现得更自然。核心内容包括：
+
+- 继承：复用已有类的属性和方法。
+- 方法重写：子类改变父类方法的行为。
+- 多态：不同对象用同一个方法名完成各自的操作。
+- 属性控制：用方法保护数据。
+- 特殊方法：让对象支持 `print()`、`len()`、比较等内置操作。
+
 ## 继承
 
-子类继承父类的属性和方法。
+继承表示“子类是一种父类”。子类会拥有父类的属性和方法。
 
 ```python
 class Animal:
     def __init__(self, name):
         self.name = name
-    
-    def speak(self):
-        pass
+
+    def eat(self):
+        print(f"{self.name} 正在吃东西")
 
 class Dog(Animal):
-    def speak(self):
-        return f"{self.name} 汪汪叫"
-
-class Cat(Animal):
-    def speak(self):
-        return f"{self.name} 喵喵叫"
+    def bark(self):
+        print(f"{self.name} 汪汪叫")
 
 dog = Dog("旺财")
-print(dog.speak())  # 旺财 汪汪叫
+dog.eat()
+dog.bark()
 ```
+
+`Dog` 继承了 `Animal`，所以 `dog` 可以调用 `eat()`。
 
 ## 方法重写
 
+子类可以重新定义父类已有的方法。
+
 ```python
 class Animal:
-    def move(self):
-        print("动物移动")
+    def speak(self):
+        print("动物发出声音")
 
-class Bird(Animal):
-    def move(self):  # 重写父类方法
-        print("鸟儿飞翔")
+class Dog(Animal):
+    def speak(self):
+        print("汪汪")
 
-bird = Bird()
-bird.move()  # 鸟儿飞翔
+dog = Dog()
+dog.speak()
 ```
+
+这叫方法重写。调用时会优先使用子类自己的实现。
 
 ## super() 函数
 
-调用父类的方法。
+`super()` 用来调用父类的方法，常用于扩展父类初始化逻辑。
 
 ```python
-class Animal:
+class Person:
     def __init__(self, name):
         self.name = name
 
-class Dog(Animal):
-    def __init__(self, name, breed):
-        super().__init__(name)  # 调用父类构造方法
-        self.breed = breed
+class Student(Person):
+    def __init__(self, name, score):
+        super().__init__(name)
+        self.score = score
 
-dog = Dog("旺财", "金毛")
-print(dog.name)   # 旺财
-print(dog.breed)  # 金毛
+student = Student("Alice", 95)
+print(student.name)
+print(student.score)
 ```
 
+如果子类需要父类的初始化内容，不要重复写一遍，优先使用 `super()`。
+
 ## 多继承
+
+Python 支持一个类继承多个父类。
 
 ```python
 class Flyable:
     def fly(self):
-        print("飞翔")
+        print("可以飞")
 
 class Swimmable:
     def swim(self):
-        print("游泳")
+        print("可以游泳")
 
 class Duck(Flyable, Swimmable):
     pass
 
 duck = Duck()
-duck.fly()   # 飞翔
-duck.swim()  # 游泳
+duck.fly()
+duck.swim()
 ```
 
-## 封装
+多继承容易让关系变复杂。初学阶段优先掌握单继承。
 
-### 私有属性
+## 多态
+
+多态表示不同对象可以用同一个方法名响应同一类操作。
 
 ```python
-class BankAccount:
-    def __init__(self, balance):
-        self.__balance = balance  # 私有
-    
-    def deposit(self, amount):
-        if amount > 0:
-            self.__balance += amount
-    
-    def get_balance(self):
-        return self.__balance
+class Dog:
+    def speak(self):
+        return "汪汪"
 
-account = BankAccount(1000)
-# account.__balance  # 错误
-account.deposit(500)
-print(account.get_balance())  # 1500
+class Cat:
+    def speak(self):
+        return "喵喵"
+
+animals = [Dog(), Cat()]
+
+for animal in animals:
+    print(animal.speak())
 ```
 
-### 属性装饰器
+调用者不需要关心对象具体是什么类，只要它有 `speak()` 方法即可。
+
+## 属性控制
+
+有些属性不能随意修改，可以通过方法控制。
 
 ```python
 class Person:
     def __init__(self, age):
         self._age = age
-    
+
+    def get_age(self):
+        return self._age
+
+    def set_age(self, age):
+        if 0 <= age <= 120:
+            self._age = age
+        else:
+            print("年龄无效")
+
+person = Person(18)
+person.set_age(20)
+print(person.get_age())
+```
+
+这种写法清楚，但访问起来有点啰嗦。
+
+## @property
+
+`@property` 可以把方法包装成属性一样访问。
+
+```python
+class Person:
+    def __init__(self, age):
+        self._age = age
+
     @property
     def age(self):
         return self._age
-    
+
     @age.setter
     def age(self, value):
         if 0 <= value <= 120:
@@ -117,87 +162,65 @@ class Person:
         else:
             raise ValueError("年龄无效")
 
-person = Person(25)
-print(person.age)  # 25
-person.age = 30    # OK
-# person.age = -5  # ValueError
+person = Person(18)
+print(person.age)
+person.age = 20
 ```
 
-## 多态
+这样既保留了属性访问的简洁，又能在赋值时做检查。
 
-同一方法在不同对象中有不同实现。
+## 常用特殊方法
 
-```python
-class Animal:
-    def speak(self):
-        pass
+特殊方法也常被叫作魔法方法，名字前后都有双下划线。
 
-class Dog(Animal):
-    def speak(self):
-        return "汪汪"
+### __str__()
 
-class Cat(Animal):
-    def speak(self):
-        return "喵喵"
-
-def make_speak(animal):
-    print(animal.speak())
-
-dog = Dog()
-cat = Cat()
-make_speak(dog)  # 汪汪
-make_speak(cat)  # 喵喵
-```
-
-## 常用魔法方法
+控制 `print()` 对象时显示什么。
 
 ```python
 class Book:
-    def __init__(self, title, pages):
+    def __init__(self, title):
         self.title = title
-        self.pages = pages
-    
-    def __str__(self):
-        # print() 时调用
-        return f"{self.title} ({self.pages}页)"
-    
-    def __repr__(self):
-        # 开发者表示
-        return f"Book('{self.title}', {self.pages})"
-    
-    def __len__(self):
-        # len() 调用
-        return self.pages
-    
-    def __eq__(self, other):
-        # == 比较
-        return self.title == other.title
-    
-    def __lt__(self, other):
-        # < 比较
-        return self.pages < other.pages
 
-book = Book("Python", 300)
-print(book)       # Python (300页)
-print(len(book))  # 300
+    def __str__(self):
+        return f"《{self.title}》"
+
+book = Book("Python 入门")
+print(book)
 ```
 
-## 抽象基类
+### __len__()
+
+让对象支持 `len()`。
 
 ```python
-from abc import ABC, abstractmethod
+class Team:
+    def __init__(self, members):
+        self.members = members
 
-class Animal(ABC):
-    @abstractmethod
-    def speak(self):
-        pass
+    def __len__(self):
+        return len(self.members)
 
-class Dog(Animal):
-    def speak(self):
-        return "汪汪"
+team = Team(["Alice", "Bob"])
+print(len(team))
+```
 
-# animal = Animal()  # 错误：不能实例化抽象类
-dog = Dog()
+### __eq__()
+
+控制两个对象如何判断相等。
+
+```python
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+p1 = Point(1, 2)
+p2 = Point(1, 2)
+print(p1 == p2)
 ```
 
 ## isinstance() 和 issubclass()
@@ -211,96 +234,125 @@ class Dog(Animal):
 
 dog = Dog()
 
-# 检查实例类型
-isinstance(dog, Dog)     # True
-isinstance(dog, Animal)  # True
-
-# 检查子类关系
-issubclass(Dog, Animal)  # True
+print(isinstance(dog, Dog))      # True
+print(isinstance(dog, Animal))   # True
+print(issubclass(Dog, Animal))   # True
 ```
+
+- `isinstance()`：判断对象是不是某个类的实例。
+- `issubclass()`：判断一个类是不是另一个类的子类。
 
 ## 使用场景
 
-### 场景 1：数据验证
-使用属性装饰器验证输入。
+### 场景 1：复用共同属性
 
-### 场景 2：运算符重载
-实现自定义类的比较、运算。
+```python
+class User:
+    def __init__(self, name):
+        self.name = name
 
-### 场景 3：上下文管理
-数据库连接、文件处理。
+class Admin(User):
+    pass
+```
 
-### 场景 4：元编程
-ORM 框架、API 客户端。
+### 场景 2：不同对象统一调用
+
+```python
+for animal in animals:
+    animal.speak()
+```
+
+### 场景 3：保护属性赋值
+
+```python
+person.age = 30
+```
+
+### 场景 4：让对象更易读
+
+```python
+print(book)
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：为 `Person` 类添加 `@property` 装饰器，年龄只读。
+**题目 1**：创建 `Animal` 父类和 `Dog` 子类，让 `Dog` 继承 `name` 属性并新增 `bark()` 方法。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+class Dog(Animal):
+    def bark(self):
+        return f"{self.name} 汪汪叫"
+
+dog = Dog("旺财")
+print(dog.bark())
+```
+</details>
+
+### 进阶练习
+
+**题目 2**：创建 `Person` 和 `Student`，`Student` 使用 `super()` 复用姓名属性，并新增分数字段。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
 class Person:
-    def __init__(self, name, age):
-        self._name = name
-        self._age = age
-    
-    @property
-    def age(self):
-        return self._age
+    def __init__(self, name):
+        self.name = name
 
-person = Person("Alice", 25)
-print(person.age)  # 25
-# person.age = 30  # AttributeError
-```
-</details>
+class Student(Person):
+    def __init__(self, name, score):
+        super().__init__(name)
+        self.score = score
 
-### 进阶练习
+    def is_passed(self):
+        return self.score >= 60
 
-**题目 2**：实现 `Vector` 类，支持加法和点积运算。
-
-<details>
-<summary>💡 查看答案</summary>
-
-```python
-class Vector:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-    
-    def __add__(self, other):
-        return Vector(self.x + other.x, self.y + other.y)
-    
-    def dot(self, other):
-        return self.x * other.x + self.y * other.y
-    
-    def __repr__(self):
-        return f"Vector({self.x}, {self.y})"
-
-v1 = Vector(1, 2)
-v2 = Vector(3, 4)
-print(v1 + v2)      # Vector(4, 6)
-print(v1.dot(v2))   # 11
+student = Student("Alice", 85)
+print(student.name)
+print(student.is_passed())
 ```
 </details>
 
 ### 挑战练习
 
-**题目 3**：实现自定义上下文管理器 `Timer`，自动计时代码块执行时间。
+**题目 3**：创建 `Product` 类，实现 `__str__()`，让 `print(product)` 输出商品名和价格。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+class Product:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+    def __str__(self):
+        return f"{self.name}: {self.price:.2f} 元"
+
+product = Product("键盘", 199)
+print(product)
+```
+</details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：`@property` 和普通方法有什么区别？为什么要用它？
+用自己的话回答以下问题：
 
-2. **为什么需要**：抽象基类有什么用？为什么不直接用普通类？
-
-3. **怎么用**：向新手解释魔术方法的命名规则和常用场景？
-
-4. **注意事项**：什么时候需要自定义 `__str__` 和 `__repr__`？
+1. **这是什么**：继承、方法重写、多态分别是什么意思？
+2. **为什么需要**：为什么子类调用父类初始化时要用 `super()`？
+3. **怎么用**：如何用 `@property` 检查属性赋值？
+4. **注意事项**：什么时候继承会让代码变复杂？
 
 ::: tip 学习建议
-OOP 进阶特性让代码更 Pythonic！掌握装饰器、魔术方法是关键。
+继承不是为了少写几行代码，而是为了表达“某类对象属于另一类对象”。关系不清楚时，不要急着用继承。
 :::

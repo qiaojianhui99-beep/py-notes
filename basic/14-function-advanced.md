@@ -1,255 +1,284 @@
 # 函数进阶
 
+## 核心概念
+
+函数进阶关注的是“怎样让函数更灵活”。本章会学习默认参数、关键字参数、可变参数、lambda 表达式和递归。
+
+这些内容都建立在上一章的基础上：函数有输入、处理过程和返回值。
+
 ## 默认参数
+
+默认参数让调用函数时可以少传一部分参数。
 
 ```python
 def greet(name, message="Hello"):
-    print(f"{message}, {name}!")
+    return f"{message}, {name}!"
 
-greet("Alice")              # Hello, Alice!
-greet("Bob", "Hi")          # Hi, Bob!
+print(greet("Alice"))
+print(greet("Bob", "Hi"))
 ```
+
+默认参数适合表示常用值。
+
+注意：默认参数通常不要使用可变对象，比如列表。这个细节后续进阶章节会继续讲。
 
 ## 关键字参数
 
-```python
-def person_info(name, age, city):
-    print(f"{name}, {age}岁, 来自{city}")
+调用函数时，可以用参数名明确指定值。
 
-# 使用关键字参数（顺序无关）
-person_info(age=25, city="Beijing", name="Alice")
+```python
+def introduce(name, age, city):
+    print(f"{name}，{age}岁，来自{city}")
+
+introduce(name="Alice", age=18, city="Beijing")
+introduce(city="Shanghai", name="Bob", age=20)
 ```
 
-## 可变参数：*args
+关键字参数的好处是更清楚，顺序也不容易写错。
 
-接收任意数量的位置参数，存储为元组。
+## 位置参数和关键字参数混用
+
+位置参数要写在关键字参数前面。
+
+```python
+def order(product, count, price):
+    total = count * price
+    print(f"{product}: {total:.2f}")
+
+order("键盘", count=2, price=199.0)
+```
+
+下面写法不合法：
+
+```python
+# order(product="键盘", 2, 199.0)
+```
+
+## 可变位置参数：*args
+
+`*args` 可以接收任意数量的位置参数，函数内部把它们当作元组使用。
 
 ```python
 def sum_all(*numbers):
     total = 0
-    for num in numbers:
-        total += num
+
+    for number in numbers:
+        total += number
+
     return total
 
-sum_all(1, 2, 3)       # 6
-sum_all(1, 2, 3, 4, 5) # 15
+print(sum_all(1, 2, 3))
+print(sum_all(1, 2, 3, 4, 5))
 ```
 
-## 可变参数：**kwargs
+`args` 只是常见名字，真正起作用的是前面的 `*`。
 
-接收任意数量的关键字参数，存储为字典。
+## 可变关键字参数：**kwargs
+
+`**kwargs` 可以接收任意数量的关键字参数，函数内部把它们当作字典使用。
 
 ```python
-def print_info(**kwargs):
-    for key, value in kwargs.items():
+def show_info(**info):
+    for key, value in info.items():
         print(f"{key}: {value}")
 
-print_info(name="Alice", age=25, city="Beijing")
+show_info(name="Alice", age=18, city="Beijing")
 ```
 
-## 混合使用
+`kwargs` 也是约定俗成的名字，真正起作用的是 `**`。
 
-参数顺序：位置参数 → *args → 关键字参数 → **kwargs
+## 参数顺序
+
+常见参数顺序：
 
 ```python
-def func(a, b, *args, x=10, **kwargs):
-    print(f"a={a}, b={b}")
-    print(f"args={args}")
-    print(f"x={x}")
-    print(f"kwargs={kwargs}")
-
-func(1, 2, 3, 4, x=20, name="Alice", age=25)
+def func(a, b, *args, c=10, **kwargs):
+    print(a)
+    print(b)
+    print(args)
+    print(c)
+    print(kwargs)
 ```
+
+初学阶段不需要刻意写复杂参数。知道读到这种函数时每部分代表什么即可。
 
 ## lambda 表达式
 
-匿名函数，用于简单操作。
+`lambda` 用来创建简单的匿名函数。
+
+普通函数：
 
 ```python
-# 普通函数
-def add(a, b):
-    return a + b
+def square(x):
+    return x ** 2
+```
 
-# lambda 表达式
-add = lambda a, b: a + b
+lambda 写法：
 
-# 常见用法：作为参数
-numbers = [1, 2, 3, 4, 5]
-squares = list(map(lambda x: x**2, numbers))  # [1, 4, 9, 16, 25]
+```python
+square = lambda x: x ** 2
+
+print(square(5))
+```
+
+lambda 适合非常短的逻辑。复杂逻辑应使用普通函数。
+
+常见场景是配合 `sorted()` 指定排序规则：
+
+```python
+students = [
+    {"name": "Alice", "score": 90},
+    {"name": "Bob", "score": 85},
+    {"name": "Charlie", "score": 95}
+]
+
+sorted_students = sorted(students, key=lambda student: student["score"])
+print(sorted_students)
 ```
 
 ## 递归函数
 
-函数调用自身。
+递归是函数调用自己。
 
 ```python
-# 阶乘
+def countdown(n):
+    if n <= 0:
+        print("结束")
+    else:
+        print(n)
+        countdown(n - 1)
+
+countdown(3)
+```
+
+递归必须有终止条件，否则会一直调用下去。
+
+经典例子：阶乘。
+
+```python
 def factorial(n):
     if n == 0 or n == 1:
         return 1
     return n * factorial(n - 1)
 
-factorial(5)  # 120
-
-# 斐波那契数列
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
-
-fibonacci(6)  # 8
+print(factorial(5))  # 120
 ```
 
-## 装饰器基础
-
-函数装饰器用于在不修改原函数的情况下增强功能。
-
-```python
-def log_decorator(func):
-    def wrapper(*args, **kwargs):
-        print(f"调用 {func.__name__}")
-        result = func(*args, **kwargs)
-        print(f"{func.__name__} 完成")
-        return result
-    return wrapper
-
-@log_decorator
-def add(a, b):
-    return a + b
-
-add(3, 5)
-# 输出:
-# 调用 add
-# add 完成
-```
-
-## 类型注解（Python 3.10+）
-
-```python
-# Python 3.10+ 使用 | 表示联合类型
-def process(value: int | str) -> str:
-    return str(value)
-
-# 泛型函数
-def first(items: list[int]) -> int | None:
-    return items[0] if items else None
-
-# 旧版本写法（Python 3.9-）
-from typing import Union, List, Optional
-
-def process_old(value: Union[int, str]) -> str:
-    return str(value)
-
-def first_old(items: List[int]) -> Optional[int]:
-    return items[0] if items else None
-```
-
-## 高阶函数
-
-### map()
-
-```python
-numbers = [1, 2, 3, 4]
-squares = list(map(lambda x: x**2, numbers))  # [1, 4, 9, 16]
-```
-
-### filter()
-
-```python
-numbers = [1, 2, 3, 4, 5, 6]
-evens = list(filter(lambda x: x % 2 == 0, numbers))  # [2, 4, 6]
-```
-
-### reduce()
-
-```python
-from functools import reduce
-
-numbers = [1, 2, 3, 4]
-result = reduce(lambda x, y: x + y, numbers)  # 10
-```
+递归适合天然可以拆成“小一号同类问题”的场景。简单循环能解决的问题，初学阶段优先用循环。
 
 ## 使用场景
 
-### 场景 1：API 设计
-灵活的参数接口，向后兼容。
+### 场景 1：给函数提供默认行为
 
-### 场景 2：装饰器开发
-日志、权限、缓存等增强功能。
+```python
+def greet(name, message="你好"):
+    print(f"{message}，{name}")
+```
 
-### 场景 3：函数式编程
-map/filter/reduce 数据处理。
+### 场景 2：接收不固定数量的数据
 
-### 场景 4：回调函数
-事件处理、异步编程。
+```python
+def sum_all(*numbers):
+    total = 0
+    for number in numbers:
+        total += number
+    return total
+```
+
+### 场景 3：保存额外信息
+
+```python
+def show_info(**info):
+    print(info)
+```
+
+### 场景 4：处理递归结构
+
+```python
+def countdown(n):
+    if n > 0:
+        countdown(n - 1)
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：编写函数 `greet(name, greeting="Hello")`，支持默认问候语。
+**题目 1**：编写函数 `greet(name, message="你好")`，支持默认问候语。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-def greet(name, greeting="Hello"):
-    return f"{greeting}, {name}!"
+def greet(name, message="你好"):
+    return f"{message}，{name}"
 
-print(greet("Alice"))          # Hello, Alice!
-print(greet("Bob", "Hi"))      # Hi, Bob!
+print(greet("Alice"))
+print(greet("Bob", "早上好"))
 ```
 </details>
 
-**题目 2**：使用 lambda 对列表 `[1, 2, 3, 4, 5]` 进行平方操作。
+**题目 2**：编写函数 `sum_all(*numbers)`，返回所有参数的和。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-numbers = [1, 2, 3, 4, 5]
-squares = list(map(lambda x: x**2, numbers))
-print(squares)  # [1, 4, 9, 16, 25]
+def sum_all(*numbers):
+    total = 0
+
+    for number in numbers:
+        total += number
+
+    return total
+
+print(sum_all(1, 2, 3))
+print(sum_all(10, 20, 30, 40))
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：编写 `sum_all(*args, **kwargs)`，返回所有数字参数的和。
+**题目 3**：编写函数 `show_profile(**info)`，逐行输出用户信息。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-def sum_all(*args, **kwargs):
-    total = sum(args)
-    total += sum(kwargs.values())
-    return total
+def show_profile(**info):
+    for key, value in info.items():
+        print(f"{key}: {value}")
 
-print(sum_all(1, 2, 3, a=4, b=5))  # 15
+show_profile(name="Alice", age=18, city="Beijing")
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现一个计时装饰器 `@timer`，测量函数执行时间并打印。
+**题目 4**：使用递归编写 `factorial(n)`，计算 `n` 的阶乘。
 
 <details>
-<summary>💡 查看提示</summary>
+<summary>💡 查看答案</summary>
 
-使用 `time.time()` 记录开始和结束时间。
+```python
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n - 1)
+
+print(factorial(5))
+```
 </details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：`*args` 和 `**kwargs` 的本质是什么？它们的类型是什么？
+用自己的话回答以下问题：
 
-2. **为什么需要**：为什么 lambda 表达式不能包含多条语句？
-
-3. **怎么用**：向新手解释装饰器的执行顺序和原理？
-
-4. **注意事项**：递归函数为什么需要终止条件？没有会怎样？
+1. **这是什么**：默认参数、`*args`、`**kwargs` 分别解决什么问题？
+2. **为什么需要**：为什么关键字参数能让函数调用更清楚？
+3. **怎么用**：什么时候可以考虑使用 lambda？
+4. **注意事项**：递归函数为什么必须有终止条件？
 
 ::: tip 学习建议
-掌握高级函数特性让代码更优雅！装饰器和 lambda 是 Python 的精华。
+函数参数越灵活，越需要保持清楚。初学阶段先写简单函数，只有确实需要时再使用可变参数。
 :::

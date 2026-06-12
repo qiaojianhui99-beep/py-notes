@@ -1,217 +1,254 @@
 # 常用标准库
 
-## os 模块
+## 核心概念
 
-操作系统接口。
+标准库是 Python 自带的一组模块。安装 Python 后就可以直接使用，不需要额外安装。
 
-```python
-import os
+Python 常被称为“自带电池”的语言，因为标准库已经提供了很多常用能力，比如文件系统、日期时间、数学计算、随机数和 JSON 处理。
 
-# 当前目录
-os.getcwd()
-
-# 列出目录
-os.listdir(".")
-
-# 创建目录
-os.mkdir("new_folder")
-os.makedirs("path/to/folder")
-
-# 删除
-os.remove("file.txt")
-os.rmdir("folder")
-
-# 重命名
-os.rename("old.txt", "new.txt")
-
-# 路径操作
-os.path.join("dir", "file.txt")
-os.path.exists("file.txt")
-os.path.isfile("file.txt")
-os.path.isdir("folder")
-os.path.getsize("file.txt")
-```
-
-## sys 模块
-
-系统参数和函数。
-
-```python
-import sys
-
-# Python 版本
-print(sys.version)
-
-# 命令行参数
-print(sys.argv)
-
-# 退出程序
-sys.exit(0)
-
-# 模块搜索路径
-print(sys.path)
-```
-
-## datetime 模块
-
-日期和时间。
-
-```python
-from datetime import datetime, date, time, timedelta
-
-# 当前时间
-now = datetime.now()
-print(now)  # 2024-06-11 10:30:00
-
-# 当前日期
-today = date.today()
-print(today)  # 2024-06-11
-
-# 创建日期时间
-dt = datetime(2024, 6, 11, 10, 30)
-
-# 格式化
-now.strftime("%Y-%m-%d %H:%M:%S")  # "2024-06-11 10:30:00"
-
-# 解析
-datetime.strptime("2024-06-11", "%Y-%m-%d")
-
-# 时间差
-delta = timedelta(days=7)
-next_week = today + delta
-```
-
-## math 模块
-
-数学函数。
+使用标准库的一般步骤：
 
 ```python
 import math
 
-# 常数
-math.pi     # 3.141592653589793
-math.e      # 2.718281828459045
-
-# 基本运算
-math.sqrt(16)    # 4.0
-math.pow(2, 3)   # 8.0
-math.ceil(3.2)   # 4
-math.floor(3.8)  # 3
-
-# 三角函数
-math.sin(math.pi/2)  # 1.0
-math.cos(0)          # 1.0
-
-# 对数
-math.log(10)      # 2.302585...
-math.log10(100)   # 2.0
+print(math.sqrt(16))
 ```
+
+## os 模块
+
+`os` 用于和操作系统交互。
+
+```python
+import os
+
+print(os.getcwd())      # 当前工作目录
+print(os.listdir("."))  # 当前目录内容
+```
+
+常用操作：
+
+```python
+import os
+
+os.path.exists("data.txt")
+os.path.isfile("data.txt")
+os.path.isdir("docs")
+os.path.join("docs", "index.md")
+```
+
+创建和删除文件目录时要谨慎：
+
+```python
+import os
+
+os.mkdir("new_folder")
+# os.remove("old.txt")
+# os.rmdir("empty_folder")
+```
+
+## sys 模块
+
+`sys` 提供和 Python 运行环境相关的信息。
+
+```python
+import sys
+
+print(sys.version)
+print(sys.platform)
+print(sys.path)
+```
+
+命令行参数：
+
+```python
+import sys
+
+print(sys.argv)
+```
+
+当你运行 `python app.py hello` 时，`sys.argv` 中会包含脚本名和参数。
+
+## datetime 模块
+
+`datetime` 用于处理日期和时间。
+
+```python
+from datetime import date, datetime, timedelta
+
+today = date.today()
+now = datetime.now()
+
+print(today)
+print(now)
+```
+
+日期计算：
+
+```python
+from datetime import date, timedelta
+
+today = date.today()
+next_week = today + timedelta(days=7)
+
+print(next_week)
+```
+
+格式化时间：
+
+```python
+from datetime import datetime
+
+now = datetime.now()
+print(now.strftime("%Y-%m-%d %H:%M:%S"))
+```
+
+## math 模块
+
+`math` 提供常用数学函数。
+
+```python
+import math
+
+print(math.pi)
+print(math.sqrt(16))
+print(math.ceil(3.2))
+print(math.floor(3.8))
+```
+
+注意：`math.pow(2, 3)` 返回浮点数，普通幂运算 `2 ** 3` 更常用。
 
 ## random 模块
 
-随机数生成。
+`random` 用于生成随机数。
 
 ```python
 import random
 
-# 随机浮点数 [0.0, 1.0)
-random.random()
+print(random.random())      # 0 到 1 之间的随机小数
+print(random.randint(1, 6)) # 1 到 6 之间的随机整数
+```
 
-# 随机整数 [a, b]
-random.randint(1, 10)
+随机选择：
 
-# 随机选择
-random.choice([1, 2, 3, 4, 5])
+```python
+import random
 
-# 随机打乱
-lst = [1, 2, 3, 4, 5]
-random.shuffle(lst)
+names = ["Alice", "Bob", "Charlie"]
+print(random.choice(names))
+```
 
-# 随机抽样
-random.sample([1, 2, 3, 4, 5], 3)  # [3, 1, 4]
+打乱列表：
+
+```python
+import random
+
+numbers = [1, 2, 3, 4, 5]
+random.shuffle(numbers)
+print(numbers)
 ```
 
 ## json 模块
 
-JSON 数据处理。
+JSON 是常见的数据交换格式，写法类似 Python 字典和列表。
 
 ```python
 import json
 
-# Python 对象转 JSON 字符串
-data = {"name": "Alice", "age": 25}
-json_str = json.dumps(data)
-print(json_str)  # '{"name": "Alice", "age": 25}'
+user = {"name": "Alice", "age": 18}
+text = json.dumps(user, ensure_ascii=False)
 
-# JSON 字符串转 Python 对象
-json_str = '{"name": "Bob", "age": 30}'
-data = json.loads(json_str)
-print(data["name"])  # Bob
-
-# 写入 JSON 文件
-with open("data.json", "w") as f:
-    json.dump(data, f, indent=2)
-
-# 读取 JSON 文件
-with open("data.json", "r") as f:
-    data = json.load(f)
+print(text)
 ```
 
-## tomllib 模块（Python 3.11+）
-
-读取 TOML 配置文件。
+JSON 字符串转 Python 对象：
 
 ```python
-# Python 3.11+ 内置 tomllib
-import tomllib
+import json
 
-with open("config.toml", "rb") as f:
-    config = tomllib.load(f)
+text = '{"name": "Alice", "age": 18}'
+user = json.loads(text)
 
-# 旧版本需要安装第三方库
-# pip install tomli
-import tomli
+print(user["name"])
+```
 
-with open("config.toml", "rb") as f:
-    config = tomli.load(f)
+写入 JSON 文件：
+
+```python
+import json
+
+user = {"name": "Alice", "age": 18}
+
+with open("user.json", "w", encoding="utf-8") as f:
+    json.dump(user, f, ensure_ascii=False, indent=2)
+```
+
+读取 JSON 文件：
+
+```python
+import json
+
+with open("user.json", "r", encoding="utf-8") as f:
+    user = json.load(f)
+
+print(user)
 ```
 
 ## 使用场景
 
-### 场景 1：日期时间处理
-定时任务、日志记录。
+### 场景 1：处理路径和目录
 
-### 场景 2：文件系统操作
-批量处理文件、目录管理。
+```python
+import os
 
-### 场景 3：数据序列化
-API 接口、配置文件。
+path = os.path.join("data", "users.txt")
+```
 
-### 场景 4：随机数生成
-测试数据、游戏开发。
+### 场景 2：记录当前时间
+
+```python
+from datetime import datetime
+
+print(datetime.now())
+```
+
+### 场景 3：生成随机结果
+
+```python
+import random
+
+print(random.randint(1, 100))
+```
+
+### 场景 4：保存结构化数据
+
+```python
+import json
+
+data = {"theme": "dark"}
+text = json.dumps(data)
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：计算从今天到你的生日还有多少天。
+**题目 1**：使用 `datetime` 输出今天的日期，以及 7 天后的日期。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-from datetime import datetime, date
+from datetime import date, timedelta
 
 today = date.today()
-birthday = date(today.year, 12, 25)  # 假设生日是 12 月 25 日
-if birthday < today:
-    birthday = date(today.year + 1, 12, 25)
-days = (birthday - today).days
-print(f"还有 {days} 天")
+next_week = today + timedelta(days=7)
+
+print(today)
+print(next_week)
 ```
 </details>
 
-**题目 2**：生成 10 个 1-100 之间的随机整数。
+**题目 2**：生成 10 个 1 到 100 之间的随机整数。
 
 <details>
 <summary>💡 查看答案</summary>
@@ -219,89 +256,66 @@ print(f"还有 {days} 天")
 ```python
 import random
 
-numbers = [random.randint(1, 100) for _ in range(10)]
+numbers = []
+
+for i in range(10):
+    numbers.append(random.randint(1, 100))
+
 print(numbers)
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：递归遍历目录，找出所有 `.py` 文件并统计总行数。
+**题目 3**：把字典 `{"name": "Alice", "age": 18}` 写入 `user.json`，再读取出来。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-import os
+import json
 
-def count_lines(directory):
-    total = 0
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith('.py'):
-                path = os.path.join(root, file)
-                with open(path, 'r', encoding='utf-8') as f:
-                    total += len(f.readlines())
-    return total
+user = {"name": "Alice", "age": 18}
 
-print(count_lines('.'))
+with open("user.json", "w", encoding="utf-8") as f:
+    json.dump(user, f, ensure_ascii=False, indent=2)
+
+with open("user.json", "r", encoding="utf-8") as f:
+    loaded_user = json.load(f)
+
+print(loaded_user)
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现一个 JSON 配置文件管理器，支持读取、修改、保存。
+**题目 4**：模拟掷骰子 20 次，统计每个点数出现的次数。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+import random
+
+counter = {}
+
+for i in range(20):
+    point = random.randint(1, 6)
+    counter[point] = counter.get(point, 0) + 1
+
+print(counter)
+```
+</details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：标准库和第三方库有什么区别？如何选择？
+用自己的话回答以下问题：
 
-2. **为什么需要**：为什么推荐用 `pathlib` 而不是 `os.path`？
-
-3. **怎么用**：向新手解释时区的概念，以及如何处理时区问题？
-
-4. **注意事项**：`random` 模块生成的随机数是真随机吗？适合加密吗？
+1. **这是什么**：标准库和第三方库有什么区别？
+2. **为什么需要**：为什么优先使用标准库，而不是自己从零写所有功能？
+3. **怎么用**：导入模块后，如何调用模块里的函数？
+4. **注意事项**：`random` 适合普通随机，为什么不适合安全敏感场景？
 
 ::: tip 学习建议
-标准库是 Python 的宝藏！"batteries included" 理念让很多功能开箱即用。
+标准库不需要背完。先记住常用模块名，遇到日期、路径、随机数、JSON 时知道去查对应模块即可。
 :::
-
-
-## re 模块
-
-正则表达式（基础）。
-
-```python
-import re
-
-# 匹配
-pattern = r"\d+"
-result = re.search(pattern, "abc123def")
-print(result.group())  # "123"
-
-# 查找所有
-re.findall(r"\d+", "a1b2c3")  # ['1', '2', '3']
-
-# 替换
-re.sub(r"\d+", "X", "a1b2c3")  # "aXbXcX"
-
-# 分割
-re.split(r"\s+", "a b  c   d")  # ['a', 'b', 'c', 'd']
-```
-
-## time 模块
-
-时间相关函数。
-
-```python
-import time
-
-# 当前时间戳
-time.time()  # 1686466200.123
-
-# 暂停
-time.sleep(2)  # 暂停 2 秒
-
-# 格式化时间
-time.strftime("%Y-%m-%d %H:%M:%S")
-```

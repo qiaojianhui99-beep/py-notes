@@ -1,6 +1,14 @@
 # 版本差异对照
 
-本文档汇总 Python 3.10+ 引入的新语法与旧版本的对比。
+## 核心概念
+
+Python 会持续发布新版本。新版本会带来更简洁的语法、更好的性能和新的标准库能力。
+
+学习版本差异不是为了追新，而是为了知道：
+
+- 当前项目能使用哪些语法。
+- 阅读旧代码时为什么写法不同。
+- 团队协作时为什么要统一 Python 版本。
 
 ## Python 3.10
 
@@ -43,20 +51,11 @@ def http_status(code):
 
 ## Python 3.11
 
-### 1. 异常组 ExceptionGroup
+### 1. 更清晰的错误提示
 
-```python
-# Python 3.11+
-try:
-    raise ExceptionGroup("错误组", [
-        ValueError("错误1"),
-        TypeError("错误2")
-    ])
-except* ValueError as e:
-    print("处理 ValueError")
-except* TypeError as e:
-    print("处理 TypeError")
-```
+Python 3.11 改进了错误定位。很多语法错误和运行时错误会指出更具体的位置，阅读报错时更容易找到问题表达式。
+
+学习建议：遇到报错时，先看最后一行的异常类型，再回到箭头或行号指向的位置。
 
 ### 2. tomllib 模块
 
@@ -68,18 +67,15 @@ import tomllib
 import tomli
 ```
 
-### 3. 异常合并
+### 3. 多异常捕获仍使用元组
+
+Python 3.11 对异常提示做了大量改进，很多报错会指出更精确的位置。对初学者来说，这能更快定位哪一段表达式出了问题。
+
+捕获多个普通异常时，仍然推荐使用元组写法：
 
 ```python
-# Python 3.11+
 try:
-    pass
-except ValueError | TypeError as e:
-    print(e)
-
-# Python 3.10-
-try:
-    pass
+    number = int("abc")
 except (ValueError, TypeError) as e:
     print(e)
 ```
@@ -218,12 +214,12 @@ def handle_status_old(code):
 
 ### 挑战练习
 
-**题目 3**：编写兼容 Python 3.9+ 和 3.10+ 的代码，使用条件判断选择不同语法。
+**题目 3**：为一个新项目写一段版本选择说明：说明为什么选择 Python 3.14，以及如果团队有人使用旧版本会遇到什么问题。
 
 <details>
-<summary>💡 查看提示</summary>
+<summary>💡 查看参考答案</summary>
 
-使用 `sys.version_info` 判断版本。
+本项目选择 Python 3.14，因为它可以使用现代类型注解、`match-case`、更新的标准库和更好的错误提示。团队应统一 Python 版本，否则旧版本可能无法运行新语法，例如 `int | str` 或 `match-case`。如果必须兼容旧版本，需要在文档中明确最低支持版本，并避免使用超过该版本的语法。
 </details>
 
 ## 费曼学习法检验

@@ -1,36 +1,93 @@
 # 字符串操作
 
+## 核心概念
+
+字符串是文本数据，类型是 `str`。姓名、消息、路径、邮箱、命令行输入，本质上都经常用字符串表示。
+
+```python
+name = "Alice"
+message = "Hello, Python"
+```
+
+字符串是有顺序的，每个字符都有位置编号，这个编号叫索引。
+
 ## 字符串定义
+
+可以使用单引号或双引号：
 
 ```python
 s1 = "Hello"
 s2 = 'World'
-s3 = """多行
-字符串"""
 ```
 
-## 索引和切片
+多行字符串使用三引号：
 
 ```python
-s = "Python"
-
-# 索引
-s[0]    # 'P'
-s[-1]   # 'n'
-
-# 切片 [start:stop:step]
-s[0:3]  # 'Pyt'
-s[:3]   # 'Pyt'
-s[3:]   # 'hon'
-s[::2]  # 'Pto'
-s[::-1] # 'nohtyP' (反转)
+text = """第一行
+第二行
+第三行"""
 ```
 
-## 字符串拼接
+如果字符串中包含引号，可以交替使用：
 
 ```python
-"Hello" + " " + "World"  # 'Hello World'
-"Python" * 3             # 'PythonPythonPython'
+message = "I'm learning Python"
+quote = '他说："你好"'
+```
+
+## 索引
+
+索引从 `0` 开始。
+
+```python
+word = "Python"
+
+print(word[0])   # P
+print(word[1])   # y
+print(word[-1])  # n
+```
+
+负数索引从右往左数，`-1` 表示最后一个字符。
+
+## 切片
+
+切片用于取出字符串的一部分。
+
+```python
+word = "Python"
+
+print(word[0:3])   # Pyt
+print(word[:3])    # Pyt
+print(word[3:])    # hon
+print(word[::2])   # Pto
+print(word[::-1])  # nohtyP
+```
+
+切片格式：
+
+```text
+字符串[start:stop:step]
+```
+
+`stop` 位置不会被包含。
+
+## 字符串拼接和重复
+
+使用 `+` 拼接字符串：
+
+```python
+first_name = "Alice"
+last_name = "Green"
+
+full_name = first_name + " " + last_name
+print(full_name)
+```
+
+使用 `*` 重复字符串：
+
+```python
+line = "-" * 20
+print(line)
 ```
 
 ## 常用方法
@@ -38,135 +95,209 @@ s[::-1] # 'nohtyP' (反转)
 ### 大小写转换
 
 ```python
-s = "Hello World"
-s.upper()       # 'HELLO WORLD'
-s.lower()       # 'hello world'
-s.capitalize()  # 'Hello world'
-s.title()       # 'Hello World'
+text = "Hello Python"
+
+print(text.upper())       # HELLO PYTHON
+print(text.lower())       # hello python
+print(text.capitalize())  # Hello python
+print(text.title())       # Hello Python
 ```
 
 ### 查找和替换
 
 ```python
-s = "Hello World"
-s.find("World")      # 6
-s.replace("World", "Python")  # 'Hello Python'
-s.count("l")         # 3
+text = "Hello Python"
+
+print(text.find("Python"))       # 6
+print(text.count("o"))           # 2
+print(text.replace("Python", "World"))  # Hello World
 ```
+
+`find()` 找不到时返回 `-1`。
 
 ### 去除空白
 
 ```python
-s = "  Hello  "
-s.strip()   # 'Hello'
-s.lstrip()  # 'Hello  '
-s.rstrip()  # '  Hello'
+text = "  Hello  "
+
+print(text.strip())   # Hello
+print(text.lstrip())  # Hello··
+print(text.rstrip())  # ··Hello
 ```
 
-### 分割和连接
-
-```python
-# 分割
-"a,b,c".split(",")  # ['a', 'b', 'c']
-
-# 连接
-"-".join(["a", "b", "c"])  # 'a-b-c'
-```
+上面的点只是为了说明空白位置，实际输出中不会显示点。
 
 ### 判断方法
 
 ```python
-s = "Python"
-s.startswith("Py")  # True
-s.endswith("on")    # True
-s.isalpha()         # True (全是字母)
-s.isdigit()         # False
-"123".isdigit()     # True
+text = "Python"
+
+print(text.startswith("Py"))  # True
+print(text.endswith("on"))    # True
+print(text.isalpha())         # True
+print("123".isdigit())        # True
+```
+
+## 成员判断
+
+可以用 `in` 判断字符串中是否包含某段内容：
+
+```python
+email = "user@example.com"
+
+print("@" in email)      # True
+print(".com" in email)   # True
 ```
 
 ## 转义字符
 
+有些字符需要特殊写法。
+
 ```python
-print("Hello\nWorld")  # 换行
-print("Hello\tWorld")  # 制表符
-print("He said \"Hi\"")  # 引号
-print("C:\\Users")     # 反斜杠
-print(r"C:\Users")     # 原始字符串
+print("Hello\nWorld")      # 换行
+print("Hello\tWorld")      # 制表符
+print("He said \"Hi\"")    # 双引号
+print("C:\\Users\\Alice")  # 反斜杠
+```
+
+如果路径中反斜杠很多，可以使用原始字符串：
+
+```python
+path = r"C:\Users\Alice"
+print(path)
+```
+
+## 字符串不可变
+
+字符串创建后，不能直接修改其中某个字符。
+
+```python
+word = "Python"
+# word[0] = "J"  # 会报错
+```
+
+如果需要“修改”，通常是创建一个新字符串：
+
+```python
+word = "Python"
+new_word = "J" + word[1:]
+print(new_word)  # Jython
 ```
 
 ## 使用场景
 
-### 场景 1：文本处理
-数据清洗、格式转换、内容提取。
+### 场景 1：清理用户输入
 
-### 场景 2：用户输入验证
-邮箱格式、手机号检查。
+```python
+name = "  Alice  "
+clean_name = name.strip()
+```
 
-### 场景 3：文件路径操作
-路径拼接、文件名提取。
+### 场景 2：检查简单格式
 
-### 场景 4：爬虫数据处理
-HTML 标签清理、关键词提取。
+```python
+email = "user@example.com"
+is_email_like = "@" in email and "." in email
+```
+
+### 场景 3：生成显示文本
+
+```python
+name = "Alice"
+message = f"欢迎你，{name}"
+```
+
+### 场景 4：逐个处理字符
+
+```python
+word = "Python"
+
+for char in word:
+    print(char)
+```
 
 ## 练习题
 
 ### 基础练习
 
-**题目 1**：统计字符串 "Hello World" 中字母 'l' 出现的次数。
+**题目 1**：统计字符串 `"Hello World"` 中字母 `l` 出现的次数。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-s = "Hello World"
-print(s.count('l'))  # 3
+text = "Hello World"
+print(text.count("l"))  # 3
 ```
 </details>
 
-**题目 2**：判断邮箱字符串是否包含 "@" 和 "."。
+**题目 2**：判断字符串是否同时包含 `@` 和 `.`。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
 email = "user@example.com"
+
 if "@" in email and "." in email:
-    print("邮箱格式可能正确")
+    print("格式可能正确")
+else:
+    print("格式可能不正确")
 ```
 </details>
 
 ### 进阶练习
 
-**题目 3**：实现函数 `reverse_words(s: str) -> str`，反转句子中每个单词但保持单词顺序。
-例：`"Hello World"` → `"olleH dlroW"`
+**题目 3**：输入一句话，输出去除首尾空白后的内容、全大写内容和反转后的内容。
 
 <details>
 <summary>💡 查看答案</summary>
 
 ```python
-def reverse_words(s: str) -> str:
-    words = s.split()
-    reversed_words = [word[::-1] for word in words]
-    return " ".join(reversed_words)
+text = input("请输入一句话: ")
+clean_text = text.strip()
 
-print(reverse_words("Hello World"))  # olleH dlroW
+print(clean_text)
+print(clean_text.upper())
+print(clean_text[::-1])
 ```
 </details>
 
 ### 挑战练习
 
-**题目 4**：实现一个简单的密码强度检查器，检查密码长度、是否包含大小写字母、数字。
+**题目 4**：输入一个密码，检查它是否至少 8 位，并且同时包含数字和字母。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+password = input("请输入密码: ")
+
+has_digit = False
+has_alpha = False
+
+for char in password:
+    if char.isdigit():
+        has_digit = True
+    if char.isalpha():
+        has_alpha = True
+
+if len(password) >= 8 and has_digit and has_alpha:
+    print("密码格式合格")
+else:
+    print("密码至少 8 位，并且要包含数字和字母")
+```
+</details>
 
 ## 费曼学习法检验
 
-1. **这是什么**：字符串为什么是不可变的？这带来什么好处和限制？
+用自己的话回答以下问题：
 
-2. **为什么需要**：`split()` 和 `join()` 为什么是互逆操作？它们解决什么问题？
-
-3. **怎么用**：向新手解释字符串切片 `s[::2]` 和 `s[::-1]` 的含义？
-
-4. **注意事项**：为什么路径字符串推荐用原始字符串 `r"path"`？
+1. **这是什么**：字符串、索引、切片分别是什么？
+2. **为什么需要**：为什么字符串不能直接修改某个字符？
+3. **怎么用**：如何取出字符串的前三个字符？如何反转字符串？
+4. **注意事项**：`find()` 找不到内容时会返回什么？
 
 ::: tip 学习建议
-字符串操作是 Python 最常用的功能！熟练掌握切片、拼接、查找替换是基本功。
+字符串方法很多，不需要一次背完。先掌握索引、切片、`strip()`、`replace()`、`count()` 和成员判断。
 :::
