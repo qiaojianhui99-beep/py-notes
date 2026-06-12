@@ -562,6 +562,6 @@ siege -c 100 -t 60s http://example.com/
 
 ## 下一步
 
-- **[Docker 容器化](../deployment/03-docker.md)** - Nginx 容器化部署
-- **[监控与日志](../deployment/05-monitoring.md)** - Nginx 监控方案
-- **[Linux 服务器部署](../deployment/02-linux-server.md)** - Nginx 基础配置
+- **[Docker 容器化](03-docker.md)** - Nginx 容器化部署
+- **[监控与日志](05-monitoring.md)** - Nginx 监控方案
+- **[Linux 服务器部署](02-linux-server.md)** - Nginx 基础配置

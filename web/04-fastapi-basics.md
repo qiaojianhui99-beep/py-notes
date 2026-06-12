@@ -538,4 +538,4 @@ SECRET_KEY=your-secret-key
 
 - **[Flask 入门](02-flask-basics.md)** - 轻量级框架
 - **[Django 入门](05-django-basics.md)** - 全栈式框架
-- **[RESTful API 设计](09-restful-api.md)** - API 设计最佳实践
+- **[RESTful API 设计](07-restful-api.md)** - API 设计最佳实践

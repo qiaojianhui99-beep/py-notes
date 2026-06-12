@@ -547,4 +547,4 @@ sudo systemctl status mysql
 
 - **[Docker 容器化](03-docker.md)** - 更现代化的部署方式
 - **[CI/CD 自动化](04-cicd.md)** - GitHub Actions 自动部署
-- **[Nginx 进阶](05-nginx-advanced.md)** - 负载均衡、缓存优化
+- **[Nginx 进阶](06-nginx-advanced.md)** - 负载均衡、缓存优化

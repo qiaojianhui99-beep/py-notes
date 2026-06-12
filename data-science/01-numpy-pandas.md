@@ -175,5 +175,5 @@ pd.concat([df1, df2], axis=1)  # 横向
 
 ## 下一步
 
-- **[数据可视化](../data-science/02-visualization.md)** - Matplotlib 绘图
-- **[机器学习入门](../data-science/03-ml-basics.md)** - Scikit-learn 基础
+- **数据可视化** - Matplotlib 绘图
+- **机器学习入门** - Scikit-learn 基础

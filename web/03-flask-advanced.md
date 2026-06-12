@@ -533,4 +533,4 @@ def test_create_user(client):
 ## 下一步
 
 - **[Django 入门](05-django-basics.md)** - 全栈式框架
-- **[FastAPI 入门](08-fastapi-basics.md)** - 高性能异步框架
+- **[FastAPI 入门](04-fastapi-basics.md)** - 高性能异步框架

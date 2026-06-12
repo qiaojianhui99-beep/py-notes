@@ -571,4 +571,4 @@ def create_order():
 
 - **[Docker 容器化](../deployment/03-docker.md)** - 微服务容器化
 - **[Kubernetes 入门](../deployment/07-kubernetes.md)** - 微服务编排
-- **[RESTful API 设计](../web/07-restful-api.md)** - 服务间接口设计
+- **[RESTful API 设计](07-restful-api.md)** - 服务间接口设计

@@ -257,4 +257,4 @@ if __name__ == '__main__':
 
 - **[Flask 入门](02-flask-basics.md)** - 轻量级 Web 框架
 - **[Django 入门](05-django-basics.md)** - 全栈式框架
-- **[FastAPI 入门](08-fastapi-basics.md)** - 现代化高性能框架
+- **[FastAPI 入门](04-fastapi-basics.md)** - 现代化高性能框架
