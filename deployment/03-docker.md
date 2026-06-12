@@ -617,4 +617,4 @@ FROM alpine:latest
 ## 下一步
 
 - **[CI/CD 自动化](04-cicd.md)** - GitHub Actions 自动构建和部署
-- **[Kubernetes 编排](06-kubernetes.md)** - 大规模容器编排
+- **[Kubernetes 编排](07-kubernetes.md)** - 大规模容器编排

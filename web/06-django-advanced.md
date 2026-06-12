@@ -629,6 +629,6 @@ if settings.DEBUG:
 
 ## 下一步
 
-- **[RESTful API 设计](09-restful-api.md)** - API 设计最佳实践
+- **[RESTful API 设计](07-restful-api.md)** - API 设计最佳实践
 - **[Flask 进阶](03-flask-advanced.md)** - 对比学习
 - **[部署指南](../deployment/)** - 部署 Django 应用

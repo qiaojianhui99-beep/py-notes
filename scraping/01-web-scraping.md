@@ -371,5 +371,5 @@ with open('douban_top250.json', 'w', encoding='utf-8') as f:
 
 ## 下一步
 
-- **[数据分析基础](01-numpy-pandas.md)** - 处理爬取的数据
+- **[数据分析基础](../data-science/01-numpy-pandas.md)** - 处理爬取的数据
 - **[异步编程](../advanced/09-asyncio-basics.md)** - 提升爬虫性能

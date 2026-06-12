@@ -564,6 +564,6 @@ def handle_message(data):
 
 ## 下一步
 
-- **[Nginx 高级配置](08-nginx-advanced.md)** - WebSocket 代理配置
+- **[Nginx 高级配置](../deployment/06-nginx-advanced.md)** - WebSocket 代理配置
 - **[Flask 进阶](03-flask-advanced.md)** - Flask-SocketIO 集成
 - **[Django 进阶](06-django-advanced.md)** - Django Channels 深入

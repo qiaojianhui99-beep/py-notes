@@ -476,4 +476,4 @@ if __name__ == '__main__':
 
 - **[Flask 进阶](03-flask-advanced.md)** - 数据库集成、表单验证、RESTful API
 - **[Django 入门](05-django-basics.md)** - 全栈式框架
-- **[FastAPI 入门](08-fastapi-basics.md)** - 现代化高性能框架
+- **[FastAPI 入门](04-fastapi-basics.md)** - 现代化高性能框架
