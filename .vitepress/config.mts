@@ -23,6 +23,8 @@ export default defineConfig({
       { text: '数据库', link: '/database/', activeMatch: '/database/' },
       { text: 'Web 框架', link: '/web/', activeMatch: '/web/' },
       { text: '部署', link: '/deployment/', activeMatch: '/deployment/' },
+      { text: '数据科学', link: '/data-science/', activeMatch: '/data-science/' },
+      { text: '爬虫', link: '/scraping/', activeMatch: '/scraping/' },
     ],
 
     // 每个 tab 对应一套侧边栏。后续加文章时，在对应分区的 items 里加一行即可。
@@ -84,6 +86,7 @@ export default defineConfig({
             { text: 'Dataclass', link: '/advanced/16-dataclass' },
             { text: '类型注解进阶', link: '/advanced/17-typing-advanced' },
             { text: 'Concurrent.futures', link: '/advanced/18-concurrent-futures' },
+            { text: '单元测试进阶', link: '/advanced/19-testing-advanced' },
           ],
         },
       ],
@@ -109,8 +112,18 @@ export default defineConfig({
       '/web/': [
         {
           text: 'Web 框架',
+          collapsed: false,
           items: [
             { text: '简介', link: '/web/' },
+            { text: 'HTTP 基础', link: '/web/01-http-basics' },
+            { text: 'Flask 入门', link: '/web/02-flask-basics' },
+            { text: 'Flask 进阶', link: '/web/03-flask-advanced' },
+            { text: 'FastAPI 入门', link: '/web/04-fastapi-basics' },
+            { text: 'Django 入门', link: '/web/05-django-basics' },
+            { text: 'Django 进阶', link: '/web/06-django-advanced' },
+            { text: 'RESTful API 设计', link: '/web/07-restful-api' },
+            { text: 'WebSocket 实时通信', link: '/web/08-websocket' },
+            { text: '微服务架构', link: '/web/09-microservices' },
           ],
         },
       ],
@@ -120,7 +133,31 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: '简介', link: '/deployment/' },
-            { text: 'GitHub 项目部署', link: '/deployment/github-pages' },
+            { text: 'GitHub Pages 部署', link: '/deployment/github-pages' },
+            { text: 'Linux 服务器部署', link: '/deployment/02-linux-server' },
+            { text: 'Docker 容器化', link: '/deployment/03-docker' },
+            { text: 'CI/CD 自动化', link: '/deployment/04-cicd' },
+            { text: '监控与日志', link: '/deployment/05-monitoring' },
+            { text: 'Nginx 高级配置', link: '/deployment/06-nginx-advanced' },
+            { text: 'Kubernetes 入门', link: '/deployment/07-kubernetes' },
+          ],
+        },
+      ],
+      '/data-science/': [
+        {
+          text: '数据科学',
+          collapsed: false,
+          items: [
+            { text: 'NumPy 与 Pandas 基础', link: '/data-science/01-numpy-pandas' },
+          ],
+        },
+      ],
+      '/scraping/': [
+        {
+          text: '爬虫开发',
+          collapsed: false,
+          items: [
+            { text: 'Python 爬虫开发', link: '/scraping/01-web-scraping' },
           ],
         },
       ],

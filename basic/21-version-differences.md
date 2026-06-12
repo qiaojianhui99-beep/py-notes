@@ -89,10 +89,15 @@ except (ValueError, TypeError) as e:
 ### 1. f-string 改进
 
 ```python
-# Python 3.12+ 支持调试信息
+# Python 3.8+ 就已支持 = 调试语法
 x = 10
 print(f"{x = }")  # x = 10
 print(f"{sum([1,2,3]) = }")  # sum([1,2,3]) = 6
+
+# Python 3.12 新增：支持内联表达式的多行和反斜杠
+text = f"""结果: {
+    1 + 2 + 3
+}"""
 ```
 
 ### 2. 类型参数语法
