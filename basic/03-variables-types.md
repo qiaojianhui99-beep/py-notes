@@ -163,6 +163,64 @@ current_page = "home"
 error_message = None
 ```
 
+## 易错点
+
+### 易错点 1：类型转换失败未处理
+
+❌ **错误示例**：
+```python
+age = int("abc")  # ValueError: invalid literal for int()
+```
+
+✅ **正确示例**：
+```python
+text = "abc"
+try:
+    age = int(text)
+except ValueError:
+    print("转换失败，请输入数字")
+```
+
+**说明**：字符串不能转换为数字时会报错。实际开发中应该处理转换失败的情况。
+
+### 易错点 2：浮点数精度问题
+
+❌ **错误现象**：
+```python
+print(0.1 + 0.2)  # 0.30000000000000004
+print(0.1 + 0.2 == 0.3)  # False
+```
+
+✅ **正确做法**：
+```python
+from decimal import Decimal
+
+a = Decimal("0.1")
+b = Decimal("0.2")
+print(a + b)  # 0.3
+
+# 或者比较时使用容差
+result = 0.1 + 0.2
+print(abs(result - 0.3) < 0.0001)  # True
+```
+
+**说明**：浮点数在计算机中采用二进制存储，某些小数无法精确表示。涉及精确计算（如金额）时应使用 `Decimal` 类型。
+
+### 易错点 3：变量未赋值就使用
+
+❌ **错误示例**：
+```python
+print(name)  # NameError: name 'name' is not defined
+```
+
+✅ **正确示例**：
+```python
+name = "Alice"
+print(name)
+```
+
+**说明**：Python 不允许使用未定义的变量。拼写错误也会导致同样的错误。
+
 ## 练习题
 
 ### 基础练习

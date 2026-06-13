@@ -178,6 +178,72 @@ while password != "123456":
 print("登录成功")
 ```
 
+## 易错点
+
+### 易错点 1：死循环 - 忘记更新循环条件
+
+❌ **错误示例**：
+```python
+count = 0
+while count < 5:
+    print("Hello")  # 忘记更新 count，无限循环
+```
+
+✅ **正确示例**：
+```python
+count = 0
+while count < 5:
+    print("Hello")
+    count += 1  # 必须更新条件变量
+```
+
+**说明**：`while` 循环必须保证条件最终会变为 `False`，否则会无限循环。
+
+### 易错点 2：`range()` 的右边界不包含
+
+❌ **错误理解**：
+```python
+# 想输出 1 到 10
+for i in range(1, 10):  # 实际只输出 1 到 9
+    print(i)
+```
+
+✅ **正确做法**：
+```python
+# 输出 1 到 10
+for i in range(1, 11):  # 右边界要写 11
+    print(i)
+```
+
+**说明**：`range(start, stop)` 不包含 `stop`。这是 Python 的设计习惯。
+
+### 易错点 3：在循环中修改正在遍历的列表
+
+❌ **错误示例**：
+```python
+numbers = [1, 2, 3, 4, 5]
+for num in numbers:
+    if num % 2 == 0:
+        numbers.remove(num)  # 可能跳过元素
+print(numbers)  # [1, 3, 5]，但 4 被跳过了
+```
+
+✅ **正确做法**：
+```python
+numbers = [1, 2, 3, 4, 5]
+# 方法 1：遍历副本
+for num in numbers[:]:
+    if num % 2 == 0:
+        numbers.remove(num)
+
+# 方法 2：创建新列表
+numbers = [1, 2, 3, 4, 5]
+numbers = [num for num in numbers if num % 2 != 0]
+print(numbers)  # [1, 3, 5]
+```
+
+**说明**：遍历列表的同时修改它会导致索引错乱。应该遍历副本或创建新列表。
+
 ## 练习题
 
 ### 基础练习

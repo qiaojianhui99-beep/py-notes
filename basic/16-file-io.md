@@ -182,6 +182,77 @@ CSV、JSON、TXT 文件处理。
 ### 场景 4：爬虫数据存储
 保存网页、图片、数据。
 
+## 易错点
+
+### 易错点 1：忘记关闭文件
+
+❌ **错误示例**：
+```python
+f = open("data.txt", "r")
+content = f.read()
+# 忘记 f.close()，资源泄漏
+```
+
+✅ **正确做法**：
+```python
+# 方法 1：使用 with 语句（推荐）
+with open("data.txt", "r") as f:
+    content = f.read()
+# 文件自动关闭
+
+# 方法 2：显式关闭
+f = open("data.txt", "r")
+try:
+    content = f.read()
+finally:
+    f.close()
+```
+
+**说明**：不关闭文件会占用系统资源。`with` 语句会自动关闭文件，是最安全的方式。
+
+### 易错点 2：使用错误的编码
+
+❌ **错误示例**：
+```python
+# 文件是 UTF-8 编码，但用默认编码打开
+with open("data.txt", "r") as f:  # Windows 上可能是 GBK
+    content = f.read()  # UnicodeDecodeError
+```
+
+✅ **正确做法**：
+```python
+# 明确指定编码
+with open("data.txt", "r", encoding="utf-8") as f:
+    content = f.read()
+```
+
+**说明**：不同系统的默认编码不同（Windows 常用 GBK，Linux/Mac 常用 UTF-8）。建议始终显式指定 `encoding="utf-8"`。
+
+### 易错点 3：覆盖模式 `"w"` 会清空原文件
+
+❌ **错误示例**：
+```python
+# 想追加内容，但用了 "w" 模式
+with open("log.txt", "w") as f:  # 原文件内容被清空！
+    f.write("新日志\n")
+```
+
+✅ **正确做法**：
+```python
+# 追加模式 "a"
+with open("log.txt", "a") as f:
+    f.write("新日志\n")
+
+# 或者先读取，再写入（如果需要修改）
+with open("log.txt", "r") as f:
+    content = f.read()
+
+with open("log.txt", "w") as f:
+    f.write(content + "新日志\n")
+```
+
+**说明**：`"w"` 模式会清空文件原有内容。追加内容应该使用 `"a"` 模式。
+
 ## 练习题
 
 ### 基础练习

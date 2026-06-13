@@ -210,6 +210,74 @@ status = {200: "成功", 404: "未找到"}
 print(status.get(200))
 ```
 
+## 易错点
+
+### 易错点 1：访问不存在的键导致 KeyError
+
+❌ **错误示例**：
+```python
+person = {"name": "Alice", "age": 18}
+print(person["city"])  # KeyError: 'city'
+```
+
+✅ **正确做法**：
+```python
+person = {"name": "Alice", "age": 18}
+# 方法 1：使用 get()（推荐）
+city = person.get("city", "未知")
+print(city)  # 未知
+
+# 方法 2：先检查键是否存在
+if "city" in person:
+    print(person["city"])
+else:
+    print("键不存在")
+```
+
+**说明**：直接访问不存在的键会报错。使用 `get()` 更安全，找不到时返回默认值。
+
+### 易错点 2：字典的键必须是不可变类型
+
+❌ **错误示例**：
+```python
+data = {[1, 2]: "value"}  # TypeError: unhashable type: 'list'
+data = {{1, 2}: "value"}  # TypeError: unhashable type: 'set'
+```
+
+✅ **正确做法**：
+```python
+# 可以使用的键类型
+data1 = {1: "a"}           # 数字
+data2 = {"name": "Alice"}  # 字符串
+data3 = {(1, 2): "point"}  # 元组（元组内元素也必须不可变）
+```
+
+**说明**：字典的键必须是不可变类型（如数字、字符串、元组）。列表、字典、集合不能作为键。
+
+### 易错点 3：遍历时修改字典大小
+
+❌ **错误示例**：
+```python
+person = {"name": "Alice", "age": 18, "city": "Beijing"}
+for key in person:
+    if key == "age":
+        del person[key]  # RuntimeError: dictionary changed size during iteration
+```
+
+✅ **正确做法**：
+```python
+person = {"name": "Alice", "age": 18, "city": "Beijing"}
+# 方法 1：遍历键的列表副本
+for key in list(person.keys()):
+    if key == "age":
+        del person[key]
+
+# 方法 2：字典推导式创建新字典
+person = {k: v for k, v in person.items() if k != "age"}
+```
+
+**说明**：遍历字典时不能改变字典大小。应该遍历键的副本或创建新字典。
+
 ## 练习题
 
 ### 基础练习

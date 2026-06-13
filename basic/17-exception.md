@@ -209,6 +209,85 @@ except ValueError:
     number = 0
 ```
 
+## 易错点
+
+### 易错点 1：捕获所有异常后不处理
+
+❌ **错误示例**：
+```python
+try:
+    result = 10 / 0
+except:
+    pass  # 吞掉所有错误，什么都不做
+```
+
+✅ **正确做法**：
+```python
+try:
+    result = 10 / 0
+except ZeroDivisionError as e:
+    print(f"除数为 0: {e}")
+    # 或者记录日志、返回默认值等
+```
+
+**说明**：捕获所有异常后什么都不做会隐藏真正的问题，导致难以调试。应该捕获具体的异常类型并妥善处理。
+
+### 易错点 2：`except` 顺序不当
+
+❌ **错误示例**：
+```python
+try:
+    result = int("abc")
+except Exception:
+    print("通用异常")
+except ValueError:  # 永远不会执行
+    print("值错误")
+```
+
+✅ **正确做法**：
+```python
+try:
+    result = int("abc")
+except ValueError:  # 具体异常在前
+    print("值错误")
+except Exception:   # 通用异常在后
+    print("其他异常")
+```
+
+**说明**：`except` 从上到下匹配，第一个匹配的会被执行。具体的异常类型应该放在前面，通用的放在后面。
+
+### 易错点 3：在 `finally` 中使用 `return`
+
+❌ **错误示例**：
+```python
+def divide(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return 0
+    finally:
+        return -1  # 会覆盖前面的返回值
+
+print(divide(10, 2))  # -1，不是 5
+```
+
+✅ **正确做法**：
+```python
+def divide(a, b):
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        result = 0
+    finally:
+        print("清理资源")  # finally 只做清理工作
+    
+    return result
+
+print(divide(10, 2))  # 5.0
+```
+
+**说明**：`finally` 中的 `return` 会覆盖 `try` 和 `except` 中的返回值。`finally` 应该只用于清理资源，不应该改变函数返回值。
+
 ## 练习题
 
 ### 基础练习

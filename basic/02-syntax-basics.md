@@ -114,6 +114,61 @@ False, True, None, if, else, for, while, def, class, import, return
 
 有些关键字现在还没学到，先记住一个原则：如果编辑器把某个单词高亮成特殊颜色，不要拿它当变量名。
 
+## 易错点
+
+### 易错点 1：缩进混用空格和 Tab
+
+❌ **错误示例**：
+```python
+if True:
+    print("第一行")  # 4 个空格
+	print("第二行")  # 1 个 Tab
+# IndentationError: unexpected indent
+```
+
+✅ **正确示例**：
+```python
+if True:
+    print("第一行")  # 4 个空格
+    print("第二行")  # 4 个空格
+```
+
+**说明**：Python 不允许混用空格和 Tab。建议编辑器设置为"自动将 Tab 转为空格"。
+
+### 易错点 2：使用 Python 关键字作为变量名
+
+❌ **错误示例**：
+```python
+class = "一班"  # SyntaxError
+for = 10       # SyntaxError
+if = True      # SyntaxError
+```
+
+✅ **正确示例**：
+```python
+class_name = "一班"
+count = 10
+condition = True
+```
+
+**说明**：`class`、`for`、`if` 等是 Python 关键字，不能用作变量名。编辑器通常会高亮显示关键字。
+
+### 易错点 3：中文标点符号
+
+❌ **错误示例**：
+```python
+print（"Hello"）  # 括号是中文的
+age = 18；         # 分号是中文的
+```
+
+✅ **正确示例**：
+```python
+print("Hello")    # 英文半角括号
+age = 18          # Python 不需要分号
+```
+
+**说明**：代码中的所有符号必须是英文半角。中文输入法下容易误输入中文符号。
+
 ## 使用场景
 
 ### 场景 1：减少语法错误

@@ -274,6 +274,106 @@ person.age = 30
 print(book)
 ```
 
+## 易错点
+
+### 易错点 1：子类 `__init__` 未调用父类初始化
+
+❌ **错误示例**：
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        # 忘记调用父类 __init__
+        self.breed = breed
+
+dog = Dog("Buddy", "Golden")
+print(dog.name)  # AttributeError: 'Dog' object has no attribute 'name'
+```
+
+✅ **正确做法**：
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)  # 调用父类初始化
+        self.breed = breed
+
+dog = Dog("Buddy", "Golden")
+print(dog.name)  # Buddy
+```
+
+**说明**：子类覆盖 `__init__` 时，如果需要父类的初始化逻辑，必须显式调用 `super().__init__()`。
+
+### 易错点 2：私有属性命名混淆
+
+❌ **错误理解**：
+```python
+class Person:
+    def __init__(self, name):
+        self.__name = name  # 私有属性
+
+person = Person("Alice")
+print(person.__name)  # AttributeError
+```
+
+但这样可以访问：
+
+```python
+print(person._Person__name)  # Alice（名称改写）
+```
+
+✅ **正确理解**：
+```python
+class Person:
+    def __init__(self, name):
+        self._name = name  # 单下划线：约定为内部使用
+        self.__id = 123   # 双下划线：名称改写，防止子类覆盖
+
+person = Person("Alice")
+print(person._name)  # 可以访问，但约定不应该
+# print(person.__id)  # AttributeError
+print(person._Person__id)  # 123（可以但不推荐）
+```
+
+**说明**：单下划线 `_` 是约定俗成的内部属性标记，双下划线 `__` 会触发名称改写（name mangling）。Python 没有真正的私有属性。
+
+### 易错点 3：多态时忘记实现接口方法
+
+❌ **错误示例**：
+```python
+class Animal:
+    def speak(self):
+        pass
+
+class Dog(Animal):
+    pass  # 忘记实现 speak
+
+dog = Dog()
+dog.speak()  # 什么都不输出，容易出错
+```
+
+✅ **正确做法**：
+```python
+class Animal:
+    def speak(self):
+        raise NotImplementedError("子类必须实现 speak 方法")
+
+class Dog(Animal):
+    def speak(self):
+        return "汪汪"
+
+dog = Dog()
+print(dog.speak())  # 汪汪
+```
+
+**说明**：父类的抽象方法应该抛出 `NotImplementedError`，强制子类实现。这样能及早发现忘记实现的问题。
+
 ## 练习题
 
 ### 基础练习

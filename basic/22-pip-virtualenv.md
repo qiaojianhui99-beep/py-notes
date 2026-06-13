@@ -133,6 +133,93 @@ dev = [
 ### 场景 4：测试不同版本
 多个虚拟环境测试兼容性。
 
+## 易错点
+
+### 易错点 1：全局安装导致版本冲突
+
+❌ **错误做法**：
+```bash
+# 全局安装，项目 A 需要 Django 2.2
+pip install Django==2.2
+
+# 项目 B 需要 Django 4.0，覆盖了之前的版本
+pip install Django==4.0
+
+# 项目 A 无法运行了
+```
+
+✅ **正确做法**：
+```bash
+# 为每个项目创建独立虚拟环境
+# 项目 A
+python -m venv venv_a
+source venv_a/bin/activate  # Windows: venv_a\Scripts\activate
+pip install Django==2.2
+
+# 项目 B
+python -m venv venv_b
+source venv_b/bin/activate
+pip install Django==4.0
+```
+
+**说明**：全局安装会导致不同项目的依赖冲突。每个项目应该有独立的虚拟环境。
+
+### 易错点 2：忘记激活虚拟环境
+
+❌ **错误现象**：
+```bash
+# 创建虚拟环境
+python -m venv venv
+
+# 忘记激活，直接安装
+pip install requests  # 安装到全局环境
+
+# 激活后发现没有 requests
+source venv/bin/activate
+python -c "import requests"  # ModuleNotFoundError
+```
+
+✅ **正确流程**：
+```bash
+# 1. 创建虚拟环境
+python -m venv venv
+
+# 2. 激活虚拟环境
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# 3. 安装包（会安装到虚拟环境）
+pip install requests
+
+# 4. 验证
+python -c "import requests"
+```
+
+**说明**：安装包前必须先激活虚拟环境，否则会安装到全局。检查提示符是否有 `(venv)` 前缀。
+
+### 易错点 3：虚拟环境目录提交到版本控制
+
+❌ **错误做法**：
+```bash
+git add venv/  # 不应该提交虚拟环境
+git commit -m "Add venv"
+```
+
+✅ **正确做法**：
+```bash
+# .gitignore
+venv/
+.venv/
+env/
+ENV/
+
+# 只提交 requirements.txt
+pip freeze > requirements.txt
+git add requirements.txt
+git commit -m "Add dependencies"
+```
+
+**说明**：虚拟环境包含大量文件且与平台相关，不应提交到版本控制。应该提交 `requirements.txt`，让其他人自己创建环境。
+
 ## 练习题
 
 ### 基础练习

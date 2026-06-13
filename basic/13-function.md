@@ -185,6 +185,81 @@ def show_welcome():
 show_welcome()
 ```
 
+## 易错点
+
+### 易错点 1：函数调用忘记加括号
+
+❌ **错误示例**：
+```python
+def greet():
+    print("Hello")
+
+greet  # 不会执行函数，只是引用
+# 输出：<function greet at 0x...>
+```
+
+✅ **正确示例**：
+```python
+def greet():
+    print("Hello")
+
+greet()  # 加括号才会执行
+```
+
+**说明**：函数名后必须加括号才能调用。不加括号只是获取函数对象的引用。
+
+### 易错点 2：函数内修改全局变量
+
+❌ **错误示例**：
+```python
+count = 0
+
+def increment():
+    count += 1  # UnboundLocalError: local variable 'count' referenced before assignment
+
+increment()
+```
+
+✅ **正确做法**：
+```python
+# 方法 1：使用 global（不推荐）
+count = 0
+def increment():
+    global count
+    count += 1
+
+# 方法 2：通过参数和返回值（推荐）
+def increment(count):
+    return count + 1
+
+count = 0
+count = increment(count)
+```
+
+**说明**：函数内赋值会创建局部变量。如果要修改全局变量需要 `global` 声明，但更好的做法是通过参数和返回值传递。
+
+### 易错点 3：返回 None 的隐式行为
+
+❌ **错误示例**：
+```python
+def add(a, b):
+    a + b  # 忘记写 return
+
+result = add(3, 5)
+print(result)  # None
+```
+
+✅ **正确示例**：
+```python
+def add(a, b):
+    return a + b  # 必须显式返回
+
+result = add(3, 5)
+print(result)  # 8
+```
+
+**说明**：函数没有 `return` 语句或 `return` 后没有值时，会隐式返回 `None`。
+
 ## 练习题
 
 ### 基础练习
