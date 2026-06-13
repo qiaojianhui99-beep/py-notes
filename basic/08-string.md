@@ -216,6 +216,71 @@ for char in word:
     print(char)
 ```
 
+## 易错点
+
+### 易错点 1：尝试修改字符串中的字符
+
+❌ **错误示例**：
+```python
+text = "Python"
+text[0] = "J"  # TypeError: 'str' object does not support item assignment
+```
+
+✅ **正确做法**：
+```python
+text = "Python"
+# 创建新字符串
+text = "J" + text[1:]
+print(text)  # Jython
+```
+
+**说明**：字符串是不可变的，不能直接修改某个字符。只能创建新字符串。
+
+### 易错点 2：切片索引越界不会报错
+
+❌ **容易误解**：
+```python
+text = "Python"
+print(text[10])  # IndexError: string index out of range
+print(text[10:15])  # 空字符串 ""，不报错
+```
+
+✅ **正确理解**：
+```python
+text = "Python"
+# 单个索引越界会报错
+# print(text[10])  # 报错
+
+# 切片越界不报错，返回空字符串或部分内容
+print(text[10:15])  # ""
+print(text[2:100])  # "thon"
+```
+
+**说明**：访问单个索引越界会报错，但切片越界不会报错，返回空或部分内容。
+
+### 易错点 3：`find()` 找不到时返回 -1
+
+❌ **错误示例**：
+```python
+text = "Hello Python"
+if text.find("Java"):  # -1 在布尔上下文中是 True
+    print("找到了")  # 会错误地输出
+```
+
+✅ **正确做法**：
+```python
+text = "Hello Python"
+# 方法 1：判断是否不等于 -1
+if text.find("Java") != -1:
+    print("找到了")
+
+# 方法 2：使用 in（推荐）
+if "Java" in text:
+    print("找到了")
+```
+
+**说明**：`find()` 找不到时返回 `-1`，不是 `False`。判断时要显式比较或使用 `in`。
+
 ## 练习题
 
 ### 基础练习

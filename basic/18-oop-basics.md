@@ -207,6 +207,85 @@ class Order:
         return self.price * self.count
 ```
 
+## 易错点
+
+### 易错点 1：`__init__` 中忘记 `self` 参数
+
+❌ **错误示例**：
+```python
+class Person:
+    def __init__(name, age):  # TypeError: __init__() takes 2 positional arguments but 3 were given
+        self.name = name
+        self.age = age
+
+person = Person("Alice", 18)
+```
+
+✅ **正确示例**：
+```python
+class Person:
+    def __init__(self, name, age):  # 第一个参数必须是 self
+        self.name = name
+        self.age = age
+
+person = Person("Alice", 18)
+```
+
+**说明**：类方法的第一个参数必须是 `self`，表示实例本身。即使是 `__init__` 也不例外。
+
+### 易错点 2：实例属性和类属性混淆
+
+❌ **错误示例**：
+```python
+class Counter:
+    count = 0  # 类属性
+    
+    def __init__(self):
+        count = 1  # 局部变量，不是实例属性
+
+c = Counter()
+print(c.count)  # 0，不是 1
+```
+
+✅ **正确做法**：
+```python
+class Counter:
+    count = 0  # 类属性
+    
+    def __init__(self):
+        self.count = 1  # 实例属性，会覆盖类属性
+
+c = Counter()
+print(c.count)  # 1
+print(Counter.count)  # 0（类属性未改变）
+```
+
+**说明**：实例属性必须用 `self.属性名` 定义。不加 `self` 只是局部变量，不会成为实例属性。
+
+### 易错点 3：方法调用忘记加括号
+
+❌ **错误示例**：
+```python
+class Calculator:
+    def add(self, a, b):
+        return a + b
+
+calc = Calculator()
+print(calc.add)  # <bound method Calculator.add of ...>，不是结果
+```
+
+✅ **正确示例**：
+```python
+class Calculator:
+    def add(self, a, b):
+        return a + b
+
+calc = Calculator()
+print(calc.add(3, 5))  # 8，加括号并传参
+```
+
+**说明**：方法名后必须加括号才能调用。不加括号只是获取方法对象的引用。
+
 ## 练习题
 
 ### 基础练习

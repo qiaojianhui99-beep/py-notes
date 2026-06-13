@@ -253,6 +253,87 @@ if all(score >= 60 for score in scores):
     print("全部及格")
 ```
 
+## 易错点
+
+### 易错点 1：`map()`、`filter()` 返回迭代器而非列表
+
+❌ **错误理解**：
+```python
+numbers = [1, 2, 3]
+doubled = map(lambda x: x * 2, numbers)
+print(doubled)  # <map object at 0x...>，不是 [2, 4, 6]
+```
+
+✅ **正确做法**：
+```python
+numbers = [1, 2, 3]
+# 方法 1：转为列表
+doubled = list(map(lambda x: x * 2, numbers))
+print(doubled)  # [2, 4, 6]
+
+# 方法 2：使用列表推导式（更 Pythonic）
+doubled = [x * 2 for x in numbers]
+print(doubled)
+```
+
+**说明**：`map()`、`filter()` 返回迭代器，必须转为列表才能看到内容。迭代器只能遍历一次。
+
+### 易错点 2：`zip()` 长度不一致时的截断行为
+
+❌ **错误理解**：
+```python
+names = ["Alice", "Bob", "Charlie"]
+ages = [18, 20]  # 少一个
+
+pairs = list(zip(names, ages))
+print(pairs)  # [('Alice', 18), ('Bob', 20)]
+# Charlie 被丢弃了！
+```
+
+✅ **正确理解**：
+```python
+names = ["Alice", "Bob", "Charlie"]
+ages = [18, 20]
+
+# zip 会截断到最短序列
+pairs = list(zip(names, ages))  # 丢失 Charlie
+
+# 如果不想丢失，使用 itertools.zip_longest
+from itertools import zip_longest
+pairs = list(zip_longest(names, ages, fillvalue=None))
+print(pairs)  # [('Alice', 18), ('Bob', 20), ('Charlie', None)]
+```
+
+**说明**：`zip()` 会在最短序列结束时停止。如果序列长度不同且需要保留所有元素，使用 `zip_longest()`。
+
+### 易错点 3：`enumerate()` 修改 index 不影响原循环
+
+❌ **错误理解**：
+```python
+items = ["a", "b", "c"]
+for i, item in enumerate(items):
+    print(i, item)
+    i += 10  # 以为会跳过元素
+# 输出：0 a, 1 b, 2 c（i 的修改不影响循环）
+```
+
+✅ **正确理解**：
+```python
+items = ["a", "b", "c"]
+for i, item in enumerate(items):
+    # i 只是当前索引的副本，修改它不会影响循环
+    print(i, item)
+
+# 如果想跳过元素，应该在遍历前过滤
+items = ["a", "b", "c"]
+for i, item in enumerate(items):
+    if i == 1:
+        continue  # 跳过索引 1
+    print(i, item)
+```
+
+**说明**：`enumerate()` 的 `i` 只是值的副本，修改它不会改变循环行为。
+
 ## 练习题
 
 ### 基础练习

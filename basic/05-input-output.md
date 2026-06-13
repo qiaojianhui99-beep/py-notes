@@ -185,6 +185,63 @@ score = 95
 print(f"当前分数: {score}")
 ```
 
+## 易错点
+
+### 易错点 1：忘记 `input()` 返回的是字符串
+
+❌ **错误示例**：
+```python
+age = input("请输入年龄: ")  # 输入 18
+print(age + 10)  # TypeError: can only concatenate str (not "int") to str
+```
+
+✅ **正确示例**：
+```python
+age = int(input("请输入年龄: "))
+print(age + 10)  # 28
+```
+
+**说明**：`input()` 始终返回字符串，需要数字时必须用 `int()` 或 `float()` 转换。
+
+### 易错点 2：f-string 忘记加前缀 `f`
+
+❌ **错误示例**：
+```python
+name = "Alice"
+print("{name}")  # 输出：{name}（不是 Alice）
+```
+
+✅ **正确示例**：
+```python
+name = "Alice"
+print(f"{name}")  # 输出：Alice
+```
+
+**说明**：必须在引号前加 `f` 才能启用变量替换。这是新手最常犯的错误之一。
+
+### 易错点 3：`print()` 拼接字符串和数字
+
+❌ **错误示例**：
+```python
+age = 18
+print("年龄: " + age)  # TypeError: can only concatenate str (not "int") to str
+```
+
+✅ **正确示例**：
+```python
+age = 18
+# 方法 1：使用 f-string
+print(f"年龄: {age}")
+
+# 方法 2：转换为字符串
+print("年龄: " + str(age))
+
+# 方法 3：用逗号分隔（自动转换）
+print("年龄:", age)
+```
+
+**说明**：`+` 只能连接相同类型。f-string 是最简洁的解决方案。
+
 ## 练习题
 
 ### 基础练习

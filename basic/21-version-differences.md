@@ -159,6 +159,62 @@ else:
 ### 场景 4：库开发
 考虑向后兼容性。
 
+## 易错点
+
+### 易错点 1：Python 2 的 `print` 语句与 Python 3 的 `print()` 函数
+
+❌ **错误示例**（Python 2 语法在 Python 3 中报错）：
+```python
+print "Hello"  # SyntaxError in Python 3
+```
+
+✅ **正确做法**（Python 3）：
+```python
+print("Hello")  # 必须使用函数形式
+```
+
+**说明**：Python 2 的 `print` 是语句，Python 3 改为函数。这是最明显的区别。
+
+### 易错点 2：`/` 除法行为不同
+
+❌ **容易混淆**：
+```python
+# Python 2: / 是整除（对整数）
+print(5 / 2)  # 2
+
+# Python 3: / 是真除法
+print(5 / 2)  # 2.5
+```
+
+✅ **正确理解**：
+```python
+# Python 3
+print(5 / 2)   # 2.5 (真除法)
+print(5 // 2)  # 2 (整除)
+
+# 如果需要跨版本兼容，总是使用 //
+```
+
+**说明**：Python 3 的 `/` 总是返回浮点数，`//` 才是整除。Python 2 的 `/` 对整数是整除，对浮点数是真除法。
+
+### 易错点 3：使用过时的类型注解语法
+
+❌ **旧语法**（Python 3.9 之前）：
+```python
+from typing import List, Dict, Union
+
+def process(items: List[int]) -> Dict[str, Union[int, str]]:
+    pass
+```
+
+✅ **新语法**（Python 3.10+）：
+```python
+def process(items: list[int]) -> dict[str, int | str]:
+    pass
+```
+
+**说明**：Python 3.10+ 支持使用内置类型和 `|` 运算符简化类型注解。旧代码仍然有效，但新代码推荐使用新语法。
+
 ## 练习题
 
 ### 基础练习

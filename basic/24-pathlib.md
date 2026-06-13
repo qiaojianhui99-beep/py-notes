@@ -152,6 +152,82 @@ basename = path.name
 ### 场景 4：配置文件
 读取项目配置文件。
 
+## 易错点
+
+### 易错点 1：忘记检查路径是否存在
+
+❌ **错误示例**：
+```python
+from pathlib import Path
+
+path = Path("data.txt")
+content = path.read_text()  # FileNotFoundError: 文件不存在
+```
+
+✅ **正确做法**：
+```python
+from pathlib import Path
+
+path = Path("data.txt")
+if path.exists():
+    content = path.read_text()
+else:
+    print("文件不存在")
+```
+
+**说明**：操作文件前应该检查路径是否存在，避免运行时错误。
+
+### 易错点 2：混用 Path 对象和字符串
+
+❌ **错误示例**：
+```python
+from pathlib import Path
+
+# Path 和字符串混用
+path = Path("data")
+full_path = path + "/file.txt"  # TypeError: 不支持 + 拼接
+```
+
+✅ **正确做法**：
+```python
+from pathlib import Path
+
+# 使用 / 运算符
+path = Path("data")
+full_path = path / "file.txt"
+
+# 或者全部使用字符串
+path_str = str(path) + "/file.txt"  # 不推荐，跨平台问题
+```
+
+**说明**：Path 对象使用 `/` 运算符拼接路径，不支持 `+`。不要混用 Path 和字符串。
+
+### 易错点 3：`glob()` 和 `rglob()` 混淆
+
+❌ **错误理解**：
+```python
+from pathlib import Path
+
+# 以为 glob 会递归搜索
+files = list(Path(".").glob("*.txt"))  # 只搜索当前目录
+```
+
+✅ **正确理解**：
+```python
+from pathlib import Path
+
+# glob: 只搜索当前目录
+files = list(Path(".").glob("*.txt"))
+
+# rglob: 递归搜索所有子目录
+files = list(Path(".").rglob("*.txt"))
+
+# 或者使用 ** 通配符
+files = list(Path(".").glob("**/*.txt"))  # 需要 recursive=True 在老版本
+```
+
+**说明**：`glob()` 不递归，`rglob()` 递归搜索所有子目录。记住：`r` = recursive。
+
 ## 练习题
 
 ### 基础练习

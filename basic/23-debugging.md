@@ -143,6 +143,93 @@ result = divide(10, 0)  # AssertionError
 ### 场景 4：单元测试
 使用断言验证预期结果。
 
+## 易错点
+
+### 易错点 1：过度依赖 `print()` 调试
+
+❌ **低效做法**：
+```python
+def complex_function(data):
+    print("进入函数")
+    print(f"data = {data}")
+    result = process(data)
+    print(f"result = {result}")
+    final = transform(result)
+    print(f"final = {final}")
+    return final
+```
+
+✅ **更好的做法**：
+```python
+# 方法 1：使用断点调试器
+import pdb
+def complex_function(data):
+    pdb.set_trace()  # 断点，可以交互查看所有变量
+    result = process(data)
+    final = transform(result)
+    return final
+
+# 方法 2：使用日志
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+def complex_function(data):
+    logging.debug(f"data = {data}")
+    result = process(data)
+    logging.debug(f"result = {result}")
+    return result
+```
+
+**说明**：`print()` 调试简单但低效，难以关闭，且混在正常输出中。断点调试或日志更专业。
+
+### 易错点 2：异常信息理解错误
+
+❌ **错误理解**：
+```python
+# 报错：TypeError: 'int' object is not subscriptable
+number = 123
+print(number[0])  # 错误
+
+# 新手可能以为是类型问题，尝试转换
+print(int(number)[0])  # 仍然报错
+```
+
+✅ **正确理解**：
+```python
+# "not subscriptable" 表示不能用 [] 索引
+# 整数不是序列，不能索引
+
+# 如果想要第一个数字，应该转字符串
+number = 123
+print(str(number)[0])  # "1"
+```
+
+**说明**：学会读错误信息。"subscriptable" 指的是能否使用 `[]` 索引，与类型转换无关。
+
+### 易错点 3：修改代码后未保存就运行
+
+❌ **常见场景**：
+```python
+# 代码改为：
+def add(a, b):
+    return a + b + 1  # 修改了这里
+
+# 但忘记保存文件，运行时仍然是旧代码
+python script.py  # 结果没变化
+```
+
+✅ **养成习惯**：
+```python
+# 1. 修改代码
+# 2. 保存文件（Ctrl+S / Cmd+S）
+# 3. 运行程序
+
+# 或者使用自动保存功能
+# VSCode: "files.autoSave": "afterDelay"
+```
+
+**说明**：修改代码后必须保存才能生效。这是新手最常犯但最容易忽略的错误。
+
 ## 练习题
 
 ### 基础练习

@@ -176,6 +176,89 @@ import re       # 正则表达式
 ### 场景 4：第三方库使用
 pandas、requests 等库的导入。
 
+## 易错点
+
+### 易错点 1：循环导入
+
+❌ **错误示例**：
+```python
+# module_a.py
+from module_b import func_b
+
+def func_a():
+    return "A"
+
+# module_b.py
+from module_a import func_a  # 循环导入
+
+def func_b():
+    return "B"
+
+# ImportError: cannot import name 'func_a'
+```
+
+✅ **正确做法**：
+```python
+# 方法 1：延迟导入
+# module_a.py
+def func_a():
+    from module_b import func_b  # 在函数内导入
+    return "A"
+
+# 方法 2：重构代码，避免循环依赖
+# 将共同依赖提取到第三个模块
+```
+
+**说明**：两个模块互相导入会导致循环依赖错误。应该重构代码结构或使用局部导入。
+
+### 易错点 2：`import *` 导入不明确
+
+❌ **错误示例**：
+```python
+from math import *
+from statistics import *
+
+# 不清楚 sqrt 来自哪个模块
+result = sqrt(16)
+# 如果两个模块有同名函数，后导入的会覆盖前面的
+```
+
+✅ **正确做法**：
+```python
+# 方法 1：显式导入需要的内容
+from math import sqrt, pi
+from statistics import mean
+
+# 方法 2：导入模块，使用模块名限定
+import math
+import statistics
+
+result = math.sqrt(16)
+```
+
+**说明**：`import *` 会导入所有公开内容，容易造成命名冲突且难以追踪来源。明确导入更清晰。
+
+### 易错点 3：模块名与标准库冲突
+
+❌ **错误示例**：
+```python
+# 文件名: random.py
+import random  # 实际上导入的是当前目录的 random.py，不是标准库
+
+print(random.randint(1, 10))  # AttributeError
+```
+
+✅ **正确做法**：
+```python
+# 避免使用与标准库同名的文件名
+# 将文件名改为: my_random.py 或 game_random.py
+
+import random
+print(random.randint(1, 10))
+```
+
+**说明**：Python 优先从当前目录导入模块。文件名不要与标准库模块同名，否则会覆盖标准库。
+
 ## 练习题
 
 ### 基础练习

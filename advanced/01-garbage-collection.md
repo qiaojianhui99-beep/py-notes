@@ -246,6 +246,105 @@ def performance_critical():
     return result
 ```
 
+## 易错点
+
+### 易错点 1：误以为 `del` 会立即释放内存
+
+❌ **错误理解**：
+```python
+import sys
+
+data = [1] * 1000000
+print(sys.getrefcount(data))  # 2
+
+del data  # 以为内存立即释放
+# 实际上只是删除了名字，如果还有其他引用，内存不会释放
+```
+
+✅ **正确理解**：
+```python
+import sys
+
+data = [1] * 1000000
+ref = data  # 增加引用
+
+del data  # 只是删除 data 这个名字
+# ref 仍然引用对象，内存未释放
+
+del ref  # 现在引用计数为 0，内存才会释放
+```
+
+**说明**：`del` 只是删除变量名，不是直接释放内存。只有引用计数为 0 时，内存才会被回收。
+
+### 易错点 2：循环引用导致内存泄漏
+
+❌ **错误示例**：
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+# 创建循环引用
+node1 = Node(1)
+node2 = Node(2)
+node1.next = node2
+node2.next = node1  # 循环引用
+
+del node1
+del node2
+# 两个对象互相引用，引用计数不为 0
+# 需要等垃圾回收器介入
+```
+
+✅ **正确做法**：
+```python
+import weakref
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self._next = None
+    
+    @property
+    def next(self):
+        return self._next() if self._next else None
+    
+    @next.setter
+    def next(self, node):
+        self._next = weakref.ref(node) if node else None
+
+# 使用弱引用避免循环引用
+```
+
+**说明**：循环引用会导致引用计数永远不为 0。应该使用弱引用或依赖分代垃圾回收。
+
+### 易错点 3：手动调用 `gc.collect()` 的时机不当
+
+❌ **错误做法**：
+```python
+import gc
+
+# 在循环中频繁调用
+for i in range(1000):
+    data = process_data(i)
+    gc.collect()  # 性能极差
+```
+
+✅ **正确做法**：
+```python
+import gc
+
+# 只在必要时手动调用
+for i in range(1000):
+    data = process_data(i)
+
+# 处理完大批量数据后，手动回收一次
+gc.collect()
+```
+
+**说明**：频繁调用 `gc.collect()` 会严重影响性能。应该让自动垃圾回收机制工作，只在处理大量数据后手动调用一次。
+
 ## 练习题
 
 ### 基础练习

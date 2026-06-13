@@ -200,6 +200,85 @@ def countdown(n):
         countdown(n - 1)
 ```
 
+## 易错点
+
+### 易错点 1：默认参数使用可变对象
+
+❌ **错误示例**：
+```python
+def add_item(item, items=[]):  # 危险：默认参数是可变对象
+    items.append(item)
+    return items
+
+print(add_item(1))  # [1]
+print(add_item(2))  # [1, 2]，不是 [2]！
+print(add_item(3))  # [1, 2, 3]
+```
+
+✅ **正确做法**：
+```python
+def add_item(item, items=None):
+    if items is None:
+        items = []
+    items.append(item)
+    return items
+
+print(add_item(1))  # [1]
+print(add_item(2))  # [2]
+print(add_item(3))  # [3]
+```
+
+**说明**：默认参数在函数定义时只创建一次。使用可变对象（列表、字典）作为默认值会导致所有调用共享同一个对象。应该使用 `None` 作为默认值，在函数内创建新对象。
+
+### 易错点 2：参数顺序错误
+
+❌ **错误示例**：
+```python
+def func(a, b=1, *args, c):  # SyntaxError: 位置参数不能在 *args 后
+    pass
+
+def func2(*args, a, b=1):  # 正确但容易误用
+    pass
+
+func2(1, 2, 3)  # TypeError: missing required keyword-only argument: 'a'
+```
+
+✅ **正确顺序**：
+```python
+# 正确顺序：位置参数 -> 默认参数 -> *args -> 关键字参数 -> **kwargs
+def func(pos1, pos2, default1=1, *args, kw_only, **kwargs):
+    pass
+
+# 调用
+func(1, 2, 3, 4, 5, kw_only=10, extra=20)
+```
+
+**说明**：参数顺序必须遵守规则。`*args` 后的参数必须用关键字传递（keyword-only）。
+
+### 易错点 3：递归没有终止条件
+
+❌ **错误示例**：
+```python
+def countdown(n):
+    print(n)
+    countdown(n - 1)  # RecursionError: maximum recursion depth exceeded
+
+countdown(5)
+```
+
+✅ **正确做法**：
+```python
+def countdown(n):
+    if n <= 0:  # 终止条件
+        return
+    print(n)
+    countdown(n - 1)
+
+countdown(5)
+```
+
+**说明**：递归函数必须有明确的终止条件，否则会无限递归直到栈溢出。
+
 ## 练习题
 
 ### 基础练习

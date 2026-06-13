@@ -225,6 +225,86 @@ for i in range(1, 6):
     numbers.append(i)
 ```
 
+## 易错点
+
+### 易错点 1：列表赋值是引用而不是复制
+
+❌ **错误示例**：
+```python
+list1 = [1, 2, 3]
+list2 = list1  # 这不是复制，而是引用
+list2.append(4)
+print(list1)  # [1, 2, 3, 4]，list1 也被修改了
+```
+
+✅ **正确做法**：
+```python
+list1 = [1, 2, 3]
+# 方法 1：使用切片复制
+list2 = list1[:]
+# 方法 2：使用 copy()
+list2 = list1.copy()
+# 方法 3：使用 list()
+list2 = list(list1)
+
+list2.append(4)
+print(list1)  # [1, 2, 3]，list1 未被修改
+```
+
+**说明**：直接赋值只是创建了引用，修改其中一个会影响另一个。要复制需要使用切片或 `copy()`。
+
+### 易错点 2：`append()` 和 `extend()` 的区别
+
+❌ **错误示例**：
+```python
+list1 = [1, 2, 3]
+list1.append([4, 5])
+print(list1)  # [1, 2, 3, [4, 5]]，嵌套列表
+
+list2 = [1, 2, 3]
+list2.extend(4)  # TypeError: 'int' object is not iterable
+```
+
+✅ **正确做法**：
+```python
+# append 添加单个元素（可以是列表）
+list1 = [1, 2, 3]
+list1.append(4)
+print(list1)  # [1, 2, 3, 4]
+
+# extend 添加多个元素
+list2 = [1, 2, 3]
+list2.extend([4, 5])
+print(list2)  # [1, 2, 3, 4, 5]
+```
+
+**说明**：`append()` 添加整个对象，`extend()` 添加可迭代对象中的每个元素。
+
+### 易错点 3：`remove()` 只删除第一个匹配项
+
+❌ **错误理解**：
+```python
+numbers = [1, 2, 3, 2, 4, 2]
+numbers.remove(2)
+print(numbers)  # [1, 3, 2, 4, 2]，只删除了第一个 2
+```
+
+✅ **正确做法**：
+```python
+# 删除所有的 2
+numbers = [1, 2, 3, 2, 4, 2]
+numbers = [num for num in numbers if num != 2]
+print(numbers)  # [1, 3, 4]
+
+# 或者循环删除（注意要遍历副本）
+numbers = [1, 2, 3, 2, 4, 2]
+for num in numbers[:]:
+    if num == 2:
+        numbers.remove(num)
+```
+
+**说明**：`remove()` 只删除第一个匹配的元素。要删除所有匹配项需要循环或列表推导式。
+
 ## 练习题
 
 ### 基础练习
