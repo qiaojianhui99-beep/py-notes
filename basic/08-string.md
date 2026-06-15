@@ -92,30 +92,47 @@ print(line)
 
 ## 常用方法
 
-### 大小写转换
+字符串方法是 `str` 类型自带的操作。调用格式通常是：
+
+```text
+字符串.方法名(参数)
+```
+
+例如：
 
 ```python
 text = "Hello Python"
+new_text = text.replace("Python", "World")
 
-print(text.upper())       # HELLO PYTHON
-print(text.lower())       # hello python
-print(text.capitalize())  # Hello python
-print(text.title())       # Hello Python
+print(new_text)  # Hello World
+print(text)      # Hello Python
 ```
 
-### 查找和替换
+`text.replace("Python", "World")` 可以拆成四部分理解：
 
-```python
-text = "Hello Python"
+1. `text`：要处理的原字符串
+2. `replace`：要执行的动作，意思是“替换”
+3. `"Python", "World"`：方法需要的参数，表示把 `"Python"` 换成 `"World"`
+4. 返回值：得到一个新字符串，原来的 `text` 不会被直接修改
 
-print(text.find("Python"))       # 6
-print(text.count("o"))           # 2
-print(text.replace("Python", "World"))  # Hello World
-```
+学习字符串方法时，不要先背方法名，而是按下面的标准判断：
 
-`find()` 找不到时返回 `-1`。
+| 你想做什么 | 优先考虑的方法或写法 | 返回结果 |
+|------------|----------------------|----------|
+| 去掉首尾空白 | `strip()` / `lstrip()` / `rstrip()` | 新字符串 |
+| 统一大小写 | `lower()` / `upper()` | 新字符串 |
+| 判断是否包含内容 | `in` | `True` 或 `False` |
+| 判断开头或结尾 | `startswith()` / `endswith()` | `True` 或 `False` |
+| 查找位置 | `find()` | 索引位置，找不到返回 `-1` |
+| 统计出现次数 | `count()` | 整数 |
+| 替换内容 | `replace()` | 新字符串 |
+| 拆成多段 | `split()` | 列表 |
+| 把多段合成字符串 | `join()` | 新字符串 |
+| 判断字符类型 | `isdigit()` / `isalpha()` / `isalnum()` | `True` 或 `False` |
 
-### 去除空白
+### 去除空白：`strip()`、`lstrip()`、`rstrip()`
+
+这三个方法用于清理字符串两端的空白字符。空白字符包括空格、换行 `\n`、制表符 `\t` 等。
 
 ```python
 text = "  Hello  "
@@ -125,18 +142,189 @@ print(repr(text.lstrip()))  # 'Hello  '
 print(repr(text.rstrip()))  # '  Hello'
 ```
 
-`repr()` 可以把字符串中的空格显示出来，便于观察 `strip()`、`lstrip()` 和 `rstrip()` 的区别。
+选择标准：
 
-### 判断方法
+- 两边都要清理：用 `strip()`
+- 只清理左边：用 `lstrip()`
+- 只清理右边：用 `rstrip()`
+
+`repr()` 可以把字符串中的空格显示出来，便于观察区别。实际项目中，处理用户输入时经常先用 `strip()`：
 
 ```python
-text = "Python"
-
-print(text.startswith("Py"))  # True
-print(text.endswith("on"))    # True
-print(text.isalpha())         # True
-print("123".isdigit())        # True
+name = input("请输入姓名: ").strip()
 ```
+
+### 大小写转换：`lower()`、`upper()`、`capitalize()`、`title()`
+
+大小写方法用于改变英文字母的显示形式。
+
+```python
+text = "hello python"
+
+print(text.upper())       # HELLO PYTHON
+print(text.lower())       # hello python
+print(text.capitalize())  # Hello python
+print(text.title())       # Hello Python
+```
+
+选择标准：
+
+- 做不区分大小写的比较：通常先用 `lower()`
+- 生成全大写显示文本：用 `upper()`
+- 只让句子第一个字符大写：用 `capitalize()`
+- 让每个单词首字母大写：用 `title()`
+
+```python
+answer = " YES "
+
+if answer.strip().lower() == "yes":
+    print("用户同意")
+```
+
+这行代码从左到右执行：先用 `strip()` 去掉首尾空白，再用 `lower()` 统一成小写，最后和 `"yes"` 比较。
+
+### 查找内容：`in`、`find()`、`count()`
+
+如果只关心“有没有”，优先使用 `in`，它最清楚。
+
+```python
+email = "user@example.com"
+
+print("@" in email)  # True
+```
+
+如果需要知道内容出现的位置，使用 `find()`：
+
+```python
+text = "Hello Python"
+
+print(text.find("Python"))  # 6
+print(text.find("Java"))    # -1
+```
+
+`find()` 返回的是索引位置，找不到时返回 `-1`。
+
+如果需要知道出现了几次，使用 `count()`：
+
+```python
+text = "banana"
+
+print(text.count("a"))   # 3
+print(text.count("na"))  # 2
+```
+
+选择标准：
+
+- 只判断是否包含：用 `in`
+- 需要位置：用 `find()`
+- 需要次数：用 `count()`
+
+### 开头和结尾判断：`startswith()`、`endswith()`
+
+这两个方法用于判断字符串是否以指定内容开头或结尾。
+
+```python
+filename = "report.pdf"
+
+print(filename.startswith("report"))  # True
+print(filename.endswith(".pdf"))      # True
+```
+
+它们比手写切片更直观：
+
+```python
+url_path = "/basic/08-string"
+
+if url_path.startswith("/basic/"):
+    print("这是基础章节")
+```
+
+### 替换内容：`replace()`
+
+`replace(old, new)` 用于把字符串中的旧内容替换为新内容。
+
+```python
+text = "Hello Python"
+new_text = text.replace("Python", "World")
+
+print(new_text)  # Hello World
+```
+
+注意：`replace()` 不会修改原字符串，而是返回新字符串。如果希望保存结果，需要重新赋值：
+
+```python
+phone = "138 0000 0000"
+phone = phone.replace(" ", "")
+
+print(phone)  # 13800000000
+```
+
+选择标准：
+
+- 要把固定文本换成另一个固定文本：用 `replace()`
+- 要根据复杂规则替换：后面学习正则表达式时再用 `re.sub()`
+
+### 拆分和合并：`split()`、`join()`
+
+`split()` 把一个字符串拆成多个部分，返回列表。
+
+```python
+sentence = "Python is easy"
+words = sentence.split(" ")
+
+print(words)  # ['Python', 'is', 'easy']
+```
+
+如果不传参数，`split()` 会按连续空白拆分，更适合处理普通句子：
+
+```python
+text = "Python   is\teasy"
+
+print(text.split())  # ['Python', 'is', 'easy']
+```
+
+`join()` 和 `split()` 相反，它把多个字符串合成一个字符串。
+
+```python
+words = ["Python", "is", "easy"]
+sentence = " ".join(words)
+
+print(sentence)  # Python is easy
+```
+
+选择标准：
+
+- 一段文本要按分隔符切开：用 `split()`
+- 多段文本要用分隔符连起来：用 `join()`
+
+### 判断字符类型：`isdigit()`、`isalpha()`、`isalnum()`
+
+这些方法用于判断字符串里的字符属于哪一类。
+
+```python
+print("123".isdigit())     # True，只包含数字
+print("Python".isalpha())  # True，只包含字母
+print("Python3".isalnum())  # True，只包含字母或数字
+print("Py 3".isalnum())    # False，里面有空格
+```
+
+常见选择标准：
+
+- 判断是否能当作正整数输入：先考虑 `isdigit()`
+- 判断是否全是字母：用 `isalpha()`
+- 判断是否只包含字母和数字：用 `isalnum()`
+
+```python
+age_text = input("请输入年龄: ").strip()
+
+if age_text.isdigit():
+    age = int(age_text)
+    print(f"明年你 {age + 1} 岁")
+else:
+    print("年龄必须是数字")
+```
+
+`isdigit()` 只能处理类似 `"18"` 这样的数字字符串。负数、小数、带单位的内容都不会返回 `True`。
 
 ## 成员判断
 
@@ -214,6 +402,17 @@ word = "Python"
 
 for char in word:
     print(char)
+```
+
+### 场景 5：拆分一行文本
+
+```python
+line = "Alice,18,Python"
+name, age, course = line.split(",")
+
+print(name)
+print(age)
+print(course)
 ```
 
 ## 易错点
@@ -360,9 +559,9 @@ else:
 
 1. **这是什么**：字符串、索引、切片分别是什么？
 2. **为什么需要**：为什么字符串不能直接修改某个字符？
-3. **怎么用**：如何取出字符串的前三个字符？如何反转字符串？
-4. **注意事项**：`find()` 找不到内容时会返回什么？
+3. **怎么用**：看到 `text.strip().lower()` 时，你能按执行顺序解释每一步吗？
+4. **注意事项**：`find()` 找不到内容时会返回什么？为什么判断是否包含时更推荐 `in`？
 
 ::: tip 学习建议
-字符串方法很多，不需要一次背完。先掌握索引、切片、`strip()`、`replace()`、`count()` 和成员判断。
+字符串方法很多，不需要一次背完。先掌握索引、切片、`strip()`、`replace()`、`split()`、`join()`、`count()` 和成员判断。每次学习新方法时，都按“处理谁、做什么、要什么参数、返回什么结果”这四步理解。
 :::
