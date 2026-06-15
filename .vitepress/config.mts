@@ -168,6 +168,7 @@ export default defineConfig({
             { text: 'Scrapy 框架', link: '/scraping/02-scrapy' },
             { text: 'Selenium 动态网页', link: '/scraping/03-selenium' },
             { text: '反爬虫策略与应对', link: '/scraping/04-anti-scraping' },
+            { text: '异步爬虫', link: '/scraping/05-async-scraping' },
           ],
         },
       ],
