@@ -120,12 +120,12 @@ print(text.replace("Python", "World"))  # Hello World
 ```python
 text = "  Hello  "
 
-print(text.strip())   # Hello
-print(text.lstrip())  # Hello··
-print(text.rstrip())  # ··Hello
+print(repr(text.strip()))   # 'Hello'
+print(repr(text.lstrip()))  # 'Hello  '
+print(repr(text.rstrip()))  # '  Hello'
 ```
 
-上面的点只是为了说明空白位置，实际输出中不会显示点。
+`repr()` 可以把字符串中的空格显示出来，便于观察 `strip()`、`lstrip()` 和 `rstrip()` 的区别。
 
 ### 判断方法
 

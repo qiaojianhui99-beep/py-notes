@@ -296,7 +296,7 @@ def post_list(request):
 
 ### 模板片段缓存
 
-```django
+```html
 {% load cache %}
 {% cache 500 sidebar %}
     <div class="sidebar">

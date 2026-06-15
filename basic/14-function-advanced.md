@@ -234,10 +234,10 @@ print(add_item(3))  # [3]
 
 ❌ **错误示例**：
 ```python
-def func(a, b=1, *args, c):  # SyntaxError: 位置参数不能在 *args 后
+def func(a=1, b):  # SyntaxError: non-default argument follows default argument
     pass
 
-def func2(*args, a, b=1):  # 正确但容易误用
+def func2(*args, a, b=1):  # 语法合法，但 a 必须用关键字传递
     pass
 
 func2(1, 2, 3)  # TypeError: missing required keyword-only argument: 'a'
@@ -245,12 +245,15 @@ func2(1, 2, 3)  # TypeError: missing required keyword-only argument: 'a'
 
 ✅ **正确顺序**：
 ```python
-# 正确顺序：位置参数 -> 默认参数 -> *args -> 关键字参数 -> **kwargs
+# 正确顺序：必填位置参数 -> 默认参数 -> *args -> 仅限关键字参数 -> **kwargs
 def func(pos1, pos2, default1=1, *args, kw_only, **kwargs):
     pass
 
 # 调用
 func(1, 2, 3, 4, 5, kw_only=10, extra=20)
+
+# *args 后面的参数必须用关键字传递
+func2(1, 2, 3, a=10)
 ```
 
 **说明**：参数顺序必须遵守规则。`*args` 后的参数必须用关键字传递（keyword-only）。

@@ -95,7 +95,7 @@ pip install -r requirements.txt
 nano .env
 ```
 
-```env
+```dotenv
 FLASK_ENV=production
 SECRET_KEY=your-production-secret-key
 DATABASE_URL=mysql://user:pass@localhost/dbname

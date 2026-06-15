@@ -84,10 +84,10 @@ p.is_absolute() # 是否是绝对路径
 p = Path('data.txt')
 
 # 写入
-p.write_text('Hello World')
+p.write_text("Hello World", encoding="utf-8")
 
 # 读取
-content = p.read_text()
+content = p.read_text(encoding="utf-8")
 
 # 二进制
 p.write_bytes(b'binary data')
@@ -161,7 +161,7 @@ basename = path.name
 from pathlib import Path
 
 path = Path("data.txt")
-content = path.read_text()  # FileNotFoundError: 文件不存在
+content = path.read_text(encoding="utf-8")  # FileNotFoundError: 文件不存在
 ```
 
 ✅ **正确做法**：
@@ -170,7 +170,7 @@ from pathlib import Path
 
 path = Path("data.txt")
 if path.exists():
-    content = path.read_text()
+    content = path.read_text(encoding="utf-8")
 else:
     print("文件不存在")
 ```
@@ -222,8 +222,8 @@ files = list(Path(".").glob("*.txt"))
 # rglob: 递归搜索所有子目录
 files = list(Path(".").rglob("*.txt"))
 
-# 或者使用 ** 通配符
-files = list(Path(".").glob("**/*.txt"))  # 需要 recursive=True 在老版本
+# 或者使用 ** 通配符递归匹配
+files = list(Path(".").glob("**/*.txt"))
 ```
 
 **说明**：`glob()` 不递归，`rglob()` 递归搜索所有子目录。记住：`r` = recursive。

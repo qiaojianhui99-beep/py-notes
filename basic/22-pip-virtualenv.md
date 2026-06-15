@@ -20,7 +20,7 @@ pip install requests
 pip install requests==2.28.0
 
 # 安装最小版本
-pip install requests>=2.28.0
+pip install "requests>=2.28.0"
 
 # 从 requirements.txt 安装
 pip install -r requirements.txt
@@ -63,7 +63,7 @@ python -m venv myenv
 # 激活（Windows）
 myenv\Scripts\activate
 
-# 激活（Linux/Mac）
+# 激活（Linux/macOS）
 source myenv/bin/activate
 
 # 退出
@@ -101,7 +101,7 @@ pip install -r requirements.txt
 
 ## pyproject.toml
 
-Python 3.11+ 推荐的现代配置格式。
+现代 Python 项目常用 `pyproject.toml` 保存项目元数据、依赖和工具配置。
 
 ```toml
 [project]
@@ -234,7 +234,7 @@ git commit -m "Add dependencies"
 python -m venv myenv
 
 # 激活
-source myenv/bin/activate  # Linux/Mac
+source myenv/bin/activate  # Linux/macOS
 # 或 myenv\Scripts\activate  # Windows
 
 # 安装包
@@ -261,7 +261,7 @@ python -m venv .venv
 # Windows
 .venv\Scripts\activate
 
-# Linux/Mac
+# Linux/macOS
 source .venv/bin/activate
 
 pip install -r requirements.txt

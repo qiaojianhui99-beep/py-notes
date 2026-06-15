@@ -235,10 +235,10 @@ text = json.dumps(data)
 ❌ **错误示例**：
 ```python
 # Windows 上使用反斜杠
-path = "data\\users.txt"  # Linux/Mac 上会出错
+path = "data\\users.txt"  # Linux/macOS 上会出错
 
 # 或者使用正斜杠
-path = "data/users.txt"  # Windows 上可能有兼容性问题
+path = "data/users.txt"  # Windows 通常能识别，但跨平台代码不应依赖手写分隔符
 ```
 
 ✅ **正确做法**：
@@ -248,7 +248,7 @@ import os
 # 使用 os.path.join 自动处理路径分隔符
 path = os.path.join("data", "users.txt")
 # Windows: data\users.txt
-# Linux/Mac: data/users.txt
+# Linux/macOS: data/users.txt
 ```
 
 **说明**：不同操作系统的路径分隔符不同。使用 `os.path.join()` 可以自动处理，保证跨平台兼容。
@@ -308,7 +308,7 @@ text = json.dumps(data)
 print(text)  # '{"name": "Alice"}'
 
 # dump：直接写入文件
-with open("data.json", "w") as f:
+with open("data.json", "w", encoding="utf-8") as f:
     json.dump(data, f)
 ```
 

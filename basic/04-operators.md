@@ -218,18 +218,7 @@ print(-10 // 3) # -4 (不是 -3)
 
 ❌ **错误示例**：
 ```python
-age = 16
-has_ticket = True
-
-# 本意是：(age >= 18) and has_ticket
-if age >= 18 and has_ticket:
-    print("可以入场")
-```
-
-这个例子本身是对的，但看下面容易出错的：
-
-```python
-# 容易误解：想表达"年龄小于 12 或大于 60"
+# 想表达“年龄小于 12 或大于 60”
 age = 10
 if age < 12 or > 60:  # SyntaxError: 语法错误
     print("优惠票")

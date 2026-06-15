@@ -111,7 +111,7 @@ def first(items: list[T]) -> T | None:
     return items[0] if items else None
 ```
 
-## Python 3.13+
+## Python 3.13
 
 ### 1. 更好的 REPL
 
@@ -125,6 +125,26 @@ def first(items: list[T]) -> T | None:
 # 编译时启用
 python3.13t script.py
 ```
+
+## Python 3.14
+
+### 1. Template string literals
+
+Python 3.14 引入模板字符串字面量（t-string），面向需要安全处理模板内容的场景。它比普通 f-string 更适合构建需要后续处理的模板对象。
+
+初学阶段不需要立刻使用 t-string。日常输出变量时，继续优先使用 f-string。
+
+### 2. 注解延迟求值与 annotationlib
+
+Python 3.14 改进了类型注解的求值方式，并新增 `annotationlib`，方便工具和库检查注解。
+
+这主要影响类型检查器、框架和库作者。普通学习者只需要知道：现代 Python 对类型注解的支持仍在持续改进。
+
+### 3. 多解释器与 free-threaded 改进
+
+Python 3.14 继续推进多解释器和 free-threaded 相关能力，用于改善并发执行能力。
+
+这些属于进阶性能和并发主题。基础阶段先掌握函数、模块、异常和常规并发概念即可。
 
 ## 版本兼容建议
 

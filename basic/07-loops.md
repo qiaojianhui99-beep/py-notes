@@ -221,11 +221,11 @@ for i in range(1, 11):  # 右边界要写 11
 
 ❌ **错误示例**：
 ```python
-numbers = [1, 2, 3, 4, 5]
+numbers = [2, 4, 6, 7]
 for num in numbers:
     if num % 2 == 0:
         numbers.remove(num)  # 可能跳过元素
-print(numbers)  # [1, 3, 5]，但 4 被跳过了
+print(numbers)  # [4, 7]，4 被跳过了
 ```
 
 ✅ **正确做法**：

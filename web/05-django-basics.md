@@ -295,7 +295,7 @@ mkdir -p blog/templates/blog
 
 ### 模板语法
 
-```django
+```html
 {# 变量 #}
 {{ post.title }}
 {{ post.created_at|date:"Y-m-d" }}

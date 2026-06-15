@@ -61,7 +61,7 @@ python3 --version
 
 Python 自带的简易开发环境，适合快速试一两行代码。
 
-### VSCode
+### VS Code
 
 轻量、常用，推荐安装 Python 插件。
 
@@ -81,6 +81,18 @@ print("Hello, World!")
 
 ```bash
 python hello.py
+```
+
+如果你的系统只提供 `python3` 或 `py` 命令，可以改用：
+
+```bash
+python3 hello.py
+```
+
+或：
+
+```bash
+py hello.py
 ```
 
 如果看到 `Hello, World!`，说明 Python 已经可以正常运行。

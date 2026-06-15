@@ -61,7 +61,7 @@ def calculate(a, b):
 
 ## IDE 断点调试
 
-### VSCode 调试
+### VS Code 调试
 
 1. 点击行号左侧设置断点
 2. F5 启动调试
@@ -101,7 +101,7 @@ try:
 except Exception as e:
     traceback.print_exc()
     # 或保存到文件
-    with open('error.log', 'w') as f:
+    with open("error.log", "w", encoding="utf-8") as f:
         traceback.print_exc(file=f)
 ```
 
@@ -225,7 +225,7 @@ python script.py  # 结果没变化
 # 3. 运行程序
 
 # 或者使用自动保存功能
-# VSCode: "files.autoSave": "afterDelay"
+# VS Code: "files.autoSave": "afterDelay"
 ```
 
 **说明**：修改代码后必须保存才能生效。这是新手最常犯但最容易忽略的错误。
@@ -244,7 +244,7 @@ def find_max(numbers):
             max_num = num
     return max_num
 
-print(find_max([1, -5, 3, -2]))  # 期望 3，实际 0
+print(find_max([-1, -5, -3, -2]))  # 期望 -1，实际 0
 ```
 
 <details>
@@ -266,10 +266,10 @@ def find_max(numbers):
     
     return max_num
 
-print(find_max([1, -5, 3, -2]))  # 3
+print(find_max([-1, -5, -3, -2]))  # -1
 ```
 
-**解析**：初始值 0 对于全负数列表会返回错误结果。
+**解析**：初始值 `0` 对于全负数列表会返回错误结果。更稳妥的做法是先判断列表是否为空，再用第一个元素作为初始最大值。
 </details>
 
 ### 进阶练习

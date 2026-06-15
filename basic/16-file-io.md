@@ -50,7 +50,7 @@ with open("file.txt", "r", encoding="utf-8") as f:
 读取全部内容。
 
 ```python
-with open("file.txt", "r") as f:
+with open("file.txt", "r", encoding="utf-8") as f:
     content = f.read()
 ```
 
@@ -59,7 +59,7 @@ with open("file.txt", "r") as f:
 读取一行。
 
 ```python
-with open("file.txt", "r") as f:
+with open("file.txt", "r", encoding="utf-8") as f:
     line = f.readline()
 ```
 
@@ -68,7 +68,7 @@ with open("file.txt", "r") as f:
 读取所有行，返回列表。
 
 ```python
-with open("file.txt", "r") as f:
+with open("file.txt", "r", encoding="utf-8") as f:
     lines = f.readlines()
     for line in lines:
         print(line.strip())
@@ -77,7 +77,7 @@ with open("file.txt", "r") as f:
 ### 逐行遍历（推荐）
 
 ```python
-with open("file.txt", "r") as f:
+with open("file.txt", "r", encoding="utf-8") as f:
     for line in f:
         print(line.strip())
 ```
@@ -87,7 +87,7 @@ with open("file.txt", "r") as f:
 ### write()
 
 ```python
-with open("file.txt", "w") as f:
+with open("file.txt", "w", encoding="utf-8") as f:
     f.write("Hello\n")
     f.write("World\n")
 ```
@@ -96,14 +96,14 @@ with open("file.txt", "w") as f:
 
 ```python
 lines = ["Line 1\n", "Line 2\n", "Line 3\n"]
-with open("file.txt", "w") as f:
+with open("file.txt", "w", encoding="utf-8") as f:
     f.writelines(lines)
 ```
 
 ## 追加内容
 
 ```python
-with open("file.txt", "a") as f:
+with open("file.txt", "a", encoding="utf-8") as f:
     f.write("New line\n")
 ```
 
@@ -196,12 +196,12 @@ content = f.read()
 ✅ **正确做法**：
 ```python
 # 方法 1：使用 with 语句（推荐）
-with open("data.txt", "r") as f:
+with open("data.txt", "r", encoding="utf-8") as f:
     content = f.read()
 # 文件自动关闭
 
 # 方法 2：显式关闭
-f = open("data.txt", "r")
+f = open("data.txt", "r", encoding="utf-8")
 try:
     content = f.read()
 finally:
@@ -226,28 +226,28 @@ with open("data.txt", "r", encoding="utf-8") as f:
     content = f.read()
 ```
 
-**说明**：不同系统的默认编码不同（Windows 常用 GBK，Linux/Mac 常用 UTF-8）。建议始终显式指定 `encoding="utf-8"`。
+**说明**：不同系统的默认编码不同（Windows 常用 GBK，Linux/macOS 常用 UTF-8）。建议始终显式指定 `encoding="utf-8"`。
 
 ### 易错点 3：覆盖模式 `"w"` 会清空原文件
 
 ❌ **错误示例**：
 ```python
 # 想追加内容，但用了 "w" 模式
-with open("log.txt", "w") as f:  # 原文件内容被清空！
+with open("log.txt", "w", encoding="utf-8") as f:  # 原文件内容被清空！
     f.write("新日志\n")
 ```
 
 ✅ **正确做法**：
 ```python
 # 追加模式 "a"
-with open("log.txt", "a") as f:
+with open("log.txt", "a", encoding="utf-8") as f:
     f.write("新日志\n")
 
 # 或者先读取，再写入（如果需要修改）
-with open("log.txt", "r") as f:
+with open("log.txt", "r", encoding="utf-8") as f:
     content = f.read()
 
-with open("log.txt", "w") as f:
+with open("log.txt", "w", encoding="utf-8") as f:
     f.write(content + "新日志\n")
 ```
 
@@ -263,11 +263,11 @@ with open("log.txt", "w") as f:
 <summary>💡 查看答案</summary>
 
 ```python
-with open("data.txt", "r") as f:
+with open("data.txt", "r", encoding="utf-8") as f:
     content = f.read()
-    lines = content.count('\n') + 1
+    lines = len(content.splitlines())
     chars = len(content)
-    print(f"行数: {lines}, 字符数: {chars}")
+    print(f"行数：{lines}, 字符数：{chars}")
 ```
 </details>
 
@@ -278,7 +278,7 @@ with open("data.txt", "r") as f:
 
 ```python
 fruits = ["apple", "banana", "orange"]
-with open("fruits.txt", "w") as f:
+with open("fruits.txt", "w", encoding="utf-8") as f:
     for fruit in fruits:
         f.write(fruit + "\n")
 ```

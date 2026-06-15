@@ -194,7 +194,7 @@ show_welcome()
 def greet():
     print("Hello")
 
-greet  # 不会执行函数，只是引用
+print(greet)  # 不会执行函数，只是打印函数对象
 # 输出：<function greet at 0x...>
 ```
 
