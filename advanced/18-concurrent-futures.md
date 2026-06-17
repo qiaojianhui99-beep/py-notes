@@ -169,47 +169,109 @@ CPU 密集型任务并行化。
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：`executor.map` 的结果按提交顺序而非完成顺序
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from concurrent.futures import ThreadPoolExecutor
+import time
+
+def task(n):
+    time.sleep(n)
+    return n
+
+with ThreadPoolExecutor(max_workers=3) as executor:
+    # 提交顺序：sleep 5, 1, 3
+    results = executor.map(task, [5, 1, 3])
+    for r in results:
+        print(r)   # 即使 1 先完成，也要等到 5 才打印
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+with ThreadPoolExecutor(max_workers=3) as executor:
+    futures = [executor.submit(task, n) for n in [5, 1, 3]]
+
+    # as_completed 按"完成时间"产出，谁先完成谁先出来
+    for f in as_completed(futures):
+        print(f.result())   # 可能顺序：1, 3, 5
 ```
 
-**说明**：待补充
+**说明**：`executor.map(func, iterable)` 的语义是"按 iterable 顺序提交 + 按提交顺序拿结果"，第一个任务没完成就不会出第一个结果，**即使后面的任务已经完成**。要按"完成顺序"拿结果必须用 `submit + as_completed`。流式处理（如网页爬取边爬边处理）几乎都该用后者。
 
-### 易错点 2：待补充
+### 易错点 2：`with` 块结束时 Future 已经被取消，但忘了取结果
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from concurrent.futures import ThreadPoolExecutor
+
+def task():
+    import time
+    time.sleep(10)
+    return "结果"
+
+with ThreadPoolExecutor(max_workers=1) as executor:
+    future = executor.submit(task)
+    # 没取 future.result() 就退出 with 块
+# with 退出时会调 shutdown(wait=True)，阻塞 10 秒等任务做完
+# 或者：直接被强制取消（如果用了 cancel）
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# 方法 1：明确取结果或处理异常
+with ThreadPoolExecutor(max_workers=1) as executor:
+    future = executor.submit(task)
+    try:
+        result = future.result(timeout=2)
+    except TimeoutError:
+        future.cancel()
+        print("超时放弃")
+
+# 方法 2：用 shutdown(wait=False) 让任务在后台继续，自己处理生命周期
+executor = ThreadPoolExecutor(max_workers=1)
+executor.submit(task)
+# 显式管理生命周期，记得最后 shutdown
 ```
 
-**说明**：待补充
+**说明**：`with ThreadPoolExecutor() as e` 在退出时会自动 `shutdown(wait=True)`——**阻塞主线程直到所有任务完成**。如果你忘了 `future.result()` 或任务卡住，整个程序会在 `with` 结束处等待。要么显式 `future.result(timeout=...)` 处理，要么不放在 `with` 里手动管理。
 
-### 易错点 3：待补充
+### 易错点 3：`ProcessPoolExecutor` 传了 lambda 或闭包
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from concurrent.futures import ProcessPoolExecutor
+
+def process(data):
+    return [x ** 2 for x in data]
+
+if __name__ == "__main__":
+    data = [1, 2, 3, 4]
+
+    with ProcessPoolExecutor() as executor:
+        # 想做 partial，传了 lambda
+        results = list(executor.map(lambda x: x ** 2, data))
+        # AttributeError: Can't pickle <function <lambda>>
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+from concurrent.futures import ProcessPoolExecutor
+from functools import partial
+
+def square(x, exponent=2):
+    return x ** exponent
+
+if __name__ == "__main__":
+    data = [1, 2, 3, 4]
+    with ProcessPoolExecutor() as executor:
+        # 用模块级函数 + partial
+        results = list(executor.map(partial(square, exponent=2), data))
 ```
 
-**说明**：待补充
+**说明**：跨进程必须 `pickle` 序列化任务函数和参数。**lambda、嵌套函数、闭包都不能 pickle**——这是 `ProcessPoolExecutor` 和 `multiprocessing.Pool` 的硬限制。`ThreadPoolExecutor` 在同进程内不受影响（共享内存，不用 pickle），但养成"任务函数都定义在模块顶层"的习惯能避免切到进程池时踩坑。
 
 ## 练习题
 

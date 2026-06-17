@@ -154,47 +154,101 @@ with ProcessPoolExecutor(max_workers=4) as executor:
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：Windows 下忘了 `if __name__ == "__main__"`
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from multiprocessing import Process
+
+def worker():
+    print("工作")
+
+p = Process(target=worker)
+p.start()
+p.join()
+# Windows / macOS（spawn 启动方式）：RuntimeError 或无限递归导入
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+from multiprocessing import Process
+
+def worker():
+    print("工作")
+
+if __name__ == "__main__":
+    p = Process(target=worker)
+    p.start()
+    p.join()
 ```
 
-**说明**：待补充
+**说明**：Windows 和 macOS 默认用 `spawn` 启动方式，子进程会**重新导入主模块**。如果不加 `if __name__ == "__main__":` 守卫，子进程导入时会再次执行 `Process().start()`，无限递归创建子进程。Linux 默认用 `fork`，老代码可能跑得起来，但跨平台兼容性需要这个守卫。
 
-### 易错点 2：待补充
+### 易错点 2：直接共享变量失败
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from multiprocessing import Process
+
+counter = 0   # 全局变量
+
+def increment():
+    global counter
+    counter += 1
+
+ps = [Process(target=increment) for _ in range(10)]
+for p in ps: p.start()
+for p in ps: p.join()
+print(counter)  # 0，子进程根本没修改父进程的变量
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+from multiprocessing import Process, Value, Manager
+
+# 方法 1：用 Value/Array（共享内存）
+counter = Value('i', 0)
+def increment():
+    with counter.get_lock():
+        counter.value += 1
+
+# 方法 2：用 Manager（更灵活，支持 dict/list）
+manager = Manager()
+shared_list = manager.list()
 ```
 
-**说明**：待补充
+**说明**：进程之间**内存独立**，子进程拿到的是父进程变量的拷贝。直接改全局变量不会反映回父进程。要共享，必须用 `multiprocessing.Value/Array`（共享内存）或 `Manager`（独立进程托管对象）。
 
-### 易错点 3：待补充
+### 易错点 3：进程间传递闭包/lambda 失败
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from multiprocessing import Pool
+
+def make_func():
+    x = 10
+    return lambda n: n + x   # 闭包
+
+with Pool(4) as p:
+    print(p.map(make_func(), [1, 2, 3]))  # AttributeError：无法 pickle lambda
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+from multiprocessing import Pool
+
+# 必须用模块顶层、可 pickle 的函数
+def add_x(n, x=10):
+    return n + x
+
+if __name__ == "__main__":
+    with Pool(4) as p:
+        # functools.partial 也支持 pickle
+        from functools import partial
+        print(p.map(partial(add_x, x=10), [1, 2, 3]))
 ```
 
-**说明**：待补充
+**说明**：跨进程传函数要靠 `pickle` 序列化。**lambda、闭包、嵌套函数不能 pickle**。被传的函数和参数都必须在模块顶层定义。这也是 `ProcessPoolExecutor` 和 `multiprocessing.Pool` 的硬性限制。
 
 ## 练习题
 

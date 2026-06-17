@@ -180,47 +180,98 @@ with lock:
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：`__exit__` 返回值错误地抑制异常
 
 ❌ **错误示例**：
 ```python
-# 待补充
+class FileManager:
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file.close()
+        return True  # 看似安全，实际吞掉了所有异常！
+
+with FileManager('test.txt', 'r') as f:
+    data = f.read()
+    undefined_var   # NameError 被 __exit__ 静默吃掉，调试极困难
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+class FileManager:
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file.close()
+        return False  # 不抑制异常，让外面看到错误
+
+# 仅在需要"故意忽略某类异常"时返回 True，且要分类
+def __exit__(self, exc_type, exc_val, exc_tb):
+    self.file.close()
+    if exc_type is FileNotFoundError:
+        return True  # 只吞 FileNotFoundError
+    return False
 ```
 
-**说明**：待补充
+**说明**：`__exit__` 返回 `True` 表示"这个异常我处理了，外面别管了"。绝大多数情况下应该返回 `False`（或 `None`）。无脑返回 `True` 会让 `with` 块里的所有异常都消失，调试地狱。
 
-### 易错点 2：待补充
+### 易错点 2：`@contextmanager` 装饰器忘了 `try/finally`
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from contextlib import contextmanager
+
+@contextmanager
+def open_file(path):
+    f = open(path)
+    yield f
+    f.close()  # 如果 with 块里抛异常，这行不会执行
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+from contextlib import contextmanager
+
+@contextmanager
+def open_file(path):
+    f = open(path)
+    try:
+        yield f
+    finally:
+        f.close()  # 无论是否异常都会执行
 ```
 
-**说明**：待补充
+**说明**：`@contextmanager` 把 `yield` 之前的部分当成 `__enter__`，之后当成 `__exit__`。但 `yield` 期间如果消费者抛了异常，"yield 之后"的代码默认不会执行——必须放进 `try/finally` 才能保证清理。
 
-### 易错点 3：待补充
+### 易错点 3：`__enter__` 返回 `self` 还是其他对象的混淆
 
 ❌ **错误示例**：
 ```python
-# 待补充
+class MyResource:
+    def __init__(self):
+        self.file = open('x.txt')
+
+    def __enter__(self):
+        # 返回 self，导致 as f 拿到的是 MyResource，不是文件对象
+        return self
+
+with MyResource() as f:
+    f.write('hi')  # AttributeError：MyResource 没有 write 方法
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+class MyResource:
+    def __init__(self):
+        self.file = open('x.txt')
+
+    def __enter__(self):
+        return self.file   # 暴露真正需要用的对象
+
+    def __exit__(self, *args):
+        self.file.close()
+
+with MyResource() as f:
+    f.write('hi')  # f 是文件对象，正常工作
 ```
 
-**说明**：待补充
+**说明**：`with X() as y` 中的 `y` 是 `__enter__()` 的返回值，不一定是 `X` 实例本身。返回什么取决于你希望 `with` 块里直接拿到什么——通常是最常被使用的"内部资源"。
 
 ## 练习题
 

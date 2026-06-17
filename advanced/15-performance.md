@@ -172,47 +172,99 @@ async def io_bound_task():
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：靠"直觉"和单次 `time.time()` 测性能
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import time
+
+start = time.time()
+result = my_function()
+end = time.time()
+print(f"耗时: {end - start:.6f}秒")
+# 问题：只跑一次，受系统抖动、GC、其他进程影响极大
+# 1ms 的函数可能测出 0.5ms 也可能 3ms，结论毫无意义
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+import timeit
+
+# 多次运行取平均，避免偶发因素
+t = timeit.timeit('my_function()', globals=globals(), number=10_000)
+print(f"平均: {t / 10_000:.6f}秒/次")
+
+# 精确测量（系统时钟分辨率有限时）
+t = timeit.repeat('my_function()', globals=globals(), number=1000, repeat=5)
+print(f"最快: {min(t) / 1000:.6f}秒/次")  # 取最小值更稳定
 ```
 
-**说明**：待补充
+**说明**：单次 `time.time()` 测量精度受系统调度、GC、CPU 频率影响。`timeit` 会禁用 GC、自动重复多次、取最小值（最稳定）。**测性能永远用 `timeit`**，单次 `time.time()` 只能看大概趋势。
 
-### 易错点 2：待补充
+### 易错点 2：cProfile 看错"瓶颈"——错把外层当真凶
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import cProfile
+cProfile.run('main()')
+
+# 输出按 tottime 排序时，看到 main() 第一，就以为 main 慢
+# 实际 main 只是调用方，自己没干啥
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+import cProfile, pstats
+
+profiler = cProfile.run('main()', 'out.prof')
+
+# 看两个指标：
+# - tottime：函数自己（不包括子调用）花的时间
+# - cumtime：包括所有子调用的累计时间
+stats = pstats.Stats('out.prof')
+stats.sort_stats('tottime').print_stats(10)   # 找"自己耗时最长"的函数
+stats.sort_stats('cumtime').print_stats(10)   # 找"调用链累计最长"的入口
 ```
 
-**说明**：待补充
+**说明**：cProfile 报告里 `tottime` 是"函数本身"耗时（不含子调用），`cumtime` 是"包括子调用"。**优化要看 `tottime` 排序**——这才是真正干活多的函数。光看 `cumtime` 会停在最外层 `main()`，毫无意义。
 
-### 易错点 3：待补充
+### 易错点 3：`__slots__` 用上后失去灵活性、还可能 break 第三方库
 
 ❌ **错误示例**：
 ```python
-# 待补充
+class User:
+    __slots__ = ['id', 'name']
+
+u = User()
+u.id = 1
+u.email = 'a@b.com'   # AttributeError！__slots__ 禁止动态属性
+# 后续 JSON 序列化（依赖 __dict__）会失败：
+import json
+json.dumps(u.__dict__)  # AttributeError: 'User' has no __dict__
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# 只有"确实需要省内存"（海量实例）时才用 __slots__
+class Point:
+    __slots__ = ('x', 'y', 'z')   # 用元组，省一点点启动时间
+
+# 需要动态属性 / 序列化时用 dataclass 或普通类
+from dataclasses import dataclass, asdict
+
+@dataclass
+class User:
+    id: int
+    name: str
+    email: str = ''
+
+# 序列化
+import json
+u = User(1, 'Alice')
+json.dumps(asdict(u))
 ```
 
-**说明**：待补充
+**说明**：`__slots__` 会让类失去 `__dict__`，意味着不能动态加属性、不能 pickle 默认行为、不能被依赖 `__dict__` 的库（如 ORM、序列化器）直接使用。**只在确实有百万级实例**（如游戏中的粒子、大数据节点）才值得用。日常业务对象用 `@dataclass` 更省心。
 
 ## 练习题
 

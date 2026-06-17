@@ -120,47 +120,110 @@ observer.start()
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：`readline()` / `readlines()` 把整个文件读进内存
 
 ❌ **错误示例**：
 ```python
-# 待补充
+def count_lines(path):
+    with open(path) as f:
+        lines = f.readlines()   # 一次性把所有行读进列表
+    return len(lines)
+
+# 对 5 GB 日志：内存爆炸，进程被 OOM 杀死
+count_lines('huge.log')
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+def count_lines(path):
+    count = 0
+    with open(path) as f:
+        for line in f:     # 文件对象本身是迭代器，按需读
+            count += 1
+    return count
+
+# 或用内置 sum + 生成器表达式
+def count_lines(path):
+    with open(path) as f:
+        return sum(1 for _ in f)
 ```
 
-**说明**：待补充
+**说明**：文件对象本身实现了迭代器协议，`for line in f` 一次只读一行到内存。`readlines()` 会把所有行一次性返回成列表，大文件直接撑爆内存。规则：**只要文件可能很大，就用 `for line in f`，不要用 `readlines()`**。
 
-### 易错点 2：待补充
+### 易错点 2：`tempfile` 默认不指定 `delete=False` 时立即消失
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import tempfile
+
+f = tempfile.NamedTemporaryFile()
+f.write(b'data')
+# 想把文件路径传给子进程
+path = f.name
+subprocess.run(['some_tool', path])
+# 某些系统（Linux）some_tool 一打开就 FileNotFoundError
+# 因为 NamedTemporaryFile 在 f.close() 时立刻删除
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+import tempfile, os
+
+# 方法 1：让文件活得久一点（自己负责删）
+with tempfile.NamedTemporaryFile(delete=False) as f:
+    f.write(b'data')
+    path = f.name
+
+try:
+    subprocess.run(['some_tool', path])
+finally:
+    os.unlink(path)
+
+# 方法 2：跨进程共享文件用 TemporaryDirectory + 自己起文件名
+with tempfile.TemporaryDirectory() as d:
+    path = os.path.join(d, 'work.bin')
+    with open(path, 'wb') as f:
+        f.write(b'data')
+    subprocess.run(['some_tool', path])
 ```
 
-**说明**：待补充
+**说明**：`NamedTemporaryFile` 默认 `delete=True`，关闭时立即删除。Windows 上其他进程不能打开它（独占锁），Linux 上其他进程能访问但只能在它关闭前。跨进程共享用 `delete=False` + 显式清理，或用 `TemporaryDirectory` 整体托管。
 
-### 易错点 3：待补充
+### 易错点 3：忘了文件锁是跨进程的，线程内互不影响
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import fcntl
+
+# 同进程两个线程同时加锁：fcntl 在同进程内不会阻塞
+import threading
+
+def write_data():
+    with open('shared.txt', 'a') as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)   # 期望"线程 A 写完线程 B 再写"
+        f.write('hello\n')
+
+t1 = threading.Thread(target=write_data)
+t2 = threading.Thread(target=write_data)
+# 实际：两个线程可能同时写，因为文件锁是"进程级"的
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# 同进程内：用 threading.Lock
+import threading
+file_lock = threading.Lock()
+
+def write_data():
+    with file_lock:
+        with open('shared.txt', 'a') as f:
+            f.write('hello\n')
+
+# 跨进程：用 fcntl（Linux/macOS）或 msvcrt（Windows）
+# 注意：文件锁的 lock 不属于"线程"，属于"进程"
 ```
 
-**说明**：待补充
+**说明**：`fcntl.flock` / `os.lockf` 是**进程级**的——同一进程内任何线程都能获取已持有的锁。同进程内的互斥要用 `threading.Lock`，跨进程互斥才用文件锁。Windows 不支持 `fcntl`，要换 `msvcrt.locking` 或第三方库（如 `portalocker`）。
 
 ## 练习题
 

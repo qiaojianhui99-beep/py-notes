@@ -672,6 +672,288 @@ def test_user_creation():
 6. 定期运行测试并修复失败的测试
 :::
 
+## 使用场景
+
+### 场景 1：参数化大批量数据驱动测试
+
+同一个验证逻辑要覆盖几十组输入输出时，写几十个 `test_xxx` 函数会让测试文件臃肿。用 `@pytest.mark.parametrize` 把"输入/期望"抽成数据表，一处逻辑、N 组数据。
+
+```python
+@pytest.mark.parametrize("email,expected", [
+    ("alice@example.com", True),
+    ("bob@", False),
+    ("", False),
+    ("a@b.c", True),
+])
+def test_is_valid_email(email, expected):
+    assert is_valid_email(email) is expected
+```
+
+### 场景 2：替换慢依赖做"快测试"
+
+数据库、外部 API、文件系统都是测试里的"慢源"。用 fixture + Mock 把它们换成内存版本，单测速度从秒级降到毫秒级。
+
+```python
+@pytest.fixture
+def mock_db():
+    return Mock()
+
+def test_create_user(mock_db):
+    service = UserService(mock_db)
+    service.create("Alice")
+    mock_db.insert.assert_called_once()
+```
+
+### 场景 3：分层 fixture 复用环境
+
+复杂测试常需要"数据库连接 + 已登录用户 + 测试数据"三层准备。Fixture 可以互相依赖，pytest 自动按依赖顺序创建并缓存。
+
+```python
+@pytest.fixture(scope="session")
+def db(): ...                    # 整个 session 复用一个连接
+
+@pytest.fixture
+def user(db): ...                # 每个测试用 db 创建一个用户
+
+def test_login(user):             # pytest 自动注入 db 和 user
+    ...
+```
+
+### 场景 4：CI 卡片化（标记分类运行）
+
+把"慢测试"和"集成测试"用 marker 标出来，CI 默认只跑快测试， nightly 跑全部。
+
+```bash
+pytest -m "not slow"           # 日常：跳过 slow
+pytest -m integration          # 集成环境：只跑 integration
+```
+
+## 易错点
+
+### 易错点 1：Mock 替换路径错——补丁打在"使用方"而非"定义方"
+
+❌ **错误示例**：
+```python
+# myapp/services.py
+import requests
+def fetch(url):
+    return requests.get(url).json()
+
+# myapp/views.py
+from myapp.services import fetch
+def view():
+    return fetch("http://x")
+
+# 测试
+@patch('myapp.services.requests.get')
+def test_view(mock_get):           # 补丁打在 services 里
+    mock_get.return_value.json.return_value = {"ok": True}
+    result = view()                # views.py 里 fetch() 还会真的发 HTTP 请求！
+```
+
+✅ **正确做法**：
+```python
+# 方法 1：补丁打在"被使用的位置"——即 views 里的 fetch 符号
+@patch('myapp.views.fetch')
+def test_view(mock_fetch):
+    mock_fetch.return_value = {"ok": True}
+    result = view()
+
+# 方法 2：补丁打在最底层 requests.get（在 services 模块里）
+@patch('myapp.services.requests.get')
+def test_fetch(mock_get):
+    mock_get.return_value.json.return_value = {"ok": True}
+    assert fetch("http://x") == {"ok": True}
+```
+
+**说明**：`mock.patch` 替换的是"那个名字在哪个命名空间里的引用"。`from x import y` 把 `y` 复制到当前模块后，补丁 `x.y` 不会影响当前模块的 `y`。原则：**补丁打在被测代码"实际去取这个名字"的位置**。混淆是测试 Mock 失效的首要原因。
+
+### 易错点 2：参数化测试数据太多导致报告爆炸
+
+❌ **错误示例**：
+```python
+@pytest.mark.parametrize("n", list(range(100)))
+def test_many(n):
+    assert n >= 0
+
+# pytest 报告里会有 100 行，CI 日志被淹没
+```
+
+✅ **正确做法**：
+```python
+# 方法 1：相同性质的数据合并到一个测试
+@pytest.mark.parametrize("group", [
+    pytest.param([1, 2, 3], id="positive"),
+    pytest.param([-1, -2, -3], id="negative"),
+    pytest.param([0, 0, 0], id="zero"),
+])
+def test_signs(group):
+    for n in group:
+        ...
+
+# 方法 2：用 pytest.param 给每个用例命名，方便定位
+@pytest.mark.parametrize("n", [
+    pytest.param(1, id="one"),
+    pytest.param(100, id="hundred"),
+])
+def test_x(n): ...
+```
+
+**说明**：参数化是双刃剑——数据驱动很爽，但 100 组数据会让 CI 报告冗长、失败定位变难。**同性质的边界值合并、特殊值用 `pytest.param(id=...)` 命名**，能让报告精简且失败时一眼定位。
+
+### 易错点 3：覆盖率 100% 但代码依然有 bug
+
+❌ **错误理解**：
+```python
+def divide(a, b):
+    return a / b
+
+# 测试只覆盖了"成功路径"
+def test_divide():
+    assert divide(10, 2) == 5   # 行覆盖率 100%，但没测 b=0
+```
+
+✅ **正确理解**：
+```python
+def divide(a, b):
+    if b == 0:
+        raise ValueError("不能除零")
+    return a / b
+
+# 覆盖率只是"被执行过"，不代表"被验证过"
+def test_divide():
+    assert divide(10, 2) == 5
+
+def test_divide_by_zero():
+    with pytest.raises(ValueError):
+        divide(10, 0)
+```
+
+**说明**：覆盖率工具只看"某行被跑过没有"，**不验证它是否被正确断言**。一个 `assert x == y` 都没写的测试也能刷出 100% 覆盖率。覆盖率是"必要不充分条件"——必须配合**有意义的断言 + 边界场景**才有价值。
+
+## 练习题
+
+### 基础练习
+
+**题目 1**：用 `@pytest.mark.parametrize` 测试一个判断质数的函数，覆盖正数、负数、0、1、大质数等至少 5 种情况。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+import pytest
+
+def is_prime(n: int) -> bool:
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+@pytest.mark.parametrize("n,expected", [
+    pytest.param(-5, False, id="负数"),
+    pytest.param(0, False, id="零"),
+    pytest.param(1, False, id="一"),
+    pytest.param(2, True, id="最小的质数"),
+    pytest.param(7, True, id="普通质数"),
+    pytest.param(9, False, id="合数"),
+    pytest.param(97, True, id="大质数"),
+])
+def test_is_prime(n, expected):
+    assert is_prime(n) is expected
+```
+
+**解析**：`pytest.param(..., id="...")` 给每组数据起名字，失败时直接看到是哪组挂了。
+</details>
+
+**题目 2**：写一个 fixture `db_session`，scope 设为 `function`，每个测试前后自动 commit/rollback。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+import pytest
+
+@pytest.fixture
+def db_session():
+    session = create_session()
+    session.begin()
+    yield session
+    session.rollback()
+    session.close()
+
+def test_create_user(db_session):
+    db_session.add(User(name="Alice"))
+    db_session.flush()   # 不 commit，让 teardown 时整体回滚
+    assert db_session.query(User).count() == 1
+```
+
+**解析**：scope="function" + yield 后 rollback，让每个测试在干净的数据库状态跑，避免互相污染。
+</details>
+
+### 进阶练习
+
+**题目 3**：用 Mock 替换 `requests.get` 测试一个调用外部 API 的函数，并断言：① 返回值正确 ② 调用次数和参数正确 ③ 发生异常时函数有合理降级。
+
+<details>
+<summary>💡 查看答案</summary>
+
+```python
+from unittest.mock import patch
+import pytest
+
+def fetch_user(uid):
+    resp = requests.get(f"https://api.example.com/users/{uid}")
+    if resp.status_code != 200:
+        return None
+    return resp.json()
+
+@patch("myapp.requests.get")
+def test_fetch_user_success(mock_get):
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = {"id": 1, "name": "Alice"}
+
+    result = fetch_user(1)
+
+    assert result == {"id": 1, "name": "Alice"}
+    mock_get.assert_called_once_with("https://api.example.com/users/1")
+
+@patch("myapp.requests.get")
+def test_fetch_user_returns_none_on_error(mock_get):
+    mock_get.return_value.status_code = 500
+    assert fetch_user(1) is None
+```
+
+**解析**：补丁打在 `myapp.requests.get`（被测代码实际取这个名字的位置）。三组断言：返回值、调用次数+参数、异常降级——三个角度覆盖，缺一不可。
+</details>
+
+### 挑战练习
+
+**题目 4**：为一段已有业务代码（如订单处理流程）补一套测试，要求：① 覆盖率 ≥ 90% ② 包含 Mock、fixture、参数化 ③ 至少一组集成测试（用 marker 标记，可单独跳过）。
+
+**提示**：先跑 `pytest --cov` 看缺哪些分支；为每个分支设计一条测试；外部依赖（数据库、HTTP）用 Mock + 集成测试 marker 分两层处理。
+
+## 费曼学习法检验
+
+用自己的话回答以下问题（不要看上面的内容）：
+
+1. **这是什么**：pytest 的 fixture 和 unittest 的 setUp/tearDown 有什么本质区别？
+
+2. **为什么需要**：Mock 一个 API 调用时，为什么补丁路径打在 `myapp.views.fetch` 而不是 `services.fetch`？
+
+3. **怎么用**：
+   - 向新手解释 `scope="session"` 和 `scope="function"` 的差异。
+   - 参数化测试数据太多时怎么让 CI 报告不那么冗长？
+
+4. **注意事项**：
+   - 覆盖率 100% 真的代表"测试充分"吗？为什么？
+   - 什么时候应该写集成测试，什么时候应该写单元测试？
+
+::: tip 学习建议
+进阶测试的核心是**隔离 + 数据驱动**：用 fixture 隔离环境、用 parametrize 把"逻辑"和"数据"分离、用 Mock 把"自己代码"和"外部世界"切开。先把这三个工具用熟，大部分测试痛点都能解决。
+:::
+
 ## 下一步
 
 - **[CI/CD 自动化](../deployment/04-cicd.md)** - 自动化测试流程
