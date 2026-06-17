@@ -154,47 +154,121 @@ pytest --cov=mymodule tests/
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：测试间共享状态导致"看顺序跑"才有问题
 
 ❌ **错误示例**：
 ```python
-# 待补充
+class TestCart(unittest.TestCase):
+    cart = []  # 类变量，所有测试方法共享
+
+    def test_add_item(self):
+        self.cart.append('apple')
+        self.assertEqual(len(self.cart), 1)
+
+    def test_add_another(self):
+        self.cart.append('banana')
+        self.assertEqual(len(self.cart), 1)  # 如果上一个先跑，长度是 2，测试失败
+
+# 测试结果取决于运行顺序！
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+class TestCart(unittest.TestCase):
+    def setUp(self):
+        self.cart = []   # 每个测试前都重新初始化
+
+    def test_add_item(self):
+        self.cart.append('apple')
+        self.assertEqual(len(self.cart), 1)
+
+    def test_add_two(self):
+        self.cart.extend(['apple', 'banana'])
+        self.assertEqual(len(self.cart), 2)
 ```
 
-**说明**：待补充
+**说明**：单元测试必须**互相独立**。`setUp` 在每个 `test_xxx` 之前都跑一遍，是隔离测试状态的标准位置。pytest 用 fixture（每次调用都创建新实例）也能达到同样效果。共享可变状态是测试不稳定（flaky test）的首要原因。
 
-### 易错点 2：待补充
+### 易错点 2：`assertRaises` 用上下文管理器 vs 直接调用的差异
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import unittest
+
+class TestDivide(unittest.TestCase):
+    def test_divide_by_zero(self):
+        # 错：先调用了 divide，已经抛错了
+        self.assertRaises(ZeroDivisionError, divide(1, 0))
+        # 等价于：result = divide(1, 0) 先抛错，再 assertRaises 检查不到
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+class TestDivide(unittest.TestCase):
+    def test_divide_by_zero(self):
+        # 方法 1：传函数对象 + 参数（推荐用 with 形式）
+        self.assertRaises(ZeroDivisionError, divide, 1, 0)
+
+    def test_divide_by_zero_context(self):
+        # 方法 2：上下文管理器（最清晰）
+        with self.assertRaises(ZeroDivisionError):
+            divide(1, 0)
+
+# pytest 版本
+import pytest
+
+def test_divide_by_zero():
+    with pytest.raises(ZeroDivisionError):
+        divide(1, 0)
 ```
 
-**说明**：待补充
+**说明**：`assertRaises` 的"位置参数形式"要求传**函数对象**（不是函数调用结果），让框架自己调用。否则 Python 在 `assertRaises(...)` 之前就先求值 `divide(1, 0)` 抛错，测试会因 `Error` 而不是断言失败。上下文管理器形式（`with ... :`）更直观、更不易错。
 
-### 易错点 3：待补充
+### 易错点 3：Mock 没还原，污染了其他测试
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from unittest import mock
+
+def test_fetch_data():
+    patcher = mock.patch('requests.get')
+    mock_get = patcher.start()
+    mock_get.return_value.json.return_value = {"ok": True}
+    # 忘了 patcher.stop()
+    # 下一个测试中 requests.get 仍是 mock，看似正常但行为不对
+    assert fetch_data() == {"ok": True}
+
+def test_other():
+    # requests.get 还是 mock，其他依赖 requests 的测试全坏
+    ...
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# 方法 1：用 patch 装饰器，自动 start/stop
+@mock.patch('requests.get')
+def test_fetch_data(mock_get):
+    mock_get.return_value.json.return_value = {"ok": True}
+    assert fetch_data() == {"ok": True}
+
+# 方法 2：上下文管理器
+def test_fetch_data():
+    with mock.patch('requests.get') as mock_get:
+        mock_get.return_value.json.return_value = {"ok": True}
+        assert fetch_data() == {"ok": True}
+
+# 方法 3：try/finally
+def test_fetch_data():
+    patcher = mock.patch('requests.get')
+    mock_get = patcher.start()
+    try:
+        mock_get.return_value.json.return_value = {"ok": True}
+        assert fetch_data() == {"ok": True}
+    finally:
+        patcher.stop()
 ```
 
-**说明**：待补充
+**说明**：`mock.patch` 必须在测试结束时还原（`stop`），否则被 patch 的对象一直是 mock，污染后续测试。装饰器和上下文管理器会自动 `stop`，是首选。手动 `start()` 必须配 `try/finally` 或 `addCleanup`。
 
 ## 练习题
 

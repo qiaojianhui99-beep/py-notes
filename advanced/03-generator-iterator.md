@@ -122,47 +122,99 @@ result = filter_even(read_data())
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：生成器只能迭代一次
 
 ❌ **错误示例**：
 ```python
-# 待补充
+def gen():
+    yield 1
+    yield 2
+    yield 3
+
+g = gen()
+print(list(g))  # [1, 2, 3]
+print(list(g))  # []，第二次为空！
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# 想多次遍历，要么重新创建生成器
+g = gen()
+print(list(g))
+g = gen()  # 重新创建
+print(list(g))
+
+# 要么把结果存成列表（牺牲内存换可复用性）
+data = list(gen())
+print(data)
+print(data)
 ```
 
-**说明**：待补充
+**说明**：生成器是"一次性"的——迭代到底就枯竭了，不会从头开始。这是为了节省内存付出的代价。如果需要多次遍历同一份数据，要么每次重建生成器，要么直接用 `list()` 缓存。
 
-### 易错点 2：待补充
+### 易错点 2：`yield` 让函数返回生成器对象而非值
 
 ❌ **错误示例**：
 ```python
-# 待补充
+def get_numbers():
+    yield 1
+    yield 2
+
+result = get_numbers()
+print(result)        # <generator object>，不是 1
+print(result + 1)    # TypeError：不能加法
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+def get_numbers():
+    yield 1
+    yield 2
+
+gen = get_numbers()
+
+# 方法 1：next() 拿一个
+first = next(gen)  # 1
+second = next(gen)  # 2
+
+# 方法 2：用 for 遍历
+for n in get_numbers():
+    print(n)
+
+# 方法 3：用 list() 全部取出
+nums = list(get_numbers())  # [1, 2]
 ```
 
-**说明**：待补充
+**说明**：含 `yield` 的函数被调用时**不执行函数体**，只返回一个生成器对象。必须用 `next()`、`for` 循环、或 `list()` 才会真正执行并产出值。
 
-### 易错点 3：待补充
+### 易错点 3：`send()` 之前忘了"启动"生成器
 
 ❌ **错误示例**：
 ```python
-# 待补充
+def echo():
+    while True:
+        x = yield
+        print(f"收到 {x}")
+
+gen = echo()
+gen.send("hi")  # TypeError: can't send non-None value to a just-started generator
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+gen = echo()
+
+# 方法 1：用 next() 启动
+next(gen)         # 推进到第一个 yield
+gen.send("hi")    # 现在可以 send
+
+# 方法 2：用 send(None) 等价于 next
+gen = echo()
+gen.send(None)    # 等价于 next(gen)
+gen.send("hi")
 ```
 
-**说明**：待补充
+**说明**：生成器刚创建时停在函数开头，还没执行到任何 `yield`，此时只能 `send(None)` 或 `next()`。要"喂值"必须先把生成器推到第一个 `yield` 处。`send()` 返回的值是**下一个** `yield` 表达式的结果。
 
 ## 练习题
 

@@ -133,47 +133,109 @@ Django Model 的字段实现。
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：`__set__` 直接给 `self.name` 赋值导致无限递归
 
 ❌ **错误示例**：
 ```python
-# 待补充
+class Typed:
+    def __init__(self, name): self.name = name
+    def __get__(self, obj, owner): return getattr(obj, self.name)
+    def __set__(self, obj, value):
+        # obj.x = value 会触发 __set__，而 __set__ 又调 obj.x = value → 死循环
+        setattr(obj, self.name, value)
+
+class Person:
+    name = Typed('name')
+
+p = Person()
+p.name = 'Alice'  # RecursionError
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+class Typed:
+    def __init__(self, name): self.name = name
+
+    def __get__(self, obj, owner):
+        if obj is None:
+            return self
+        return obj.__dict__.get(self.name)   # 直接读实例字典
+
+    def __set__(self, obj, value):
+        obj.__dict__[self.name] = value       # 直接写实例字典
 ```
 
-**说明**：待补充
+**说明**：`__set__` 里如果写 `obj.x = value`，Python 又会调用描述符的 `__set__`，进入无限递归。必须直接操作 `obj.__dict__` 跳过描述符机制。读也一样——用 `obj.__dict__.get(name)` 而不是 `getattr(obj, name)`。
 
-### 易错点 2：待补充
+### 易错点 2：把"实例属性名"写死导致多个描述符共用同一份数据
 
 ❌ **错误示例**：
 ```python
-# 待补充
+class Typed:
+    def __init__(self, type_):
+        self.type_ = type_
+        self.value = None         # 共享存储！所有用 Typed 的属性都共用
+
+    def __get__(self, obj, owner):
+        return self.value
+    def __set__(self, obj, value):
+        self.value = value
+
+class Person:
+    name = Typed(str)
+    age = Typed(int)
+
+p = Person()
+p.name = 'Alice'
+p.age = 18
+print(p.name)  # 18！name 被 age 覆盖了
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+class Typed:
+    def __init__(self, type_):
+        self.type_ = type_
+
+    def __set_name__(self, owner, name):  # Python 3.6+ 自动调用
+        self.name = name
+
+    def __get__(self, obj, owner):
+        if obj is None: return self
+        return obj.__dict__.get(self.name)
+
+    def __set__(self, obj, value):
+        if not isinstance(value, self.type_):
+            raise TypeError(f"{self.name} 必须是 {self.type_}")
+        obj.__dict__[self.name] = value
 ```
 
-**说明**：待补充
+**说明**：描述符实例本身在类级别（`Person.name`、`Person.age`），如果它的存储也是"自己身上的属性"，所有实例共享。正确做法是把数据**存到 instance 自己的 `__dict__`**。`__set_name__`（3.6+）让描述符自动拿到自己绑定的属性名，避免手动传字符串。
 
-### 易错点 3：待补充
+### 易错点 3：忘了处理 `instance is None`（类访问）
 
 ❌ **错误示例**：
 ```python
-# 待补充
+class Typed:
+    def __get__(self, obj, owner):
+        return obj.__dict__.get('x')  # 类访问 Person.x 时 obj 是 None
+
+class Person:
+    x = Typed()
+
+print(Person.x)  # AttributeError: 'NoneType' has no attribute '__dict__'
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+class Typed:
+    def __get__(self, obj, owner):
+        if obj is None:
+            return self           # 类访问返回描述符本身
+        return obj.__dict__.get('x')
 ```
 
-**说明**：待补充
+**说明**：`obj.x` 调用 `__get__(obj, Person)`，但 `Person.x`（通过类访问，没有实例）调用 `__get__(None, Person)`。不处理 `None` 分支会导致 `Person.x` 直接报错。这也是为什么 `@property`、`@classmethod` 等内置描述符都能优雅处理"类访问"。
 
 ## 练习题
 

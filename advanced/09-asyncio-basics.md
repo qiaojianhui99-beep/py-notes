@@ -165,47 +165,98 @@ asyncio.run(main())
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：在 async 函数里调用阻塞 I/O
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import asyncio
+import time
+
+async def task():
+    time.sleep(1)   # 阻塞！整个事件循环卡住
+    return "done"
+
+async def main():
+    await asyncio.gather(task(), task(), task())  # 期望并发，实际串行 3 秒
+
+asyncio.run(main())  # 总耗时 3 秒
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+import asyncio
+
+async def task():
+    await asyncio.sleep(1)   # 让出控制权
+    return "done"
+
+async def main():
+    await asyncio.gather(task(), task(), task())  # 真并发
+
+asyncio.run(main())  # 总耗时 1 秒
 ```
 
-**说明**：待补充
+**说明**：`async def` 只是声明"这个函数是协程"，**不会魔法般变成非阻塞**。`time.sleep`、`requests.get`、`open().read()` 这些都是同步阻塞，会霸占事件循环。要用 `asyncio.sleep`、`aiohttp`、`aiofiles` 这类异步库替代。
 
-### 易错点 2：待补充
+### 易错点 2：忘了 `await` 导致协程没真正执行
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import asyncio
+
+async def hello():
+    print("Hi")
+
+async def main():
+    hello()      # 没 await，只是创建了协程对象，根本没执行
+    # RuntimeWarning: coroutine 'hello' was never awaited
+
+asyncio.run(main())
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+async def main():
+    await hello()    # 必须显式 await
+
+# 或并发：
+async def main():
+    await asyncio.gather(hello(), hello())
 ```
 
-**说明**：待补充
+**说明**：调用 `async def` 函数只是**返回一个协程对象**，函数体并不会执行。必须 `await` 它、或用 `asyncio.create_task()` 调度、或交给 `asyncio.gather()`，代码才真正运行。Python 会发出 `RuntimeWarning: never awaited` 警告。
 
-### 易错点 3：待补充
+### 易错点 3：在同步上下文里调用 `asyncio.run()`
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import asyncio
+
+async def fetch_data():
+    await asyncio.sleep(1)
+    return [1, 2, 3]
+
+# 已经在异步函数里又调 asyncio.run
+async def main():
+    data = asyncio.run(fetch_data())  # RuntimeError: asyncio.run() cannot be called from a running event loop
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# 顶层同步入口
+def sync_main():
+    data = asyncio.run(fetch_data())
+
+# 已在 async 上下文：用 await
+async def main():
+    data = await fetch_data()
+
+# 跨同步/异步库的桥：用 asyncio.to_thread 把同步阻塞函数包成协程
+async def main():
+    result = await asyncio.to_thread(blocking_function)
 ```
 
-**说明**：待补充
+**说明**：`asyncio.run()` 是事件循环的"顶层入口"，每个进程只能有一个运行中的事件循环。已经在 `async def` 里就 `await`，不要嵌套 `asyncio.run`。从同步代码调用异步代码用 `asyncio.run()`，从异步代码调用同步阻塞代码用 `asyncio.to_thread()`。
 
 ## 练习题
 

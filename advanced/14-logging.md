@@ -151,47 +151,104 @@ logger.warning(f"权限不足: {user_id}")
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：在模块顶层用 `logging.basicConfig` 多次调用只生效一次
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import logging
+
+# 模块 A 里
+logging.basicConfig(level=logging.DEBUG)
+
+# 模块 B 里又想覆盖配置
+logging.basicConfig(level=logging.WARNING, format='%(message)s')
+# basicConfig 默认行为：只有第一次（root logger 没 handler 时）才生效
+# 第二次调用毫无效果
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+import logging
+
+# 方法 1：程序入口（main）配置一次，其他模块只 getLogger
+def setup_logging():
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(levelname)s %(message)s',
+    )
+
+if __name__ == "__main__":
+    setup_logging()
+    # 业务逻辑
+
+# 方法 2：强制重新配置（force=True，Python 3.8+）
+logging.basicConfig(level=logging.WARNING, force=True)
+
+# 方法 3：用 dictConfig / 文件配置，显式覆盖
+import logging.config
+logging.config.dictConfig({...})
 ```
 
-**说明**：待补充
+**说明**：`basicConfig` 设计上是"幂等"的——只有 root logger 没有 handler 时才会真的配置。在生产代码里应**只在主入口配置一次**，库代码用 `logging.getLogger(__name__)` 拿 logger 即可，让应用决定日志格式。要在运行时改配置，用 `force=True`（3.8+）或 `dictConfig`。
 
-### 易错点 2：待补充
+### 易错点 2：日志里 `f-string` 让格式串失去延迟求值
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import logging
+
+logger = logging.getLogger(__name__)
+
+# 即使级别是 WARNING，DEBUG 字符串也会先拼接
+def process(data):
+    logger.debug(f"处理数据: {json.dumps(data)}")   # 拼接先发生
+    # 如果 level=WARNING，DEBUG 不输出，但 f-string 还是计算了
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# 方法 1：用 %-style，参数延迟到确实要输出时才格式化
+logger.debug("处理数据: %s", data)   # data 的 repr 只在真的输出时才求值
+
+# 方法 2：先判级别，避免昂贵格式化
+if logger.isEnabledFor(logging.DEBUG):
+    logger.debug(f"处理数据: {json.dumps(data)}")
 ```
 
-**说明**：待补充
+**说明**：`logger.debug(f"...")` 会**先**把 f-string 求值（即使最终不输出），对昂贵对象（`json.dumps`、大字典、数据库查询）来说会浪费 CPU。传统 `%s, %d` 占位符是延迟到确定输出时才调 `__repr__`/`__str__`，性能好得多。
 
-### 易错点 3：待补充
+### 易错点 3：库代码直接用 root logger 导致日志格式被应用接管
 
 ❌ **错误示例**：
 ```python
-# 待补充
+# my_library.py
+import logging
+logging.info("库初始化")  # 用了 root logger，污染应用日志
+
+# app.py
+logging.basicConfig(level=logging.WARNING)  # 只想看 WARNING
+import my_library
+# 库里调的 logging.info() 被 root 接收，但 level=WARNING 过滤掉了
+# 或者反过来：库给 root 加了 handler，应用的格式被改了
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# my_library.py
+import logging
+
+logger = logging.getLogger(__name__)   # 每个模块独立 logger
+logger.addHandler(logging.NullHandler())  # 默认没有输出，避免"未配置时打印到 stderr"
+
+logger.info("库初始化")
+
+# app.py
+import logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(message)s")
+import my_library  # 应用决定如何处理库的日志
 ```
 
-**说明**：待补充
+**说明**：库代码应该 `logging.getLogger(__name__)` 拿自己模块路径的 logger，并加 `NullHandler` 避免"用户没配置时打印到 stderr"。是否输出、输出到哪里、什么格式，全部交给应用的入口配置。
 
 ## 练习题
 

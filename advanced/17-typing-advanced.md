@@ -149,47 +149,114 @@ set_mode('read')   # OK
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：把类型提示当成运行时检查
 
 ❌ **错误示例**：
 ```python
-# 待补充
+def add(a: int, b: int) -> int:
+    return a + b
+
+add("hello", "world")   # 运行时不会报错，照常执行
+add(1, "2")             # TypeError——但不是因为类型提示报的，是 + 报的
+```
+
+✅ **正确理解**：
+```python
+# 类型提示只是给 IDE / mypy / pyright 看的"静态文档"
+# Python 解释器完全无视，运行时不做任何类型校验
+
+# 运行时强制校验需要：
+# 1. 用 mypy / pyright 静态检查
+#    $ mypy your_code.py
+# 2. 或运行时用 pydantic / typeguard 显式校验
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    name: str
+    price: float
+
+Item(name="x", price="10")  # pydantic 帮你转换字符串 '10' 为 float
+Item(name="x", price="abc") # ValidationError：运行时拒绝
+```
+
+**说明**：类型提示是**静态注释**，运行时完全不影响。你给 `int` 类型的参数传字符串，Python 不会拦。要真正的类型保护，要么 CI 里跑 mypy / pyright 静态分析，要么用 pydantic / typeguard 在运行时校验。
+
+### 易错点 2：把可变对象当默认值或泛型参数共享
+
+❌ **错误示例**：
+```python
+from typing import List
+
+# 想表达"返回一个空列表"
+def get_items() -> List[int]:
+    return []
+
+# 想定义"list[T]"类型时用了 List 实例
+x: List[int] = []
+x.append("hi")  # mypy 可能不会报（取决于配置），运行时不报
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# Python 3.9+ 内置泛型，可以直接用 list/dict/tuple
+def get_items() -> list[int]:
+    return []
+
+x: list[int] = []
+
+# Python 3.9- 用 typing.List 等（小写 list 不支持泛型）
+from typing import List
+def get_items() -> List[int]:
+    return []
+
+# 注意：默认参数用 None + 类型提示 Optional
+from typing import Optional
+
+def process(items: Optional[list[int]] = None):
+    if items is None:
+        items = []
 ```
 
-**说明**：待补充
+**说明**：Python 3.9+ 起，`list[int]`、`dict[str, int]` 可以直接作为类型注解，不用从 `typing` 导入大写版本。`typing.List` 等大写形式是 3.9 之前的写法，新代码应该用小写。但默认参数的可变陷阱依旧存在——配合类型提示时记得用 `None` 当哨兵。
 
-### 易错点 2：待补充
+### 易错点 3：`Callable` 参数类型描述方式过时
 
 ❌ **错误示例**：
 ```python
-# 待补充
+from typing import Callable
+
+# 用 Callable[[int, int], int] 描述"接收两个 int 返回 int"
+def apply(func: Callable[[int, int], int]) -> int:
+    return func(1, 2)
+
+# 但用 any() / **kwargs 的函数，类型就难描述
+def my_func(*args, **kwargs): pass
+# 旧式 Callable 没法表达 "接收任意参数"
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# Python 3.10+：用 Ellipsis 表示"任意参数"
+def apply(func: Callable[..., int]) -> int:
+    return func()
+
+# Python 3.12+：直接用函数定义语法描述类型（Type Parameter Syntax）
+# def apply[T](func: Callable[[T], T]) -> T: ...
+
+# 用 ParamSpec 描述"原样转发参数"
+from typing import Callable, ParamSpec, TypeVar
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+def log_and_call(func: Callable[P, R]) -> Callable[P, R]:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        print(f"调用 {func.__name__}")
+        return func(*args, **kwargs)
+    return wrapper
 ```
 
-**说明**：待补充
-
-### 易错点 3：待补充
-
-❌ **错误示例**：
-```python
-# 待补充
-```
-
-✅ **正确做法**：
-```python
-# 待补充
-```
-
-**说明**：待补充
+**说明**：`Callable[[Arg1, Arg2], Return]` 是描述函数类型的经典方式。但有两个常见坑：参数列表只能描述固定的位置参数，`*args`/`**kwargs` 用 `Callable[..., R]` 表示"任意参数，返回 R"。要做"装饰器转发原函数签名"必须用 `ParamSpec`（3.10+）才能保住类型信息。否则装饰后的函数签名变成 `(*args, **kwargs)`，mypy 看不出原函数的参数约束。
 
 ## 练习题
 

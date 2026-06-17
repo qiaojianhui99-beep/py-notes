@@ -70,60 +70,173 @@ def my_decorator(func):
 ## 使用场景
 
 ### 场景 1：日志记录
-记录函数调用信息。
+
+在不修改函数体的前提下，记录"谁、何时、调用了什么、返回了什么"。
+
+```python
+from functools import wraps
+
+def log(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"调用 {func.__name__}({args}, {kwargs})")
+        result = func(*args, **kwargs)
+        print(f"返回 {result}")
+        return result
+    return wrapper
+
+@log
+def transfer(amount): ...
+```
 
 ### 场景 2：权限验证
-检查用户权限。
+
+Web 接口、命令行工具中检查当前用户是否有权限调用某个函数。函数本身只关心业务，"是否登录"由装饰器把关。
+
+```python
+def require_login(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not current_user.is_authenticated:
+            raise PermissionError("请先登录")
+        return func(*args, **kwargs)
+    return wrapper
+
+@require_login
+def delete_account(): ...
+```
 
 ### 场景 3：缓存结果
-缓存函数返回值。
+
+对参数相同、结果不变的纯函数（如斐波那契、阶乘）做缓存，避免重复计算。
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=128)
+def fib(n):
+    return n if n < 2 else fib(n-1) + fib(n-2)
+```
 
 ### 场景 4：性能监控
-测量函数执行时间。
+
+测量函数耗时，找出慢函数。
+
+```python
+import time
+from functools import wraps
+
+def timer(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = time.perf_counter() - start
+        print(f"{func.__name__}: {elapsed:.3f}s")
+        return result
+    return wrapper
+```
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：忘记 `functools.wraps` 导致元数据丢失
 
 ❌ **错误示例**：
 ```python
-# 待补充
+def my_decorator(func):
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+@my_decorator
+def greet(name):
+    """打招呼"""
+    return f"Hello {name}"
+
+print(greet.__name__)  # 'wrapper'，原函数名丢了
+print(greet.__doc__)   # None，文档字符串丢了
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+from functools import wraps
+
+def my_decorator(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+@my_decorator
+def greet(name):
+    """打招呼"""
+    return f"Hello {name}"
+
+print(greet.__name__)  # 'greet'
+print(greet.__doc__)   # '打招呼'
 ```
 
-**说明**：待补充
+**说明**：装饰器返回的是 `wrapper` 函数，它会"冒充"原函数。不加 `@wraps(func)` 时，`__name__`、`__doc__`、`__module__` 等元数据全是 wrapper 的，调试时看不出原始函数。写装饰器永远先加 `@wraps`。
 
-### 易错点 2：待补充
+### 易错点 2：带参数装饰器的嵌套层数错误
 
 ❌ **错误示例**：
 ```python
-# 待补充
+def repeat(times):  # 想做 @repeat(3)
+    def wrapper(func):
+        result = func()  # 错！这里立刻调用了原函数
+        for _ in range(times):
+            func()
+    return wrapper
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+def repeat(times):          # 第 1 层：接收参数
+    def decorator(func):    # 第 2 层：接收被装饰函数
+        @wraps(func)
+        def wrapper(*args, **kwargs):  # 第 3 层：接收调用参数
+            for _ in range(times):
+                result = func(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator
+
+@repeat(3)
+def greet(name):
+    print(f"Hello {name}")
 ```
 
-**说明**：待补充
+**说明**：带参数的装饰器必须是**三层嵌套**——参数层、函数层、wrapper 层。判断口诀：装饰器语法 `@deco(x)` 会**调用** `deco(x)` 拿到一个真正的装饰器，所以最外层只负责接收参数。
 
-### 易错点 3：待补充
+### 易错点 3：装饰器多个叠加时执行顺序混乱
 
-❌ **错误示例**：
+❌ **错误理解**：
 ```python
-# 待补充
+@A
+@B
+@C
+def f(): ...
+# 以为是 A 先执行，然后 B，然后 C
 ```
 
-✅ **正确做法**：
+✅ **正确理解**：
 ```python
-# 待补充
+# 等价于：f = A(B(C(f)))
+# 装饰器从下往上"包"，最终调用从外到内
+@A
+@B
+def f(): ...
+# 等价于 f = A(B(f))
+
+# 实际调用时：
+#   1. A 的 wrapper 开始
+#   2. A 调用原函数 (= B 包装后的)
+#   3. B 的 wrapper 开始
+#   4. B 调用真正的 f
 ```
 
-**说明**：待补充
+**说明**：装饰器**应用顺序是从下到上**（最靠近函数的先包），**执行顺序是从外到内**（最远的先执行 wrapper 的前置逻辑）。如果 `@app.route` 和 `@login_required` 顺序写反了，路由注册会拿不到登录保护。
 
 ## 练习题
 

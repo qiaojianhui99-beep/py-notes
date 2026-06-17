@@ -180,47 +180,120 @@ WebSocket、消息队列。
 
 ## 易错点
 
-### 易错点 1：待补充
+### 易错点 1：用 `asyncio.gather` 没容错——一个失败全盘皆输
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import asyncio
+import aiohttp
+
+async def fetch(session, url):
+    async with session.get(url) as resp:
+        resp.raise_for_status()
+        return await resp.text()
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        # 只要有一个 URL 失败，整个 gather 抛错
+        # 其他成功的请求结果也拿不到
+        results = await asyncio.gather(
+            fetch(session, "https://valid.com"),
+            fetch(session, "https://404.com"),
+            fetch(session, "https://valid2.com"),
+        )
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+async def main():
+    async with aiohttp.ClientSession() as session:
+        results = await asyncio.gather(
+            fetch(session, "https://valid.com"),
+            fetch(session, "https://404.com"),
+            fetch(session, "https://valid2.com"),
+            return_exceptions=True,   # 异常作为返回值，不传播
+        )
+        # results[1] 会是 Exception 对象，其他是字符串
+        ok = [r for r in results if not isinstance(r, Exception)]
 ```
 
-**说明**：待补充
+**说明**：`asyncio.gather(*tasks)` 默认 `return_exceptions=False`，任意一个任务抛错整个 `gather` 立刻抛异常，其他任务的结果全部丢失。批量抓取网页、调用多个 API 时几乎都应该传 `return_exceptions=True`，让"部分失败"成为可处理的情况。
 
-### 易错点 2：待补充
+### 易错点 2：把协程当 Task 用，导致实际还是串行
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import asyncio
+
+async def task(n):
+    await asyncio.sleep(1)
+    return n * 2
+
+async def main():
+    # 一行 await 一个，根本没并发
+    a = await task(1)   # 1 秒
+    b = await task(2)   # 又 1 秒
+    c = await task(3)   # 又 1 秒
+    # 总共 3 秒
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+# 方法 1：gather（推荐）
+async def main():
+    a, b, c = await asyncio.gather(task(1), task(2), task(3))
+    # 总共 1 秒
+
+# 方法 2：显式 create_task
+async def main():
+    t1 = asyncio.create_task(task(1))
+    t2 = asyncio.create_task(task(2))
+    t3 = asyncio.create_task(task(3))
+    a, b, c = await t1, await t2, await t3   # 总共 1 秒
 ```
 
-**说明**：待补充
+**说明**：`asyncio.gather(coro1, coro2)` 内部会自动 `create_task`，让多个协程同时跑。但**直接 `await coro1; await coro2` 是顺序执行**。要并发，要么 `gather`，要么先 `create_task` 再 `await`。
 
-### 易错点 3：待补充
+### 易错点 3：用 `asyncio.Queue` 但忘了 `task_done` / `join`
 
 ❌ **错误示例**：
 ```python
-# 待补充
+import asyncio
+
+async def consumer(q):
+    while True:
+        item = await q.get()
+        print(item)
+        # 忘了 q.task_done()
+        # 主协程 await q.join() 永远等不到，死锁
+
+async def main():
+    q = asyncio.Queue()
+    for i in range(5): await q.put(i)
+    c = asyncio.create_task(consumer(q))
+    await q.join()   # 永远卡住
+    c.cancel()
 ```
 
 ✅ **正确做法**：
 ```python
-# 待补充
+async def consumer(q):
+    while True:
+        item = await q.get()
+        try:
+            print(item)
+        finally:
+            q.task_done()   # 标记这个任务处理完了
+
+async def main():
+    q = asyncio.Queue()
+    for i in range(5): await q.put(i)
+    c = asyncio.create_task(consumer(q))
+    await q.join()   # 等到所有 put 进去的项都被 task_done
+    c.cancel()
 ```
 
-**说明**：待补充
+**说明**：`asyncio.Queue.join()` 的协议是"队列里所有被 `get` 走的项都必须 `task_done`"。消费者处理完一项就调 `task_done()`，主流程才能从 `await q.join()` 返回。漏调会让 `join()` 永远挂起。把"处理"放进 `try/finally` 还能保证异常也算"做完了"。
 
 ## 练习题
 
