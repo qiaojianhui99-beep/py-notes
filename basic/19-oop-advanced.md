@@ -146,6 +146,10 @@ print(person.get_age())
 
 `@property` 可以把方法包装成属性一样访问。
 
+### 只读属性
+
+先看最简单的情况：让方法像属性一样被读取。
+
 ```python
 class Person:
     def __init__(self, age):
@@ -153,19 +157,51 @@ class Person:
 
     @property
     def age(self):
+        """读取年龄时自动调用这个方法"""
+        return self._age
+
+person = Person(18)
+print(person.age)  # 18，看起来像访问属性，实际调用了方法
+```
+
+此时 `person.age` 只能读取，不能赋值：
+
+```python
+person.age = 20  # AttributeError: can't set attribute
+```
+
+### 可读写属性
+
+如果希望赋值时也能做检查，需要配套定义一个 **setter 方法**。
+
+```python
+class Person:
+    def __init__(self, age):
+        self._age = age
+
+    @property
+    def age(self):
+        """读取 age 时调用"""
         return self._age
 
     @age.setter
     def age(self, value):
+        """赋值 age 时调用，例如 person.age = 20"""
         if 0 <= value <= 120:
             self._age = value
         else:
             raise ValueError("年龄无效")
 
 person = Person(18)
-print(person.age)
-person.age = 20
+print(person.age)  # 读取时调用 @property 装饰的方法
+person.age = 20    # 赋值时调用 @age.setter 装饰的方法
+print(person.age)  # 20
 ```
+
+**关键点**：
+- `@property` 装饰的方法控制**读取**行为。
+- `@age.setter` 装饰的方法控制**赋值**行为。
+- setter 装饰器的名字必须是 `@属性名.setter`，这里属性名是 `age`，所以是 `@age.setter`。
 
 这样既保留了属性访问的简洁，又能在赋值时做检查。
 
