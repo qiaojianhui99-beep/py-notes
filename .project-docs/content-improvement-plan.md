@@ -768,7 +768,7 @@
 |------|------|------|---------|
 | Web 认证系统 | `web/10-authentication.md` | ✅ 已完成 | 2026-06-22 |
 | Nginx 基础 | `deployment/01-nginx-basics.md` | ✅ 已完成 | 2026-06-22 |
-| 域名与 SSL | `deployment/08-domain-ssl.md` | ⏳ 待开始 | - |
+| 域名与 SSL | `deployment/08-domain-ssl.md` | ✅ 已完成 | 2026-06-22 |
 
 ### 第二批进度
 

@@ -143,6 +143,7 @@ export default defineConfig({
             { text: '监控与日志', link: '/deployment/05-monitoring' },
             { text: 'Nginx 高级配置', link: '/deployment/06-nginx-advanced' },
             { text: 'Kubernetes 入门', link: '/deployment/07-kubernetes' },
+            { text: '域名与 SSL 配置', link: '/deployment/08-domain-ssl' },
           ],
         },
       ],
