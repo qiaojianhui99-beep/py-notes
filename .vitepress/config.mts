@@ -125,6 +125,7 @@ export default defineConfig({
             { text: 'RESTful API 设计', link: '/web/07-restful-api' },
             { text: 'WebSocket 实时通信', link: '/web/08-websocket' },
             { text: '微服务架构', link: '/web/09-microservices' },
+            { text: 'Web 认证与授权', link: '/web/10-authentication' },
           ],
         },
       ],
@@ -134,6 +135,7 @@ export default defineConfig({
           collapsed: false,
           items: [
             { text: '简介', link: '/deployment/' },
+            { text: 'Nginx 基础配置', link: '/deployment/01-nginx-basics' },
             { text: 'GitHub Pages 部署', link: '/deployment/github-pages' },
             { text: 'Linux 服务器部署', link: '/deployment/02-linux-server' },
             { text: 'Docker 容器化', link: '/deployment/03-docker' },
