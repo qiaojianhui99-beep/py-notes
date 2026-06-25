@@ -107,6 +107,7 @@ export default defineConfig({
             { text: '最佳实践', link: '/database/08-best-practices' },
             { text: '实战项目', link: '/database/09-project' },
             { text: '常见问题', link: '/database/10-faq' },
+            { text: 'Alembic 数据库迁移', link: '/database/11-alembic' },
           ],
         },
       ],
